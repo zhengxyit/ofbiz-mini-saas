@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entity-engine-xml>
+    <!-- 开发组李颖晖、郑晓远、娄继伟，业务Sandy Ricky 老蔡 颖晖 -->
+    <UserInfo userInfoId="1" name="Ted" mobile="18612345678" email="" status="0"/>
+
+    <LoginUser apiLoginUserId="1" username1="18612345678" currentPassword="MTIzNDU2" userInfoId="1"/>
+
+    <Enterprise enterpriseId="1" domainName="abc" configs="ALL" />
+
+</entity-engine-xml>

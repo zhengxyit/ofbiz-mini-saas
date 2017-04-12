@@ -1,0 +1,22 @@
+*.class
+
+# 先加上，免配置
+# /.idea/workspace.xml 在GIT上改吧，要不然自己要设置src和lib
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+applications/*/build/*
+framework/*/build/*
+ofbiz.jar
+*.war
+*.ear
+
+# ybs-page
+themes/elementui/webapp/static/*
+runtime/logs/*
+runtime/catalina/*
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*

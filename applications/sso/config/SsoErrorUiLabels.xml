@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/ofbiz-properties.xsd">
+    <property key="CompanyReadFailure">
+        <value xml:lang="en">Company's info read failure.</value>
+        <value xml:lang="zh">公司信息读取失败</value>
+    </property>
+    <property key="NoTenant">
+        <value xml:lang="en">Not found Tenant.</value>
+        <value xml:lang="zh">未找到租户信息</value>
+    </property>
+</resource>

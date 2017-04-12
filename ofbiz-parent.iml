@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/build/classes" />
+    <output-test url="file://$MODULE_DIR$/build/lib/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/framework/entity/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/framework/base/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/applications/sso/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/framework/catalina/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/framework/common/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/framework/datafile/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/framework/entityext/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/framework/geronimo/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/framework/minilang/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/framework/security/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/framework/service/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/framework/testtools/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/framework/webapp/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/framework/webtools/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/build/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/build/lib" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="CCP_REST_SDK_JAVA_v2.7r" level="project" />
+  </component>
+</module>

@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/services.xsd">
+    <description>Common Application Services</description>
+    <vendor>OFBiz</vendor>
+    <version>1.0</version>
+
+    <!-- Common Permission Service -->
+    <service name="commonGenericPermission" engine="simple"
+        location="component://common/script/org/ofbiz/common/CommonServices.xml" invoke="commonGenericPermission">
+        <implements service="permissionInterface"/>
+    </service>
+
+    <service name="commonGetAllCrudPermissions" engine="simple"
+        location="component://common/script/org/ofbiz/common/permission/CommonPermissionServices.xml" invoke="getAllCrudPermissions" auth="false">
+        <description>Returns all CRUD and View Permissions</description>
+        <attribute name="primaryPermission" type="String" mode="IN" optional="false"/>
+        <attribute name="altPermission" type="String" mode="IN" optional="true"/>
+        <attribute name="hasCreatePermission" type="Boolean" mode="OUT" optional="false"/>
+        <attribute name="hasUpdatePermission" type="Boolean" mode="OUT" optional="false"/>
+        <attribute name="hasDeletePermission" type="Boolean" mode="OUT" optional="false"/>
+        <attribute name="hasViewPermission" type="Boolean" mode="OUT" optional="false"/>
+    </service>
+
+    <service name="echoService" engine="java" validate="false"
+            location="org.ofbiz.common.CommonServices" invoke="echoService">
+        <description>Echos back all passed parameters</description>
+    </service>
+    <service name="returnErrorService" engine="java" validate="false"
+            location="org.ofbiz.common.CommonServices" invoke="returnErrorService">
+        <description>Always returns error</description>
+    </service>
+
+    <service name="forceGarbageCollection" engine="java"
+            location="org.ofbiz.common.CommonServices" invoke="forceGc">
+       <description>Force the JVM to run the GC</description>
+       <required-permissions join-type="AND">
+           <check-permission permission="UTIL_CACHE_EDIT"/>
+       </required-permissions>
+    </service>
+
+    <service name="adjustDebugLevels" engine="java"
+             location="org.ofbiz.common.CommonServices" invoke="adjustDebugLevels" auth="true">
+        <description>Sets/Updates cached debugging levels</description>
+        <attribute name="fatal" type="String" mode="IN" optional="true"/>
+        <attribute name="error" type="String" mode="IN" optional="true"/>
+        <attribute name="warning" type="String" mode="IN" optional="true"/>
+        <attribute name="important" type="String" mode="IN" optional="true"/>
+        <attribute name="info" type="String" mode="IN" optional="true"/>
+        <attribute name="timing" type="String" mode="IN" optional="true"/>
+        <attribute name="verbose" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="displayXaDebugInfo" engine="java"
+            location="org.ofbiz.common.CommonServices" invoke="displayXaDebugInfo" auth="true">
+        <required-permissions join-type="AND">
+            <check-permission permission="SERVICE_INVOKE_ANY"/>
+        </required-permissions>
+    </service>
+
+    <!-- Status services -->
+    <service name="getStatusItems" engine="java"
+            location="org.ofbiz.common.status.StatusServices" invoke="getStatusItems" auth="false">
+        <description>Gets all StatusItem entries for the supplied StatusTypeId's</description>
+        <attribute name="statusTypeIds" type="List" mode="IN" optional="false"/>
+        <attribute name="statusItems" type="List" mode="OUT" optional="false"/>
+    </service>
+    <service name="getStatusValidChangeToDetails" engine="java"
+            location="org.ofbiz.common.status.StatusServices" invoke="getStatusValidChangeToDetails" auth="false">
+        <description>Gets all StatusValidChangeToDetails entries for the supplied statusId</description>
+        <attribute name="statusId" type="String" mode="IN" optional="false"/>
+        <attribute name="statusValidChangeToDetails" type="List" mode="OUT" optional="true"/>
+    </service>
+
+    <!-- Lookup services -->
+    <service name="prepareFind" auth="false" engine="java" invoke="prepareFind" location="org.ofbiz.common.FindServices">
+        <description>Generic service to return a entity conditions</description>
+        <attribute name="entityName" type="String" mode="IN" optional="false"/>
+        <attribute name="inputFields" type="java.util.Map" mode="IN" optional="false"/>
+        <attribute name="orderBy" type="String" mode="IN" optional="true"/>
+        <attribute name="noConditionFind" type="String" mode="IN" optional="true"><!-- find with no condition (empty entityConditionList) only done when this is Y --></attribute>
+        <attribute name="filterByDate" type="String" mode="IN" optional="true"/>
+        <attribute name="filterByDateValue" type="Timestamp" mode="IN" optional="true"/>
+        <attribute name="fromDateName" type="String" mode="IN" optional="true"/>
+        <attribute name="thruDateName" type="String" mode="IN" optional="true"/>
+        <attribute name="queryString" type="String" mode="OUT" optional="true"/>
+        <attribute name="queryStringMap" type="java.util.Map" mode="OUT" optional="true"/>
+        <attribute name="orderByList" type="java.util.List" mode="OUT" optional="true"/>
+        <attribute name="entityConditionList" type="org.ofbiz.entity.condition.EntityConditionList" mode="OUT" optional="true"/>
+    </service>
+    <service name="executeFind" auth="false" engine="java" invoke="executeFind" location="org.ofbiz.common.FindServices">
+        <description>Generic service to return an entity iterator</description>
+        <attribute name="entityName" type="String" mode="IN" optional="false"/>
+        <attribute name="fieldList" type="java.util.List" mode="IN" optional="true"/>
+        <attribute name="orderByList" type="java.util.List" mode="IN" optional="true"/>
+        <attribute name="maxRows" mode="IN" type="Integer" optional="true"/>
+        <attribute name="entityConditionList" type="org.ofbiz.entity.condition.EntityConditionList" mode="IN" optional="true"/>
+        <attribute name="noConditionFind" type="String" mode="IN" optional="true"><!-- find with no condition (empty entityConditionList) only done when this is Y --></attribute>
+        <attribute name="distinct" type="String" mode="IN" optional="true"><!-- distinct find only done when this is Y --></attribute>
+        <attribute name="listIt" type="org.ofbiz.entity.util.EntityListIterator" mode="OUT" optional="true"/>
+        <attribute name="listSize" type="Integer" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="performFind" auth="false" engine="java" invoke="performFind" location="org.ofbiz.common.FindServices">
+        <description>Generic service to return an entity iterator.  set filterByDate to Y to exclude expired records.
+           set noConditionFind to Y to find without conditions.  </description>
+        <attribute name="entityName" type="String" mode="IN" optional="false"/>
+        <attribute name="inputFields" type="java.util.Map" mode="IN" optional="false"/>
+        <attribute name="fieldList" type="java.util.List" mode="IN" optional="true"/>
+        <attribute name="orderBy" type="String" mode="IN" optional="true"/>
+        <attribute name="noConditionFind" type="String" mode="IN" optional="true"><!-- find with no condition (empty entityConditionList) only done when this is Y --></attribute>
+        <attribute name="distinct" type="String" mode="IN" optional="true"><!-- distinct find only done when this is Y --></attribute>
+        <attribute name="filterByDate" type="String" mode="IN" optional="true"/>
+        <attribute name="filterByDateValue" type="Timestamp" mode="IN" optional="true"/>
+        <attribute name="fromDateName" type="String" mode="IN" optional="true"/>
+        <attribute name="thruDateName" type="String" mode="IN" optional="true"/>
+        <attribute name="viewIndex" type="Integer" mode="IN" optional="true"/>
+        <attribute name="viewSize" type="Integer" mode="IN" optional="true"/>
+        <attribute name="listIt" type="org.ofbiz.entity.util.EntityListIterator" mode="OUT" optional="true"/>
+        <attribute name="listSize" type="Integer" mode="OUT" optional="true"/>
+        <attribute name="queryString" type="String" mode="OUT" optional="true"/>
+        <attribute name="queryStringMap" type="java.util.Map" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="performFindList" auth="false" engine="java" invoke="performFindList" location="org.ofbiz.common.FindServices">
+        <description>Generic service to return an partial list.  set filterByDate to Y to exclude expired records.
+            set noConditionFind to Y to find without conditions. 
+            If used in a form, it is necessary to assign a value (true makes sense) to override-list-size attribute so that 
+            FormRenderer.renderItemRows sets the lowIndex correctly, because once the results of performFindList are displayed, 
+            otherwise pages > 0 are rendered as empty. see OFBIZ-6422 + 6423 for details</description>
+        <attribute name="entityName" type="String" mode="IN" optional="false"/>
+        <attribute name="inputFields" type="java.util.Map" mode="IN" optional="false"/>
+        <attribute name="orderBy" type="String" mode="IN" optional="true"/>
+        <attribute name="noConditionFind" type="String" mode="IN" optional="true"><!-- find with no condition (empty entityConditionList) only done when this is Y --></attribute>
+        <attribute name="filterByDate" type="String" mode="IN" optional="true"/>
+        <attribute name="filterByDateValue" type="Timestamp" mode="IN" optional="true"/>
+        <attribute name="viewIndex" type="Integer" mode="IN" optional="true"/>
+        <attribute name="viewSize" type="Integer" mode="IN" optional="true"/>
+        <attribute name="list" type="List" mode="OUT" optional="true"/>
+        <attribute name="listSize" type="Integer" mode="OUT" optional="false"/>
+        <attribute name="queryString" type="String" mode="OUT" optional="true"/>
+        <attribute name="queryStringMap" type="java.util.Map" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="performFindItem" auth="false" engine="java" invoke="performFindItem" location="org.ofbiz.common.FindServices">
+        <description>Generic service to return an single GenericValue.  set filterByDate to Y to exclude expired records.</description>
+        <attribute name="entityName" type="String" mode="IN" optional="false"/>
+        <attribute name="inputFields" type="java.util.Map" mode="IN" optional="false"/>
+        <attribute name="orderBy" type="String" mode="IN" optional="true"/>
+        <attribute name="filterByDate" type="String" mode="IN" optional="true"/>
+        <attribute name="filterByDateValue" type="Timestamp" mode="IN" optional="true"/>
+        <attribute name="item" type="org.ofbiz.entity.GenericValue" mode="OUT" optional="true"/>
+        <attribute name="queryString" type="String" mode="OUT" optional="true"/>
+        <attribute name="queryStringMap" type="java.util.Map" mode="OUT" optional="true"/>
+    </service>
+
+    
+    <service name="getFileUploadProgressStatus" engine="simple" location="component://common/script/org/ofbiz/common/CommonServices.xml" invoke="getFileUploadProgressStatus" auth="false">
+        <description>Look up progress made in File Upload process</description>
+        <attribute name="uploadProgressListener" mode="IN" type="org.ofbiz.webapp.event.FileUploadProgressListener" optional="true"/>
+        <attribute name="contentLength" mode="OUT" type="Long" optional="true"/>
+        <attribute name="bytesRead" mode="OUT" type="Long" optional="true"/>
+        <attribute name="readPercent" mode="OUT" type="Integer" optional="true"/>
+        <attribute name="hasStarted" mode="OUT" type="Boolean" optional="true"/>
+    </service>
+
+    <!-- ftp services -->
+    <service name="ftpInterface" engine="interface" location="" invoke="">
+        <attribute name="hostname" type="String" mode="IN" optional="false"/>
+        <attribute name="username" type="String" mode="IN" optional="false"/>
+        <attribute name="password" type="String" mode="IN" optional="false"/>
+        <attribute name="localFilename" type="String" mode="IN" optional="false"/>
+        <attribute name="remoteFilename" type="String" mode="IN" optional="false"/>
+        <attribute name="binaryTransfer" type="Boolean" mode="IN" optional="true"/>
+        <attribute name="passiveMode" type="Boolean" mode="IN" optional="true"/>
+        <attribute name="defaultTimeout" type="Integer" mode="IN" optional="true"/>
+    </service>
+    <service name="ftpPutFile" engine="java" use-transaction="false"
+        location="org.ofbiz.common.FtpServices" invoke="putFile">
+        <implements service="ftpInterface"/>
+        <attribute name="siteCommands" type="List" mode="IN" optional="true"/>
+    </service>
+    <service name="ftpGetFile" engine="java" use-transaction="false"
+        location="org.ofbiz.common.FtpServices" invoke="getFile">
+        <implements service="ftpInterface"/>
+    </service>
+
+    <!-- UserLogin services
+    <service name="userLogin" engine="java" location="org.ofbiz.common.login.LoginServices" invoke="userLogin">
+        <description>Used to Automatically Authenticate a username/password; create a UserLogin object</description>
+        <implements service="authenticationInterface"/>
+    </service>
+    <service name="createUserLogin" engine="java" auth="false"
+        location="org.ofbiz.common.login.LoginServices" invoke="createUserLogin">
+        <description>Create a UserLogin</description>
+        <attribute name="userLoginId" type="String" mode="IN" optional="false"/>
+        <attribute name="enabled" type="String" mode="IN" optional="true"/>
+        <attribute name="currentPassword" type="String" mode="IN" optional="false"/>
+        <attribute name="currentPasswordVerify" type="String" mode="IN" optional="false"/>
+        <attribute name="passwordHint" type="String" mode="IN" optional="true"/>
+        <attribute name="requirePasswordChange" type="String" mode="IN" optional="true"/>
+        <attribute name="externalAuthId" type="String" mode="IN" optional="true"/>
+        <attribute name="partyId" type="String" mode="IN" optional="true"/>
+        <attribute name="securityQuestion" type="String" mode="IN" optional="true"/>
+        <attribute name="securityAnswer" type="String" mode="IN" optional="true"/>
+    </service>-->
+
+    <!-- common permission services -->
+    <service name="genericBasePermissionCheck" engine="simple"
+             location="component://common/script/org/ofbiz/common/permission/CommonPermissionServices.xml" invoke="genericBasePermissionCheck">
+        <implements service="permissionInterface"/>
+        <attribute name="primaryPermission" type="String" mode="IN" optional="false"/>
+        <attribute name="altPermission" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <!-- generic RSS feed interface -->
+    <service name="rssFeedInterface" engine="interface">
+        <description>Interface for ROME RSS feed services; should return the WireFeed object (serializable)</description>
+        <attribute name="feedType" type="String" mode="IN" optional="false"/>
+        <attribute name="mainLink" type="String" mode="IN" optional="false"/>
+        <attribute name="entryLink" type="String" mode="IN" optional="false"/>
+        <attribute name="wireFeed" type="com.sun.syndication.feed.WireFeed" mode="OUT" optional="false"/>
+    </service>
+
+    <!-- User preferences services -->
+    <service name="copyUserPrefGroup" engine="java"
+            location="org.ofbiz.common.preferences.PreferenceServices" invoke="copyUserPreferenceGroup" auth="true" use-transaction="true">
+        <description>Copies the preferences from one userLoginId and preference group to another.
+            If no userPrefLoginId is specified, preferences are copied to current user's preferences.</description>
+        <permission-service service-name="preferenceCopyPermission"/>
+        <attribute name="fromUserLoginId" type="String" mode="IN" optional="false"/>
+        <attribute name="userPrefGroupTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="userPrefLoginId" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="getUserPreference" engine="java"
+            location="org.ofbiz.common.preferences.PreferenceServices" invoke="getUserPreference">
+        <description>
+            Gets a single user preference.
+            If not found for the specific userLogin, find it for the _NA_ userlogin.
+            If the value is DEFAULT, find the value in general.properties file.
+        </description>
+        <attribute name="userPrefTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="userPrefLoginId" type="String" mode="IN" optional="true"/>
+        <attribute name="userPrefGroupTypeId" type="String" mode="IN" optional="true"/>
+        <attribute name="userPrefMap" type="Map" mode="OUT" optional="true"/>
+        <attribute name="userPrefValue" type="Object" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="getUserPreferenceGroup" engine="java"
+            location="org.ofbiz.common.preferences.PreferenceServices" invoke="getUserPreferenceGroup">
+        <description>Gets a group of user preferences.</description>
+        <attribute name="userPrefGroupTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="userPrefLoginId" type="String" mode="IN" optional="true"/>
+        <attribute name="userPrefMap" type="Map" mode="OUT" optional="true"/>
+    </service>
+
+    <service name="setUserPreference" engine="java"
+            location="org.ofbiz.common.preferences.PreferenceServices" invoke="setUserPreference" auth="true">
+        <description>Sets a single user preference.</description>
+        <permission-service service-name="preferenceGetSetPermission" main-action="CREATE"/>
+        <attribute name="userPrefTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="userPrefValue" type="String" mode="IN" optional="false"/>
+        <attribute name="userPrefGroupTypeId" type="String" mode="IN" optional="true"/>
+        <attribute name="userPrefLoginId" type="String" mode="IN" optional="true"/>
+    </service>
+    <service name="removeUserPreference" engine="java"
+        location="org.ofbiz.common.preferences.PreferenceServices" invoke="removeUserPreference" auth="true">
+        <description>Sets a single user preference.</description>
+        <permission-service service-name="preferenceGetSetPermission" main-action="CREATE"/>
+        <attribute name="userPrefTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="userPrefLoginId" type="String" mode="IN" optional="true"/>
+    </service>
+    
+    <service name="setUserPreferenceGroup" engine="java"
+            location="org.ofbiz.common.preferences.PreferenceServices" invoke="setUserPreferenceGroup" auth="true">
+        <description>Sets a group of user preferences.</description>
+        <permission-service service-name="preferenceGetSetPermission" main-action="CREATE"/>
+        <attribute name="userPrefMap" type="Map" mode="IN" optional="false"/>
+        <attribute name="userPrefGroupTypeId" type="String" mode="IN" optional="false"/>
+        <attribute name="userPrefLoginId" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="preferenceGetSetPermission" engine="java"
+            location="org.ofbiz.common.preferences.PreferenceWorker" invoke="checkPermission">
+        <description>User preference get/set permission checking.</description>
+        <implements service="permissionInterface"/>
+        <attribute name="userPrefLoginId" type="String" mode="IN" optional="true"/>
+    </service>
+
+    <service name="preferenceCopyPermission" engine="java"
+            location="org.ofbiz.common.preferences.PreferenceWorker" invoke="checkCopyPermission">
+        <description>User preference copy permission checking.</description>
+        <implements service="permissionInterface"/>
+    </service>
+
+    <service name="createTemporalExpression" default-entity-name="TemporalExpression" engine="entity-auto" invoke="create" auth="true">
+        <description>Create a Temporal Expression</description>
+        <permission-service service-name="tempExprPermissionCheck" main-action="CREATE"/>
+        <auto-attributes include="pk" mode="INOUT" optional="true"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+    </service>
+    <service name="updateTemporalExpression" default-entity-name="TemporalExpression" engine="entity-auto" invoke="update" auth="true">
+        <description>Update a Temporal Expression</description>
+        <permission-service service-name="tempExprPermissionCheck" main-action="UPDATE"/>
+        <auto-attributes include="pk" mode="IN" optional="false"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+    </service>
+    <service name="createTemporalExpressionAssoc" default-entity-name="TemporalExpressionAssoc" engine="entity-auto" invoke="create" auth="true">
+        <description>Create a Temporal Expression Association</description>
+        <permission-service service-name="tempExprPermissionCheck" main-action="CREATE"/>
+        <auto-attributes include="pk" mode="IN" optional="false"/>
+        <auto-attributes include="nonpk" mode="IN" optional="true"/>
+    </service>
+    <service name="deleteTemporalExpressionAssoc" default-entity-name="TemporalExpressionAssoc" engine="entity-auto" invoke="delete" auth="true">
+        <description>Delete a Temporal Expression Association</description>
+        <permission-service service-name="tempExprPermissionCheck" main-action="DELETE"/>
+        <auto-attributes include="pk" mode="IN" optional="false"/>
+    </service>
+
+    <!-- update Sequence No for Drag and Drop -->
+    <service name="updatePortletSeqDragDrop" engine="simple" auth="true"
+        location="component://common/script/org/ofbiz/common/PortalPageServices.xml" invoke="updatePortletSeqDragDrop">
+        <attribute name="o_portalPageId" mode="IN" type="String" ></attribute>
+        <attribute name="o_portalPortletId" mode="IN" type="String"></attribute>
+        <attribute name="o_portletSeqId" mode="IN" type="String"></attribute>
+
+        <attribute name="d_portalPageId" mode="IN" type="String" optional="true"></attribute>
+        <attribute name="d_portalPortletId" mode="IN" type="String" optional="true"></attribute>
+        <attribute name="d_portletSeqId" mode="IN" type="String" optional="true"></attribute>
+
+        <attribute name="destinationColumn" mode="IN" optional="true" type="String"/>
+        <attribute name="mode" type="String" mode="IN"/>
+    </service>
+    
+    <service name="getServerTimestamp" engine="simple" auth="false"
+        location="component://common/script/org/ofbiz/common/CommonServices.xml" invoke="getServerTimestamp">
+        <attribute name="serverTimestamp" mode="OUT" type="TimeStamp"/>
+    </service>
+    
+    <service name="getServerTimeZone" engine="simple" auth="false"
+        location="component://common/script/org/ofbiz/common/CommonServices.xml" invoke="getServerTimeZone">
+        <attribute name="serverTimeZone" mode="OUT" type="String"/>
+    </service>
+    
+    <service name="getServerTimestampAsLong" engine="simple" auth="false"
+        location="component://common/script/org/ofbiz/common/CommonServices.xml" invoke="getServerTimestampAsLong">
+        <attribute name="serverTimestamp" mode="OUT" type="Long"/>
+    </service>
+    
+    <service name="createJsLanguageFileMapping" engine="java" auth="false" use-transaction="false"
+        location="org.ofbiz.common.JsLanguageFileMappingCreator" invoke="createJsLanguageFileMapping">
+        <description>Create or update the JsLanguageFilesMapping.java. You still need to compile thereafter</description>
+        <attribute name="encoding" mode="IN" type="String" optional="true" default-value="UTF-8"></attribute>
+    </service>
+
+    <!-- Metrics services -->
+    <service name="getAllMetrics" auth="true" use-transaction="false"
+            engine="java" location="org.ofbiz.common.CommonServices" invoke="getAllMetrics">
+        <description>
+            Get all metrics. Returns a List of Maps - one Map per metric. Each Map includes the following keys:
+            name, serviceRate, threshold, totalEvents. See org.ofbiz.base.metrics.Metrics.
+        </description>
+        <attribute name="metricsList" mode="OUT" type="java.util.List" optional="false" />
+    </service>
+
+    <service name="resetMetric" auth="true" use-transaction="false"
+         engine="java" location="org.ofbiz.common.CommonServices" invoke="resetMetric">
+        <description>Resets a metric. See org.ofbiz.base.metrics.Metrics.</description>
+        <attribute name="name" mode="IN" type="String" optional="false"/>
+    </service>
+
+</services>
