@@ -7,6 +7,17 @@
 3. 开发难度低，可一个项目经理轻松调度16人以下的技术支持团队（需要API与任务管理工具）；
 4. 适用于业务变更频繁的场景（比如App接口开发，修改Groovy不需要重启Web服务）；
 
+# 运行项目
+把idea的配置也发上去了~参考
+```javascript
+ant build
+ant load-demo
+ant start
+```
+启动后，使用postman测试一下http://localhost:8080/sso/login 使用Basic Auth
+18612345678/123456
+
+
 # 修改内容
 1. 本项目只作为中间件使用，只保留了后端代码；（考虑到现在前后端分离）
 2. 去掉了所有业务模块；（现在追求短平快，基本上用到原模块1/5-1/3的功能基本就能满足需求，需要哪些自己去找吧）
@@ -22,7 +33,7 @@ Y 启用多租户 N 不启用  多租户使用SaaS同库同表方式
 multitenant=N
 saas.home=localhost
 ```
-默认是N，就是单应用项目，启动后，使用postman测试一下http://localhost:8080/sso/login 使用Basic Auth
+默认是N，就是单应用项目
 
 # 关于开发
 * 定义实体
