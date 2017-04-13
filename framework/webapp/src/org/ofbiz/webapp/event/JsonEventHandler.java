@@ -29,6 +29,8 @@ import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.condition.EntityCondition;
 import org.ofbiz.entity.util.EntityFindOptions;
+import org.ofbiz.entity.util.EntityUtil;
+import org.ofbiz.entity.util.EntityUtilProperties;
 import org.ofbiz.service.*;
 import org.ofbiz.webapp.EnterpriseModulesCache;
 import org.ofbiz.webapp.control.ConfigXMLReader.Event;
@@ -171,6 +173,10 @@ public class JsonEventHandler implements EventHandler {
         if (service.permissionGroups.size() == 0) {
             return true;
         }
+        // 判断Ticket的合法性
+        if (EntityUtil.isMultiTenantEnabled() && !delegator.getTenantId().equals(TicketUtil.getTenantFromTicket(ticket))) {
+            return false;
+        }
         // 0 先查Ticket查权限编码
         Map<String, Object> fields = new HashMap<String, Object>();
         fields.put("ticket", ticket);
@@ -210,7 +216,7 @@ public class JsonEventHandler implements EventHandler {
                 e.printStackTrace();
                 return null;
             }
-            if (userLoginToken == null) {
+            if (userLoginToken == null || (EntityUtil.isMultiTenantEnabled() && !delegator.getTenantId().equals(TicketUtil.getTenantIdFromRequest(request)))) {
                 response.setStatus(401);
                 sendError(response, "it's not login", null);
                 return null;

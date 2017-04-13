@@ -1,6 +1,7 @@
 package org.ofbiz.sso;
 
 import com.cloopen.rest.sdk.CCPRestSDK;
+import org.ofbiz.base.util.UtilProperties;
 import org.ofbiz.base.util.ValiUtil;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.DelegatorFactory;
@@ -25,10 +26,10 @@ import java.util.Map;
  */
 public class SmsService {
 
-    private final static String accountSid = "xxxxxxx"; // 主帐号
-    private final static String accountToken = "xxxxxxxx";
-    private final static String APP_ID = "xxxxxxxxx";
-    private final static String VACODE_TMID = "xxx";
+    private final static String accountSid = UtilProperties.getPropertyValue("app", "sms.accountSid", null);
+    private final static String accountToken = UtilProperties.getPropertyValue("app", "sms.accountToken", null);
+    private final static String APP_ID = UtilProperties.getPropertyValue("app", "sms.appId", null);
+    private final static String VACODE_TMID = UtilProperties.getPropertyValue("app", "sms.module.login", null);
 
     public static String sendValicode(HttpServletRequest request, HttpServletResponse response) {
         Delegator delegator = DelegatorFactory.getDelegator("default");

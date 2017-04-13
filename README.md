@@ -25,10 +25,19 @@ saas.home=localhost
 默认是N，就是单应用项目，启动后，使用postman测试一下http://localhost:8080/sso/login 使用Basic Auth
 
 # 关于开发
+实例见application/example
 * 定义实体
 * 写Groovy文件
 * 定义服务接口
 OK~
+测试
+1. 先将multitenant=Y
+2. ant clean/ant build/ant load-demo 顺序执行
+3. 一个小错误，需要在数据库里employee表加上tenant,一个abc一个xyz
+4. 在host中加 127.0.0.1	abc.aaa.com/127.0.0.1	xyz.aaa.com 这两条
+5. http://abc.aaa.com:8080/sso/login和http://abc.aaa.com:8080/sso/login分别登录（Ticket不同） 使用Basic Auth
+6. 在Header中设置X-TICKET=登录中的Ticket　http://abc.aaa.com:8080/example/j/queryEmployeeList/http://xyz.aaa.com:8080/example/j/queryEmployeeList
+7. 返回的数据不同，并且有一个有groupId
 
 # 不足之处
 * 开发文档，跟Ofbiz差不多，要是会Ofbiz直接上手试试吧，不足就给我留信息

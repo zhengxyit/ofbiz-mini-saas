@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- name 所有模块都必须唯一，建议跟包名（模块名相同） -->
+<ofbiz-component name="example" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/ofbiz-component.xsd">
+    <resource-loader  name="main" type="component"/>
+    <!-- load single or multiple external libraries -->
+    <classpath type="jar" location="build/lib/*"/>
+    <!-- 设置默认路径，主要用于配置文件读取 -->
+    <classpath type="dir" location="config"/>
+
+    <!-- 实体 -->
+    <entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel.xml"/>
+
+    <!-- 只要在 ant load-deom 的时候才会加载该文件中的数据 -->
+    <entity-resource type="data" reader-name="demo" loader="main" location="data/ExampleData.xml"/>
+
+    <!-- 接口 -->
+    <service-resource type="model" loader="main" location="servicedef/services.xml"/>
+
+    <!-- Web相关支持，可选，如果不希望通过HTTP请求访问该模块的[接口]可以去掉这个配置，注意路径 -->
+    <webapp name="example"
+            title="example"
+            server="default-server"
+            location="webapp"
+            mount-point="/example"/>
+
+</ofbiz-component>

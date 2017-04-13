@@ -6,14 +6,15 @@ import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.Notification;
+import org.ofbiz.base.util.UtilProperties;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class PushServer {
-    private static String appKey = "xxxxxxxxxxx";
-    private static String masterSecret = "xxxxxxxxx";
+    private static String appKey = UtilProperties.getPropertyValue("app", "jpush.appKey", null);
+    private static String masterSecret = UtilProperties.getPropertyValue("app", "jpush.masterSecret", null);
     private static JPushClient client = null;
 
     /**
