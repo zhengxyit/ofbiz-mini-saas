@@ -207,7 +207,9 @@ public class JsonEventHandler implements EventHandler {
 
         if (ticket != null) {
             Delegator delegator = DelegatorFactory.getDelegator("default");
-
+            if (EntityUtil.isMultiTenantEnabled()) {
+                delegator.setTenantId(TicketUtil.getTenantIdFromRequest(request));
+            }
             Map<String, Object> fields = new HashMap<String, Object>();
             fields.put("ticket", ticket);
             try {
@@ -216,7 +218,7 @@ public class JsonEventHandler implements EventHandler {
                 e.printStackTrace();
                 return null;
             }
-            if (userLoginToken == null || (EntityUtil.isMultiTenantEnabled() && !delegator.getTenantId().equals(TicketUtil.getTenantIdFromRequest(request)))) {
+            if (userLoginToken == null || (EntityUtil.isMultiTenantEnabled() && !delegator.getTenantId().equals(TicketUtil.getTenantFromTicket(ticket)))) {
                 response.setStatus(401);
                 sendError(response, "it's not login", null);
                 return null;
