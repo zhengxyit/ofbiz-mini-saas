@@ -20,15 +20,14 @@
 
 <entity-engine-xml>
     <!-- 可以不加载，属 -->
-    <UserInfo userInfoId="1" name="Ted" mobile="18612345678" email="" status="0"/>
+    <UserInfo userInfoId="1" userName="Ted" mobile="18612345678" email=""/>
 
-    <LoginUser apiLoginUserId="1" username1="18612345678" currentPassword="MTIzNDU2" userInfoId="1"/>
+    <LoginUser loginUserId="1" username1="18612345678" currentPassword="MTIzNDU2" userInfoId="1"/>
 
-    <Enterprise enterpriseId="1" domainName="abc" configs="HR" />
-    <Enterprise enterpriseId="2" domainName="xyz" configs="HR,HR-GROUP" />
+    <Enterprise enterpriseId="1" domainName="abc" configs="HR"/>
+    <Enterprise enterpriseId="2" domainName="xyz" configs="HR,HR-GROUP"/>
 
-    <!-- tenant导不进去。。。自己手工加一下吧 -->
     <Employee employeeId="1" employeeName="张三" groupId="1" tanent="abc"/>
     <Employee employeeId="2" employeeName="李四" groupId="2" tanent="xyz"/>
-    
+
 </entity-engine-xml>

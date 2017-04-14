@@ -910,6 +910,10 @@ public class GenericDelegator implements Delegator {
                 createEntityAuditLogAll(value, false, false);
             }
 
+            if (EntityUtil.isMultiTenantEnabled() && value.getModelEntity().getIsTenant()) {
+                value.put("tenant", this.tenantId);
+            }
+
             value = helper.create(value);
 
             if (testMode) {
