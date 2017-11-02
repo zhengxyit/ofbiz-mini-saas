@@ -312,7 +312,7 @@ public class UtilCodec {
         public void clear() { this.internalMap.clear(); }
         public Set<K> keySet() { return this.internalMap.keySet(); }
         public Collection<Object> values() { return this.internalMap.values(); }
-        public Set<Map.Entry<K, Object>> entrySet() { return this.internalMap.entrySet(); }
+        public Set<Entry<K, Object>> entrySet() { return this.internalMap.entrySet(); }
         @Override
         public String toString() { return this.internalMap.toString(); }
     }

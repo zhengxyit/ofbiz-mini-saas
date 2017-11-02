@@ -18,10 +18,6 @@
  *******************************************************************************/
 package org.ofbiz.service.mail;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.ofbiz.base.component.ComponentConfig;
 import org.ofbiz.base.config.GenericConfigException;
 import org.ofbiz.base.config.ResourceHandler;
@@ -32,6 +28,10 @@ import org.ofbiz.entity.GenericValue;
 import org.ofbiz.service.GenericServiceException;
 import org.ofbiz.service.LocalDispatcher;
 import org.w3c.dom.Element;
+
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ServiceMcaUtil {
 

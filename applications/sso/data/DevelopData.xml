@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <entity-engine-xml>
-
+    <Enterprise enterpriseId="1" manager="18612345678" managerName="管理员" fullName="技术有限公司" domainName="tech"/>
+    <!-- 帐户信息 -->
+    <Account accountId="1" username1="18612345678" currentPassword="MTIzNDU2" accountType="A" accountStatus="1" tenants=",tech,"/><!-- 0 禁止 2 必须修改密码 -->
 </entity-engine-xml>

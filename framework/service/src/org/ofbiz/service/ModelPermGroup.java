@@ -18,12 +18,12 @@
  *******************************************************************************/
 package org.ofbiz.service;
 
+import org.ofbiz.base.util.UtilValidate;
+
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.ofbiz.base.util.UtilValidate;
 
 /**
  * Service Permission Group Model Class

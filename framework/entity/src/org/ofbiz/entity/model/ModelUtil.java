@@ -24,7 +24,6 @@ import org.ofbiz.base.util.StringUtil;
 
 /**
  * Generic Entity - General Utilities
- *
  */
 public class ModelUtil {
 
@@ -32,6 +31,7 @@ public class ModelUtil {
 
     /**
      * Changes the first letter of the passed String to upper case.
+     *
      * @param string The passed String
      * @return A String with an upper case first letter
      */
@@ -59,7 +59,8 @@ public class ModelUtil {
         return sb.toString();
     }
 
-    /** Converts a database name to a Java class name.
+    /**
+     * Converts a database name to a Java class name.
      * The naming conventions used to allow for this are as follows: a database name (table or
      * column) is in all capital letters, and the words are separated by an underscore
      * (for example: NEAT_ENTITY_NAME or RANDOM_FIELD_NAME); a Java name (ejb or field) is in all
@@ -67,6 +68,7 @@ public class ModelUtil {
      * NeatEntityName or RandomFieldName). The convention of using a capital letter at
      * the beginning of a class name in Java, or a lower-case letter for the beginning of a
      * variable name in Java is also used along with the Java name convention above.
+     *
      * @param columnName The database name
      * @return The Java class name
      */
@@ -74,7 +76,8 @@ public class ModelUtil {
         return upperFirstChar(dbNameToVarName(columnName));
     }
 
-    /** Converts a database name to a Java variable name.
+    /**
+     * Converts a database name to a Java variable name.
      * The naming conventions used to allow for this are as follows: a database name (table or
      * column) is in all capital letters, and the words are separated by an underscore
      * (for example: NEAT_ENTITY_NAME or RANDOM_FIELD_NAME); a Java name (ejb or field) is in all
@@ -82,6 +85,7 @@ public class ModelUtil {
      * NeatEntityName or RandomFieldName). The convention of using a capital letter at
      * the beginning of a class name in Java, or a lower-case letter for the beginning of a
      * variable name in Java is also used along with the Java name convention above.
+     *
      * @param columnName The database name
      * @return The Java variable name
      */
@@ -91,7 +95,7 @@ public class ModelUtil {
         StringBuilder fieldName = new StringBuilder(columnName.length());
 
         boolean toUpper = false;
-        for (int i=0; i < columnName.length(); i++) {
+        for (int i = 0; i < columnName.length(); i++) {
             char ch = columnName.charAt(i);
             if (ch == '_') {
                 toUpper = true;
@@ -115,6 +119,7 @@ public class ModelUtil {
      * NeatEntityName or RandomFieldName). The convention of using a capital letter at
      * the beginning of a class name in Java, or a lower-case letter for the beginning of a
      * variable name in Java is also used along with the Java name convention above.
+     *
      * @param javaName The Java variable name
      * @return The database name
      */
@@ -138,7 +143,9 @@ public class ModelUtil {
     }
 
     public static String vowelBag = "aeiouyAEIOUY";
-    /**  Start by removing all vowels, then pull 1 letter at a time off the end of each _ separated segment, go until it is less than or equal to the desired length
+
+    /**
+     * Start by removing all vowels, then pull 1 letter at a time off the end of each _ separated segment, go until it is less than or equal to the desired length
      *
      * @param dbName
      * @param desiredLength
@@ -241,7 +248,8 @@ public class ModelUtil {
 
     /**
      * Converts a package name to a path by replacing all '.' characters with the File.separatorChar character.
-     *  Is therefore platform independent.
+     * Is therefore platform independent.
+     *
      * @param packageName The package name.
      * @return The path name corresponding to the specified package name.
      */
@@ -252,9 +260,10 @@ public class ModelUtil {
 
     /**
      * Replaces all occurances of oldString in mainString with newString
+     *
      * @param mainString The original string
-     * @param oldString The string to replace
-     * @param newString The string to insert in place of the old
+     * @param oldString  The string to replace
+     * @param newString  The string to insert in place of the old
      * @return mainString with all occurances of oldString replaced by newString
      */
     public static String replaceString(String mainString, String oldString, String newString) {
@@ -288,6 +297,8 @@ public class ModelUtil {
             return "time";
         } else if (sqlTypeName.equalsIgnoreCase("CHAR") && length == 1) {
             return "indicator";
+        } else if (sqlTypeName.equalsIgnoreCase("JSON")) {
+            return "json";
         } else {
             return "invalid-" + sqlTypeName + ":" + length + ":" + precision;
         }

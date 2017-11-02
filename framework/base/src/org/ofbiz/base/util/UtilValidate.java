@@ -240,7 +240,7 @@ public class UtilValidate {
     }
 
     public static boolean isString(Object obj) {
-        return ((obj != null) && (obj instanceof java.lang.String));
+        return ((obj != null) && (obj instanceof String));
     }
 
     /** Returns true if string s is empty or whitespace characters only. */

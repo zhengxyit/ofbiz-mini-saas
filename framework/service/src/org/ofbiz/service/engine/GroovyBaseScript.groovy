@@ -18,7 +18,10 @@
  *******************************************************************************/
 package org.ofbiz.service.engine
 
+import com.alibaba.fastjson.JSONObject
 import org.ofbiz.base.util.Debug
+import org.ofbiz.entity.GenericEntityException
+import org.ofbiz.entity.GenericValue
 import org.ofbiz.entity.util.EntityQuery
 import org.ofbiz.service.ExecutionServiceException
 import org.ofbiz.service.ServiceUtil
@@ -37,6 +40,7 @@ abstract class GroovyBaseScript extends Script {
         if (!inputMap.locale) {
             inputMap.locale = this.binding.getVariable('parameters').locale;
         }
+
         Map result = binding.getVariable('dispatcher').runSync(serviceName, inputMap);
         if (ServiceUtil.isError(result)) {
             throw new ExecutionServiceException(ServiceUtil.getErrorMessage(result))
@@ -45,7 +49,7 @@ abstract class GroovyBaseScript extends Script {
     }
 
     Map run(Map args) throws ExecutionServiceException {
-        return runService((String)args.get('service'), (Map)args.get('with', new HashMap()));
+        return runService((String) args.get('service'), (Map) args.get('with', new HashMap()));
     }
 
     Map makeValue(String entityName) throws ExecutionServiceException {
@@ -81,6 +85,28 @@ abstract class GroovyBaseScript extends Script {
             }
         }
     }
+
+    JSONObject getLogionUser() throws GenericEntityException {
+        String ticket = this.binding.getVariable('parameters').ticket;
+        if (ticket == null) {
+            throw new ExecutionServiceException(ServiceUtil.getErrorMessage("no login"));
+        }
+
+        Map fields = new HashMap<String, Object>();
+        fields.put("ticket", ticket);
+
+        GenericValue obj = this.binding.getVariable('delegator').findOne("LoginToken", fields, true);
+        if (obj == null) {
+            throw new ExecutionServiceException(ServiceUtil.getErrorMessage("no login"));
+        }
+        JSONObject json = JSONObject.parseObject(obj.get("cacheData").toString());
+
+        if (ticket.contains(":F:")) {
+            json.put("openId", ticket.split(":")[0]);
+        }
+        return json;
+    }
+
     Map failure(String message) {
         // TODO: implement some clever i18n mechanism based on the userLogin and locale in the binding
         if (message) {
@@ -89,6 +115,7 @@ abstract class GroovyBaseScript extends Script {
             return ServiceUtil.returnFailure();
         }
     }
+
     def error(String message) {
         // TODO: implement some clever i18n mechanism based on the userLogin and locale in the binding
         if (this.binding.hasVariable('request')) {
@@ -105,17 +132,20 @@ abstract class GroovyBaseScript extends Script {
             }
         }
     }
+
     def logInfo(String message) {
         Debug.logInfo(message, module);
     }
+
     def logWarning(String message) {
         Debug.logWarning(message, module);
     }
+
     def logError(String message) {
         Debug.logError(message, module);
     }
 
-    Map returnSUCCESS(HashMap<String,Object> map) {
+    Map returnSUCCESS(HashMap<String, Object> map) {
         map.put("success", true);
         map.put("message", "");
         return map;

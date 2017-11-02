@@ -18,38 +18,27 @@
  *******************************************************************************/
 package org.ofbiz.service;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.ofbiz.base.config.GenericConfigException;
 import org.ofbiz.base.config.ResourceHandler;
 import org.ofbiz.base.metrics.MetricsFactory;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.GeneralException;
-import org.ofbiz.base.util.UtilTimer;
-import org.ofbiz.base.util.UtilValidate;
-import org.ofbiz.base.util.UtilXml;
+import org.ofbiz.base.util.*;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.model.ModelEntity;
 import org.ofbiz.entity.model.ModelField;
 import org.ofbiz.entity.model.ModelFieldType;
 import org.ofbiz.service.ModelParam.ModelParamValidator;
-import org.ofbiz.service.group.GroupModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Generic Service - Service Definition Reader
@@ -223,6 +212,11 @@ public class ModelServiceReader implements Serializable {
         }
         service.hideResultInLog = !"false".equalsIgnoreCase(serviceElement.getAttribute("hideResultInLog"));
 
+        if ("api".equals(service.retModel)) {
+            // 模式为api 自动将export=true
+            service.export = true;
+            service.auth = true;
+        }
         // set the semaphore sleep/wait times
         String semaphoreWaitStr = UtilXml.checkEmpty(serviceElement.getAttribute("semaphore-wait-seconds"));
         int semaphoreWait = 300;
@@ -282,10 +276,10 @@ public class ModelServiceReader implements Serializable {
         this.createNotification(serviceElement, service);
         this.createPermission(serviceElement, service);
         this.createPermGroups(serviceElement, service);
-        this.createGroupDefs(serviceElement, service);
         this.createImplDefs(serviceElement, service);
         this.createAutoAttrDefs(serviceElement, service);
         this.createAttrDefs(serviceElement, service);
+//        this.createFormatDefs(serviceElement, service);
         this.createOverrideDefs(serviceElement, service);
         // Get metrics.
         Element metricsElement = UtilXml.firstChildElement(serviceElement, "metric");
@@ -395,18 +389,6 @@ public class ModelServiceReader implements Serializable {
                 perm.serviceModel = service;
                 group.permissions.add(perm);
             }
-        }
-    }
-
-    private void createGroupDefs(Element baseElement, ModelService service) {
-        List<? extends Element> group = UtilXml.childElementList(baseElement, "group");
-        if (UtilValidate.isNotEmpty(group)) {
-            Element groupElement = group.get(0);
-            groupElement.setAttribute("name", "_" + service.name + ".group");
-            service.internalGroup = new GroupModel(groupElement);
-            service.invoke = service.internalGroup.getGroupName();
-            if (Debug.verboseOn())
-                Debug.logVerbose("Created INTERNAL GROUP model [" + service.internalGroup + "]", module);
         }
     }
 
@@ -521,6 +503,10 @@ public class ModelServiceReader implements Serializable {
             param.optional = "true".equalsIgnoreCase(attribute.getAttribute("optional")); // default to true
             param.formDisplay = !"false".equalsIgnoreCase(attribute.getAttribute("form-display")); // default to false
             param.allowHtml = UtilXml.checkEmpty(attribute.getAttribute("allow-html"), "none").intern(); // default to none
+            String ml = attribute.getAttribute("max-length");
+            if (!UtilValidate.isEmpty(ml)) {
+                param.maxLength = Integer.valueOf(ml);
+            }
 
             // default value
             String defValue = attribute.getAttribute("default-value");
@@ -548,7 +534,7 @@ public class ModelServiceReader implements Serializable {
         // Add the default optional parameters
         ModelParam def;
 
-        if(service.auth){
+        if (service.auth) {
             def = new ModelParam();
             def.name = "ticket";
             def.type = "String";
@@ -558,7 +544,14 @@ public class ModelServiceReader implements Serializable {
         }
 
         // 如果是移动端加几个默认参数
-        if ("mobile".equals(service.retModel)) {
+        if ("api".equals(service.retModel)) {
+            def = new ModelParam();
+            def.name = "tenant";
+            def.type = "String";
+            def.mode = "IN";
+            def.optional = true;
+            service.addParam(def);
+
             def = new ModelParam();
             def.name = "success";
             def.type = "Boolean";
@@ -569,6 +562,13 @@ public class ModelServiceReader implements Serializable {
             def = new ModelParam();
             def.name = "message";
             def.type = "String";
+            def.mode = "OUT";
+            def.optional = true;
+            service.addParam(def);
+
+            def = new ModelParam();
+            def.name = "format";
+            def.type = "Object";
             def.mode = "OUT";
             def.optional = true;
             service.addParam(def);
@@ -638,6 +638,37 @@ public class ModelServiceReader implements Serializable {
         def.internal = true;
         service.addParam(def);
     }
+
+//    private void createFormatDefs(Element baseElement, ModelService service) {
+//        // Add in the defined attributes (override the above defaults if specified)
+//        for (Element format : UtilXml.childElementList(baseElement, "format")) {
+//            String parentName = UtilXml.checkEmpty(format.getAttribute("equipmentInfo")).intern();
+//            for (Element attribute : UtilXml.childElementList(format, "column")) {
+//                ModelParam param = new ModelParam();
+//
+//                String type = UtilXml.checkEmpty(attribute.getAttribute("type")).intern();
+//                param.name = UtilXml.checkEmpty(attribute.getAttribute("name")).intern();
+//                param.formLabel = UtilXml.checkEmpty(attribute.getAttribute("formLabel")).intern();
+//                param.type = type;
+//                param.optional = "true".equalsIgnoreCase(attribute.getAttribute("optional"));
+//                param.parentName = parentName;
+//
+//                if ("List".equals(type)) {
+//                    JSONArray cs = new JSONArray();
+//                    for (Element column : UtilXml.childElementList(attribute, "column-value")) {
+//                        JSONObject c = new JSONObject();
+//                        c.put("value", UtilXml.checkEmpty(column.getAttribute("value")).intern());
+//                        c.put("text", UtilXml.checkEmpty(column.getAttribute("text")).intern());
+//                        cs.add(c);
+//                    }
+//                    param.data = cs;
+//                }
+//
+//                service.addColumn(param);
+//            }
+//        }
+//    }
+
 
     private void createOverrideDefs(Element baseElement, ModelService service) {
         for (Element overrideElement : UtilXml.childElementList(baseElement, "override")) {

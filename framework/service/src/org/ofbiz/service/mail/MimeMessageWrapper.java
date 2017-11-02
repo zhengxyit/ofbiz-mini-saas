@@ -18,6 +18,15 @@
  *******************************************************************************/
 package org.ofbiz.service.mail;
 
+import org.ofbiz.base.conversion.AbstractConverter;
+import org.ofbiz.base.conversion.ConversionException;
+import org.ofbiz.base.conversion.Converters;
+import org.ofbiz.base.util.Debug;
+import org.ofbiz.base.util.GeneralRuntimeException;
+import org.ofbiz.base.util.UtilDateTime;
+
+import javax.mail.*;
+import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,22 +36,6 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-
-import javax.mail.Address;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-
-import org.ofbiz.base.conversion.AbstractConverter;
-import org.ofbiz.base.conversion.ConversionException;
-import org.ofbiz.base.conversion.Converters;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.GeneralRuntimeException;
-import org.ofbiz.base.util.UtilDateTime;
 
 @SuppressWarnings("serial")
 public class MimeMessageWrapper implements java.io.Serializable {

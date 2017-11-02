@@ -18,11 +18,6 @@
  *******************************************************************************/
 package org.ofbiz.webapp;
 
-import java.io.IOException;
-import java.net.URL;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.ofbiz.base.component.ComponentConfig.WebappInfo;
 import org.ofbiz.base.util.Assert;
 import org.ofbiz.entity.Delegator;
@@ -35,6 +30,10 @@ import org.ofbiz.webapp.control.ConfigXMLReader.RequestMap;
 import org.ofbiz.webapp.control.WebAppConfigurationException;
 import org.ofbiz.webapp.website.WebSiteProperties;
 import org.xml.sax.SAXException;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * OFBiz URL builder.

@@ -18,10 +18,6 @@
  *******************************************************************************/
 package org.ofbiz.service.config;
 
-import java.net.URL;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.ofbiz.base.config.GenericConfigException;
 import org.ofbiz.base.util.Assert;
 import org.ofbiz.base.util.Debug;
@@ -33,6 +29,10 @@ import org.ofbiz.service.config.model.ServiceConfig;
 import org.ofbiz.service.config.model.ServiceEngine;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import java.net.URL;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A <code>ServiceConfig</code> factory and related utility methods.
@@ -93,7 +93,7 @@ public final class ServiceConfigUtil {
 
     /**
      * Returns the default service engine configuration (named "default").
-     * @throws GenericConfigException 
+     * @throws GenericConfigException
      */
     public static ServiceEngine getServiceEngine() throws GenericConfigException {
         return getServiceConfig().getServiceEngine(engine);

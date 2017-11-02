@@ -18,14 +18,7 @@
  *******************************************************************************/
 package org.ofbiz.service.job;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.ibm.icu.util.Calendar;
 import org.apache.commons.lang.StringUtils;
 import org.ofbiz.base.config.GenericConfigException;
 import org.ofbiz.base.util.Debug;
@@ -48,7 +41,12 @@ import org.ofbiz.service.calendar.TemporalExpressionWorker;
 import org.ofbiz.service.config.ServiceConfigUtil;
 import org.xml.sax.SAXException;
 
-import com.ibm.icu.util.Calendar;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A {@link Job} that is backed by the entity engine. Job data is stored
@@ -201,7 +199,7 @@ public class PersistedServiceJob extends GenericServiceJob {
             newJob.set("statusId", "SERVICE_PENDING");
             newJob.set("startDateTime", null);
             newJob.set("runByInstanceId", null);
-            newJob.set("runTime", new java.sql.Timestamp(next));
+            newJob.set("runTime", new Timestamp(next));
             if (isRetryOnFailure) {
                 newJob.set("currentRetryCount", new Long(currentRetryCount + 1));
             } else {

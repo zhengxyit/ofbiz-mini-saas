@@ -18,16 +18,16 @@
  *******************************************************************************/
 package org.ofbiz.service.calendar;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.util.EntityQuery;
+
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /** TemporalExpression persistence worker. */
 public class TemporalExpressionWorker {

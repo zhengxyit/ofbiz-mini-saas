@@ -111,7 +111,7 @@ public class ResourceBundleMapWrapper implements Map<String, Object>, Serializab
     public boolean containsValue(Object arg0) {
         return this.rbmwStack.containsValue(arg0);
     }
-    public Set<Map.Entry<String, Object>> entrySet() {
+    public Set<Entry<String, Object>> entrySet() {
         return this.rbmwStack.entrySet();
     }
     public Object get(Object arg0) {
@@ -313,7 +313,7 @@ public class ResourceBundleMapWrapper implements Map<String, Object>, Serializab
         /* (non-Javadoc)
          * @see java.util.Map#entrySet()
          */
-        public Set<Map.Entry<String, Object>> entrySet() {
+        public Set<Entry<String, Object>> entrySet() {
             createMapWhenNeeded();
             return this.topLevelMap.entrySet();
         }

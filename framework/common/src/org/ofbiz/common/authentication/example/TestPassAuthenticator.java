@@ -36,7 +36,7 @@ public class TestPassAuthenticator extends TestFailAuthenticator {
      * @param password      User's password
      * @param isServiceAuth true if authentication is for a service call
      * @return true if the user is authenticated
-     * @throws org.ofbiz.common.authentication.api.AuthenticatorException
+     * @throws AuthenticatorException
      *          when a fatal error occurs during authentication
      */
     @Override

@@ -300,7 +300,7 @@ public class UtilXml {
 
     // ------------------------------------------------- //
 
-    public static String writeXmlDocument(Node node) throws java.io.IOException {
+    public static String writeXmlDocument(Node node) throws IOException {
         if (node == null) {
             Debug.logWarning("[UtilXml.writeXmlDocument] Node was null, doing nothing", module);
             return null;
@@ -331,7 +331,7 @@ public class UtilXml {
         }
     }
 
-    public static void writeXmlDocument(OutputStream os, Node node) throws java.io.IOException {
+    public static void writeXmlDocument(OutputStream os, Node node) throws IOException {
         if (node == null) {
             Debug.logWarning("[UtilXml.writeXmlDocument] Node was null, doing nothing", module);
             return;
@@ -347,12 +347,12 @@ public class UtilXml {
     }
 
     public static Document readXmlDocument(String content)
-            throws SAXException, ParserConfigurationException, java.io.IOException {
+            throws SAXException, ParserConfigurationException, IOException {
         return readXmlDocument(content, true);
     }
 
     public static Document readXmlDocument(String content, boolean validate)
-            throws SAXException, ParserConfigurationException, java.io.IOException {
+            throws SAXException, ParserConfigurationException, IOException {
         if (content == null) {
             Debug.logWarning("[UtilXml.readXmlDocument] content was null, doing nothing", module);
             return null;
@@ -362,7 +362,7 @@ public class UtilXml {
     }
 
     public static Document readXmlDocument(String content, boolean validate, boolean withPosition)
-            throws SAXException, ParserConfigurationException, java.io.IOException {
+            throws SAXException, ParserConfigurationException, IOException {
         if (content == null) {
             Debug.logWarning("[UtilXml.readXmlDocument] content was null, doing nothing", module);
             return null;
@@ -372,12 +372,12 @@ public class UtilXml {
     }
 
     public static Document readXmlDocument(URL url)
-            throws SAXException, ParserConfigurationException, java.io.IOException {
+            throws SAXException, ParserConfigurationException, IOException {
         return readXmlDocument(url, true);
     }
 
     public static Document readXmlDocument(URL url, boolean validate)
-            throws SAXException, ParserConfigurationException, java.io.IOException {
+            throws SAXException, ParserConfigurationException, IOException {
         if (url == null) {
             Debug.logWarning("[UtilXml.readXmlDocument] URL was null, doing nothing", module);
             return null;
@@ -389,7 +389,7 @@ public class UtilXml {
     }
 
     public static Document readXmlDocument(URL url, boolean validate, boolean withPosition)
-            throws SAXException, ParserConfigurationException, java.io.IOException {
+            throws SAXException, ParserConfigurationException, IOException {
         if (url == null) {
             Debug.logWarning("[UtilXml.readXmlDocument] URL was null, doing nothing", module);
             return null;
@@ -401,17 +401,17 @@ public class UtilXml {
     }
 
     public static Document readXmlDocument(InputStream is, String docDescription)
-            throws SAXException, ParserConfigurationException, java.io.IOException {
+            throws SAXException, ParserConfigurationException, IOException {
         return readXmlDocument(is, true, docDescription);
     }
 
     public static Document readXmlDocument(InputStream is, String docDescription, boolean withPosition)
-            throws SAXException, ParserConfigurationException, java.io.IOException {
+            throws SAXException, ParserConfigurationException, IOException {
         return readXmlDocument(is, true, docDescription, withPosition);
     }
 
     public static Document readXmlDocument(InputStream is, boolean validate, String docDescription)
-            throws SAXException, ParserConfigurationException, java.io.IOException {
+            throws SAXException, ParserConfigurationException, IOException {
         if (is == null) {
             Debug.logWarning("[UtilXml.readXmlDocument] InputStream was null, doing nothing", module);
             return null;
@@ -463,7 +463,7 @@ public class UtilXml {
     }
 
     public static Document readXmlDocument(InputStream is, boolean validate, String docDescription, boolean withPosition)
-            throws SAXException, ParserConfigurationException, java.io.IOException {
+            throws SAXException, ParserConfigurationException, IOException {
         if (!withPosition) {
             return readXmlDocument(is, validate, docDescription);
         }
@@ -1131,7 +1131,7 @@ public class UtilXml {
 
         @Override
         public boolean canConvert(@SuppressWarnings("rawtypes") Class arg0) {
-            if (java.lang.ProcessBuilder.class.equals(arg0)) {
+            if (ProcessBuilder.class.equals(arg0)) {
                 return true;
             }
             return false;

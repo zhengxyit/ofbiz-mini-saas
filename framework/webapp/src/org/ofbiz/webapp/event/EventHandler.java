@@ -18,12 +18,12 @@
  *******************************************************************************/
 package org.ofbiz.webapp.event;
 
+import org.ofbiz.webapp.control.ConfigXMLReader.Event;
+import org.ofbiz.webapp.control.ConfigXMLReader.RequestMap;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.ofbiz.webapp.control.ConfigXMLReader.Event;
-import org.ofbiz.webapp.control.ConfigXMLReader.RequestMap;
 
 /**
  * EventHandler - Event Handler Interface

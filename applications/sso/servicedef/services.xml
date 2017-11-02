@@ -24,7 +24,7 @@ under the License.
     <vendor>OFBiz</vendor>
     <version>1.0</version>
 
-    <service name="changePassword" engine="groovy" location="component://api/groovyScripts/ChangePassword.groovy"  ret-model="mobile" auth="false" export="true">
+    <service name="changePassword" engine="groovy" location="component://api/groovyScripts/ChangePassword.groovy"  ret-model="api" export="true">
         <description>Test Groovy Script Service</description>
         <attribute name="username" type="String" mode="IN" optional="false"/>
         <attribute name="vcode" type="String" mode="IN" optional="false"/>

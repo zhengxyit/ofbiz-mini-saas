@@ -18,15 +18,15 @@
  *******************************************************************************/
 package org.ofbiz.service.job;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import org.ofbiz.base.util.Assert;
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.service.DispatchContext;
 import org.ofbiz.service.GenericRequester;
 import org.ofbiz.service.LocalDispatcher;
 import org.ofbiz.service.ServiceUtil;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * A generic async-service job.

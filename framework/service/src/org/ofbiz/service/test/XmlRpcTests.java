@@ -19,9 +19,6 @@
 
 package org.ofbiz.service.test;
 
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.ofbiz.base.start.Start;
 import org.ofbiz.base.util.UtilGenerics;
@@ -30,6 +27,9 @@ import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.service.DispatchContext;
 import org.ofbiz.service.GenericServiceException;
 import org.ofbiz.service.ServiceUtil;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * XmlRpcTests

@@ -18,16 +18,15 @@
  *******************************************************************************/
 package org.ofbiz.webapp.webdav;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.UtilXml;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.Writer;
 
 /** WebDAV response helper class. This class provides helper methods for
  * working with WebDAV requests and responses.*/

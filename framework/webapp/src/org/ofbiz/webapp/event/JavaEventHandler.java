@@ -18,18 +18,17 @@
  *******************************************************************************/
 package org.ofbiz.webapp.event;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.webapp.control.ConfigXMLReader;
 import org.ofbiz.webapp.control.ConfigXMLReader.Event;
 import org.ofbiz.webapp.control.ConfigXMLReader.RequestMap;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * JavaEventHandler - Static Method Java Event Handler
@@ -41,13 +40,13 @@ public class JavaEventHandler implements EventHandler {
     private Map<String, Class<?>> eventClassMap = new HashMap<String, Class<?>>();
 
     /**
-     * @see org.ofbiz.webapp.event.EventHandler#init(javax.servlet.ServletContext)
+     * @see EventHandler#init(javax.servlet.ServletContext)
      */
     public void init(ServletContext context) throws EventHandlerException {
     }
 
     /**
-     * @see org.ofbiz.webapp.event.EventHandler#invoke(ConfigXMLReader.Event, ConfigXMLReader.RequestMap, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see EventHandler#invoke(ConfigXMLReader.Event, ConfigXMLReader.RequestMap, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     public String invoke(Event event, RequestMap requestMap, HttpServletRequest request, HttpServletResponse response) throws EventHandlerException {
         Class<?> eventClass = this.eventClassMap.get(event.path);

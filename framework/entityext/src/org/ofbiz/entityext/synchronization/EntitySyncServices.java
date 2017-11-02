@@ -504,7 +504,7 @@ public class EntitySyncServices {
                     UtilXml.writeXmlDocument(fileName, mainDoc);
                 } catch (java.io.FileNotFoundException e) {
                     throw new EntitySyncContext.SyncOtherErrorException(e);
-                } catch (java.io.IOException e) {
+                } catch (IOException e) {
                     throw new EntitySyncContext.SyncOtherErrorException(e);
                 }
             } else {

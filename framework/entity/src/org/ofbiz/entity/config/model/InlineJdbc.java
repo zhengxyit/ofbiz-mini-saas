@@ -59,7 +59,7 @@ public final class InlineJdbc extends JdbcElement {
             throw new GenericEntityConfException("<inline-jdbc> element jdbc-driver attribute is empty" + lineNumberText);
         }
         this.jdbcDriver = jdbcDriver;
-        String jdbcUri = element.getAttribute("jdbc-uri").intern() +"&useSSL=false"; // 雷
+        String jdbcUri = element.getAttribute("jdbc-uri").intern();// +"&useSSL=false"; // mysql 加一下
         if (jdbcUri.isEmpty()) {
             throw new GenericEntityConfException("<inline-jdbc> element jdbc-uri attribute is empty" + lineNumberText);
         }
@@ -169,102 +169,142 @@ public final class InlineJdbc extends JdbcElement {
         this.poolXaWrapperClass = element.getAttribute("pool-xa-wrapper-class").intern();
     }
 
-    /** Returns the value of the <code>jdbc-driver</code> attribute. */
+    /**
+     * Returns the value of the <code>jdbc-driver</code> attribute.
+     */
     public String getJdbcDriver() {
         return this.jdbcDriver;
     }
 
-    /** Returns the value of the <code>jdbc-uri</code> attribute. */
+    /**
+     * Returns the value of the <code>jdbc-uri</code> attribute.
+     */
     public String getJdbcUri() {
         return this.jdbcUri;
     }
 
-    /** Returns the value of the <code>jdbc-username</code> attribute. */
+    /**
+     * Returns the value of the <code>jdbc-username</code> attribute.
+     */
     public String getJdbcUsername() {
         return this.jdbcUsername;
     }
 
-    /** Returns the value of the <code>jdbc-password</code> attribute. */
+    /**
+     * Returns the value of the <code>jdbc-password</code> attribute.
+     */
     public String getJdbcPassword() {
         return this.jdbcPassword;
     }
 
-    /** Returns the value of the <code>jdbc-password-lookup</code> attribute. */
+    /**
+     * Returns the value of the <code>jdbc-password-lookup</code> attribute.
+     */
     public String getJdbcPasswordLookup() {
         return this.jdbcPasswordLookup;
     }
 
-    /** Returns the value of the <code>pool-maxsize</code> attribute. */
+    /**
+     * Returns the value of the <code>pool-maxsize</code> attribute.
+     */
     public int getPoolMaxsize() {
         return this.poolMaxsize;
     }
 
-    /** Returns the value of the <code>pool-minsize</code> attribute. */
+    /**
+     * Returns the value of the <code>pool-minsize</code> attribute.
+     */
     public int getPoolMinsize() {
         return this.poolMinsize;
     }
 
-    /** Returns the value of the <code>idle-maxsize</code> attribute. */
+    /**
+     * Returns the value of the <code>idle-maxsize</code> attribute.
+     */
     public int getIdleMaxsize() {
         return this.idleMaxsize;
     }
 
-    /** Returns the value of the <code>time-between-eviction-runs-millis</code> attribute. */
+    /**
+     * Returns the value of the <code>time-between-eviction-runs-millis</code> attribute.
+     */
     public int getTimeBetweenEvictionRunsMillis() {
         return this.timeBetweenEvictionRunsMillis;
     }
 
-    /** Returns the value of the <code>time-between-eviction-runs-millis</code> attribute. */
+    /**
+     * Returns the value of the <code>time-between-eviction-runs-millis</code> attribute.
+     */
     public int getSoftMinEvictableIdleTimeMillis() {
         return this.softMinEvictableIdleTimeMillis;
     }
 
-    /** Returns the value of the <code>pool-sleeptime</code> attribute. */
+    /**
+     * Returns the value of the <code>pool-sleeptime</code> attribute.
+     */
     public int getPoolSleeptime() {
         return this.poolSleeptime;
     }
 
-    /** Returns the value of the <code>pool-lifetime</code> attribute. */
+    /**
+     * Returns the value of the <code>pool-lifetime</code> attribute.
+     */
     public int getPoolLifetime() {
         return this.poolLifetime;
     }
 
-    /** Returns the value of the <code>pool-deadlock-maxwait</code> attribute. */
+    /**
+     * Returns the value of the <code>pool-deadlock-maxwait</code> attribute.
+     */
     public int getPoolDeadlockMaxwait() {
         return this.poolDeadlockMaxwait;
     }
 
-    /** Returns the value of the <code>pool-deadlock-retrywait</code> attribute. */
+    /**
+     * Returns the value of the <code>pool-deadlock-retrywait</code> attribute.
+     */
     public int getPoolDeadlockRetrywait() {
         return this.poolDeadlockRetrywait;
     }
 
-    /** Returns the value of the <code>pool-jdbc-test-stmt</code> attribute. */
+    /**
+     * Returns the value of the <code>pool-jdbc-test-stmt</code> attribute.
+     */
     public String getPoolJdbcTestStmt() {
         return this.poolJdbcTestStmt;
     }
 
-    /** Returns the value of the <code>test-on-create</code> attribute. */
+    /**
+     * Returns the value of the <code>test-on-create</code> attribute.
+     */
     public boolean getTestOnCreate() {
         return this.testOnCreate;
     }
 
-    /** Returns the value of the <code>test-on-create</code> attribute. */
+    /**
+     * Returns the value of the <code>test-on-create</code> attribute.
+     */
     public boolean getTestOnBorrow() {
         return this.testOnBorrow;
     }
 
-    /** Returns the value of the <code>test-on-create</code> attribute. */
+    /**
+     * Returns the value of the <code>test-on-create</code> attribute.
+     */
     public boolean getTestOnReturn() {
         return this.testOnReturn;
     }
 
-    /** Returns the value of the <code>test-on-create</code> attribute. */
+    /**
+     * Returns the value of the <code>test-on-create</code> attribute.
+     */
     public boolean getTestWhileIdle() {
         return this.testWhileIdle;
     }
 
-    /** Returns the value of the <code>pool-xa-wrapper-class</code> attribute. */
+    /**
+     * Returns the value of the <code>pool-xa-wrapper-class</code> attribute.
+     */
     public String getPoolXaWrapperClass() {
         return this.poolXaWrapperClass;
     }

@@ -68,7 +68,7 @@ public final class ModelField extends ModelChild {
      * @param isPk        <code>true</code> if this field is part of the primary key.
      */
     public static ModelField create(ModelEntity modelEntity, String name, String type, boolean isPk) {
-        return create(modelEntity, null, name, type, null, null, null, false, isPk, false, false, false, null, null);
+        return create(modelEntity, null, name, type, null, null, null, false, isPk, false, false, false, false, false, null, null);
     }
 
     /**
@@ -88,11 +88,11 @@ public final class ModelField extends ModelChild {
      * @param enableAuditLog        <code>true</code> if this field is included in the entity audit log.
      * @param validators            The validators for this field.
      */
-    public static ModelField create(ModelEntity modelEntity, String description, String name, String type, String colName, String colValue, String fieldSet, boolean isNotNull, boolean isPk, boolean encrypt, boolean isAutoCreatedInternal, boolean enableAuditLog, String supportModules, List<String> validators) {
-        return create(modelEntity, description, name, type, colName, colValue, fieldSet, isNotNull, isPk, encrypt ? EncryptMethod.TRUE : EncryptMethod.FALSE, isAutoCreatedInternal, enableAuditLog, supportModules, validators);
+    public static ModelField create(ModelEntity modelEntity, String description, String name, String type, String colName, String colValue, String fieldSet, boolean isNotNull, boolean isPk, boolean isStatus, boolean isClassify, boolean encrypt, boolean isAutoCreatedInternal, boolean enableAuditLog, String supportModules, List<String> validators) {
+        return create(modelEntity, description, name, type, colName, colValue, fieldSet, isNotNull, isPk, isStatus, isClassify, encrypt ? EncryptMethod.TRUE : EncryptMethod.FALSE, isAutoCreatedInternal, enableAuditLog, supportModules, validators);
     }
 
-    public static ModelField create(ModelEntity modelEntity, String description, String name, String type, String colName, String colValue, String fieldSet, boolean isNotNull, boolean isPk, EncryptMethod encrypt, boolean isAutoCreatedInternal, boolean enableAuditLog, String supportModules, List<String> validators) {
+    public static ModelField create(ModelEntity modelEntity, String description, String name, String type, String colName, String colValue, String fieldSet, boolean isNotNull, boolean isPk, boolean isStatus, boolean isClassify, EncryptMethod encrypt, boolean isAutoCreatedInternal, boolean enableAuditLog, String supportModules, List<String> validators) {
         // TODO: Validate parameters.
         if (description == null) {
             description = "";
@@ -120,7 +120,7 @@ public final class ModelField extends ModelChild {
         if (isPk) {
             isNotNull = true;
         }
-        return new ModelField(modelEntity, description, name, type, colName, colValue, fieldSet, isNotNull, isPk, encrypt, isAutoCreatedInternal, enableAuditLog, supportModules, validators);
+        return new ModelField(modelEntity, description, name, type, colName, colValue, fieldSet, isNotNull, isPk, isStatus, isClassify, encrypt, isAutoCreatedInternal, enableAuditLog, supportModules, validators);
     }
 
     /**
@@ -162,8 +162,10 @@ public final class ModelField extends ModelChild {
             }
             validators = Collections.unmodifiableList(validators);
         }
+        boolean isStatus = "true".equals(fieldElement.getAttribute("is-status"));
+        boolean isClassify = "true".equals(fieldElement.getAttribute("is-classify"));
         String supportModules = fieldElement.getAttribute("support-modules");
-        return new ModelField(modelEntity, description, name, type, colName, colValue, fieldSet, isNotNull, isPk, encrypt, false, enableAuditLog, supportModules, validators);
+        return new ModelField(modelEntity, description, name, type, colName, colValue, fieldSet, isNotNull, isPk, isStatus, isClassify, encrypt, false, enableAuditLog, supportModules, validators);
     }
 
     /**
@@ -184,7 +186,7 @@ public final class ModelField extends ModelChild {
         String fieldSet = "";
         EncryptMethod encrypt = EncryptMethod.FALSE;
         boolean enableAuditLog = false;
-        return new ModelField(modelEntity, description, name, type, colName, colValue, fieldSet, isNotNull, isPk, encrypt, false, enableAuditLog, null, Collections.<String>emptyList());
+        return new ModelField(modelEntity, description, name, type, colName, colValue, fieldSet, isNotNull, isPk, false, false, encrypt, false, enableAuditLog, null, Collections.<String>emptyList());
     }
 
     /*
@@ -216,6 +218,8 @@ public final class ModelField extends ModelChild {
     private final boolean isPk;
     private final EncryptMethod encrypt;
     private final boolean isNotNull;
+    private final boolean isStatus;
+    private final boolean isClassify;
     private final boolean isAutoCreatedInternal;
     private final boolean enableAuditLog;
     private final String supportModules;
@@ -231,7 +235,7 @@ public final class ModelField extends ModelChild {
      */
     private final List<String> validators;
 
-    private ModelField(ModelEntity modelEntity, String description, String name, String type, String colName, String colValue, String fieldSet, boolean isNotNull, boolean isPk, EncryptMethod encrypt, boolean isAutoCreatedInternal, boolean enableAuditLog, String supportModules, List<String> validators) {
+    private ModelField(ModelEntity modelEntity, String description, String name, String type, String colName, String colValue, String fieldSet, boolean isNotNull, boolean isPk, boolean isStatus, boolean isClassify, EncryptMethod encrypt, boolean isAutoCreatedInternal, boolean enableAuditLog, String supportModules, List<String> validators) {
         super(modelEntity, description);
         this.name = name;
         this.type = type;
@@ -244,6 +248,8 @@ public final class ModelField extends ModelChild {
         this.enableAuditLog = enableAuditLog;
         this.isAutoCreatedInternal = isAutoCreatedInternal;
         this.supportModules = supportModules;
+        this.isClassify = isClassify;
+        this.isStatus = isStatus;
         if (EntityUtil.isMultiTenantEnabled() && this.supportModules != null) {
             this.isSupportModules = true;
         }
@@ -295,6 +301,14 @@ public final class ModelField extends ModelChild {
      */
     public boolean getIsNotNull() {
         return this.isNotNull;
+    }
+
+    public boolean getIsStatus() {
+        return this.isStatus;
+    }
+
+    public boolean getIsClassify() {
+        return this.isClassify;
     }
 
     /**

@@ -57,23 +57,26 @@ import org.ofbiz.entity.condition.EntityConditionParam;
 import org.ofbiz.entity.condition.EntityOperator;
 import org.ofbiz.entity.condition.OrderByList;
 import org.ofbiz.entity.config.model.Datasource;
+import org.ofbiz.entity.field.JsonValue;
 import org.ofbiz.entity.model.ModelEntity;
 import org.ofbiz.entity.model.ModelField;
 import org.ofbiz.entity.model.ModelFieldType;
 import org.ofbiz.entity.model.ModelFieldTypeReader;
 import org.ofbiz.entity.model.ModelKeyMap;
 import org.ofbiz.entity.model.ModelViewEntity;
+import org.postgresql.util.PGobject;
 
 /**
  * GenericDAO Utility methods for general tasks
- *
  */
 public class SqlJdbcUtil {
     public static final String module = SqlJdbcUtil.class.getName();
 
     public static final int CHAR_BUFFER_SIZE = 4096;
 
-    /** Makes the FROM clause and when necessary the JOIN clause(s) as well */
+    /**
+     * Makes the FROM clause and when necessary the JOIN clause(s) as well
+     */
     public static String makeFromClause(ModelEntity modelEntity, ModelFieldTypeReader modelFieldTypeReader, Datasource datasourceInfo) throws GenericEntityException {
         StringBuilder sql = new StringBuilder(" FROM ");
 
@@ -198,7 +201,7 @@ public class SqlJdbcUtil {
 
                 // handle tables not included in view-link
                 boolean fromEmpty = restOfStatement.length() == 0;
-                for (String aliasName: modelViewEntity.getMemberModelMemberEntities().keySet()) {
+                for (String aliasName : modelViewEntity.getMemberModelMemberEntities().keySet()) {
                     ModelEntity fromEntity = modelViewEntity.getMemberModelEntity(aliasName);
 
                     if (!joinedAliasSet.contains(aliasName)) {
@@ -236,7 +239,9 @@ public class SqlJdbcUtil {
         return sql.toString();
     }
 
-    /** Makes a WHERE clause String with "<col name>=?" if not null or "<col name> IS null" if null, all AND separated */
+    /**
+     * Makes a WHERE clause String with "<col name>=?" if not null or "<col name> IS null" if null, all AND separated
+     */
     @Deprecated
     public static String makeWhereStringFromFields(List<ModelField> modelFields, Map<String, Object> fields, String operator) {
         return makeWhereStringFromFields(new StringBuilder(), modelFields, fields, operator, null).toString();
@@ -246,13 +251,17 @@ public class SqlJdbcUtil {
         return makeWhereStringFromFields(sb, modelFields, fields, operator, null);
     }
 
-    /** Makes a WHERE clause String with "<col name>=?" if not null or "<col name> IS null" if null, all AND separated */
+    /**
+     * Makes a WHERE clause String with "<col name>=?" if not null or "<col name> IS null" if null, all AND separated
+     */
     @Deprecated
     public static String makeWhereStringFromFields(List<ModelField> modelFields, Map<String, Object> fields, String operator, List<EntityConditionParam> entityConditionParams) {
         return makeWhereStringFromFields(new StringBuilder(), modelFields, fields, operator, entityConditionParams).toString();
     }
 
-    /** Makes a WHERE clause String with "<col name>=?" if not null or "<col name> IS null" if null, all AND separated */
+    /**
+     * Makes a WHERE clause String with "<col name>=?" if not null or "<col name> IS null" if null, all AND separated
+     */
     public static StringBuilder makeWhereStringFromFields(StringBuilder sb, List<ModelField> modelFields, Map<String, Object> fields, String operator, List<EntityConditionParam> entityConditionParams) {
         if (modelFields.size() < 1) {
             return sb;
@@ -370,7 +379,7 @@ public class SqlJdbcUtil {
                         whereString.append(viewLink.getRelEntityAlias());
                         whereString.append(".");
                         whereString.append(relLinkField.getColName());
-                   }
+                    }
                 }
             } else {
                 throw new GenericModelException("The join-style " + joinStyle + " is not supported");
@@ -420,7 +429,7 @@ public class SqlJdbcUtil {
             }
             sql.append(makeFromClause(modelEntity, modelFieldTypeReader, datasourceInfo));
             String viewWhereClause = makeViewWhereClause(modelEntity, datasourceInfo.getJoinStyle());
-            ModelViewEntity modelViewEntity = (ModelViewEntity)modelEntity;
+            ModelViewEntity modelViewEntity = (ModelViewEntity) modelEntity;
             List<EntityCondition> whereConditions = new LinkedList<EntityCondition>();
             List<EntityCondition> havingConditions = new LinkedList<EntityCondition>();
             List<String> orderByList = new LinkedList<String>();
@@ -428,7 +437,7 @@ public class SqlJdbcUtil {
             modelViewEntity.populateViewEntityConditionInformation(modelFieldTypeReader, whereConditions, havingConditions, orderByList, null);
             String viewConditionClause;
             if (!whereConditions.isEmpty()) {
-                viewConditionClause = EntityCondition.makeCondition(whereConditions, EntityOperator.AND).makeWhereString(modelViewEntity,  null, datasourceInfo);
+                viewConditionClause = EntityCondition.makeCondition(whereConditions, EntityOperator.AND).makeWhereString(modelViewEntity, null, datasourceInfo);
             } else {
                 viewConditionClause = null;
             }
@@ -455,7 +464,7 @@ public class SqlJdbcUtil {
     }
 
     public static String filterColName(String colName) {
-        return colName.replace('.', '_').replace('(','_').replace(')','_');
+        return colName.replace('.', '_').replace('(', '_').replace(')', '_');
     }
 
     /* ====================================================================== */
@@ -463,8 +472,8 @@ public class SqlJdbcUtil {
     /* ====================================================================== */
 
     /**
-     *  The elements (ModelFields) of the list are bound to an SQL statement
-     *  (SQL-Processor)
+     * The elements (ModelFields) of the list are bound to an SQL statement
+     * (SQL-Processor)
      *
      * @param sqlP
      * @param list
@@ -472,14 +481,14 @@ public class SqlJdbcUtil {
      * @throws GenericEntityException
      */
     public static void setValues(SQLProcessor sqlP, List<ModelField> list, GenericEntity entity, ModelFieldTypeReader modelFieldTypeReader) throws GenericEntityException {
-        for (ModelField curField: list) {
+        for (ModelField curField : list) {
             setValue(sqlP, curField, entity, modelFieldTypeReader);
         }
     }
 
     /**
-     *  The elements (ModelFields) of the list are bound to an SQL statement
-     *  (SQL-Processor), but values must not be null.
+     * The elements (ModelFields) of the list are bound to an SQL statement
+     * (SQL-Processor), but values must not be null.
      *
      * @param sqlP
      * @param list
@@ -488,7 +497,7 @@ public class SqlJdbcUtil {
      * @throws GenericEntityException
      */
     public static void setValuesWhereClause(SQLProcessor sqlP, List<ModelField> list, GenericValue dummyValue, ModelFieldTypeReader modelFieldTypeReader) throws GenericEntityException {
-        for (ModelField curField: list) {
+        for (ModelField curField : list) {
             // for where clause variables only setValue if not null...
             if (dummyValue.get(curField.getName()) != null) {
                 setValue(sqlP, curField, dummyValue, modelFieldTypeReader);
@@ -497,8 +506,8 @@ public class SqlJdbcUtil {
     }
 
     /**
-     *  Get all primary keys from the model entity and bind their values
-     *  to the an SQL statement (SQL-Processor)
+     * Get all primary keys from the model entity and bind their values
+     * to the an SQL statement (SQL-Processor)
      *
      * @param sqlP
      * @param modelEntity
@@ -548,8 +557,8 @@ public class SqlJdbcUtil {
                 Debug.logError(e, module);
             }
         } else {
-            Debug.logWarning("JdbcValueHandler not found for java-type " + mft.getJavaType() + 
-                    ", falling back on switch statement. Entity = " + 
+            Debug.logWarning("JdbcValueHandler not found for java-type " + mft.getJavaType() +
+                    ", falling back on switch statement. Entity = " +
                     curField.getModelEntity().getEntityName() +
                     ", field = " + curField.getName() + ".", module);
         }
@@ -566,159 +575,162 @@ public class SqlJdbcUtil {
 
             if (typeValue <= 4 || typeValue >= 11) {
                 switch (typeValue) {
-                case 1:
-                    if (java.sql.Types.CLOB == colType) {
-                        // Debug.logInfo("For field " + curField.getName() + " of entity " + entity.getEntityName() + " getString is a CLOB, trying getCharacterStream", module);
-                        // if the String is empty, try to get a text input stream, this is required for some databases for larger fields, like CLOBs
+                    case 1:
+                        if (java.sql.Types.CLOB == colType) {
+                            // Debug.logInfo("For field " + curField.getName() + " of entity " + entity.getEntityName() + " getString is a CLOB, trying getCharacterStream", module);
+                            // if the String is empty, try to get a text input stream, this is required for some databases for larger fields, like CLOBs
 
-                        Clob valueClob = rs.getClob(ind);
-                        Reader valueReader = null;
-                        if (valueClob != null) {
-                            valueReader = valueClob.getCharacterStream();
-                        }
+                            Clob valueClob = rs.getClob(ind);
+                            Reader valueReader = null;
+                            if (valueClob != null) {
+                                valueReader = valueClob.getCharacterStream();
+                            }
 
-                        //Reader valueReader = rs.getCharacterStream(ind);
-                        if (valueReader != null) {
-                            char[] inCharBuffer = new char[CHAR_BUFFER_SIZE];
-                            StringBuilder strBuf = new StringBuilder();
-                            int charsRead = 0;
-                            try {
-                                while ((charsRead = valueReader.read(inCharBuffer, 0, CHAR_BUFFER_SIZE)) > 0) {
-                                    strBuf.append(inCharBuffer, 0, charsRead);
+                            //Reader valueReader = rs.getCharacterStream(ind);
+                            if (valueReader != null) {
+                                char[] inCharBuffer = new char[CHAR_BUFFER_SIZE];
+                                StringBuilder strBuf = new StringBuilder();
+                                int charsRead = 0;
+                                try {
+                                    while ((charsRead = valueReader.read(inCharBuffer, 0, CHAR_BUFFER_SIZE)) > 0) {
+                                        strBuf.append(inCharBuffer, 0, charsRead);
+                                    }
+                                    valueReader.close();
+                                } catch (IOException e) {
+                                    throw new GenericEntityException("Error reading long character stream for field " + curField.getName() + " of entity " + entity.getEntityName(), e);
                                 }
-                                valueReader.close();
-                            } catch (IOException e) {
-                                throw new GenericEntityException("Error reading long character stream for field " + curField.getName() + " of entity " + entity.getEntityName(), e);
-                            }
-                            entity.dangerousSetNoCheckButFast(curField, strBuf.toString());
-                        } else {
-                            entity.dangerousSetNoCheckButFast(curField, null);
-                        }
-                    } else {
-                        String value = rs.getString(ind);
-                        if (value instanceof String && curField.getEncryptMethod().isEncrypted()) {
-                            value = (String) entity.getDelegator().decryptFieldValue(encryptionKeyName, curField.getEncryptMethod(), value);
-                        }
-                        entity.dangerousSetNoCheckButFast(curField, value);
-                    }
-                    break;
-
-                case 2:
-                    entity.dangerousSetNoCheckButFast(curField, rs.getTimestamp(ind));
-                    break;
-
-                case 3:
-                    entity.dangerousSetNoCheckButFast(curField, rs.getTime(ind));
-                    break;
-
-                case 4:
-                    entity.dangerousSetNoCheckButFast(curField, rs.getDate(ind));
-                    break;
-
-                case 11:
-                    Object obj = null;
-
-                    byte[] originalBytes = rs.getBytes(ind);
-                    obj = deserializeField(originalBytes, ind, curField);
-
-                    if (obj != null) {
-                        entity.dangerousSetNoCheckButFast(curField, obj);
-                    } else {
-                        entity.dangerousSetNoCheckButFast(curField, originalBytes);
-                    }
-                    break;
-                case 12:
-                    Object originalObject;
-                    byte[] fieldBytes;
-                    try {
-                        Blob theBlob = rs.getBlob(ind);
-                        fieldBytes = theBlob != null ? theBlob.getBytes(1, (int) theBlob.length()) : null;
-                        originalObject = theBlob;
-                    } catch (SQLException e) {
-                        // for backward compatibility if getBlob didn't work try getBytes
-                        fieldBytes = rs.getBytes(ind);
-                        originalObject = fieldBytes;
-                    }
-
-                    if (originalObject != null) {
-                        // for backward compatibility, check to see if there is a serialized object and if so return that
-                        Object blobObject = deserializeField(fieldBytes, ind, curField);
-                        if (blobObject != null) {
-                            entity.dangerousSetNoCheckButFast(curField, blobObject);
-                        } else {
-                            if (originalObject instanceof Blob) {
-                                // NOTE using SerialBlob here instead of the Blob from the database to make sure we can pass it around, serialize it, etc
-                                entity.dangerousSetNoCheckButFast(curField, new SerialBlob((Blob) originalObject));
+                                entity.dangerousSetNoCheckButFast(curField, strBuf.toString());
                             } else {
-                                entity.dangerousSetNoCheckButFast(curField, originalObject);
+                                entity.dangerousSetNoCheckButFast(curField, null);
+                            }
+                        } else {
+                            String value = rs.getString(ind);
+                            if (value instanceof String && curField.getEncryptMethod().isEncrypted()) {
+                                value = (String) entity.getDelegator().decryptFieldValue(encryptionKeyName, curField.getEncryptMethod(), value);
+                            }
+                            entity.dangerousSetNoCheckButFast(curField, value);
+                        }
+                        break;
+
+                    case 2:
+                        entity.dangerousSetNoCheckButFast(curField, rs.getTimestamp(ind));
+                        break;
+
+                    case 3:
+                        entity.dangerousSetNoCheckButFast(curField, rs.getTime(ind));
+                        break;
+
+                    case 4:
+                        entity.dangerousSetNoCheckButFast(curField, rs.getDate(ind));
+                        break;
+
+                    case 11:
+                        Object obj = null;
+
+                        byte[] originalBytes = rs.getBytes(ind);
+                        obj = deserializeField(originalBytes, ind, curField);
+
+                        if (obj != null) {
+                            entity.dangerousSetNoCheckButFast(curField, obj);
+                        } else {
+                            entity.dangerousSetNoCheckButFast(curField, originalBytes);
+                        }
+                        break;
+                    case 12:
+                        Object originalObject;
+                        byte[] fieldBytes;
+                        try {
+                            Blob theBlob = rs.getBlob(ind);
+                            fieldBytes = theBlob != null ? theBlob.getBytes(1, (int) theBlob.length()) : null;
+                            originalObject = theBlob;
+                        } catch (SQLException e) {
+                            // for backward compatibility if getBlob didn't work try getBytes
+                            fieldBytes = rs.getBytes(ind);
+                            originalObject = fieldBytes;
+                        }
+
+                        if (originalObject != null) {
+                            // for backward compatibility, check to see if there is a serialized object and if so return that
+                            Object blobObject = deserializeField(fieldBytes, ind, curField);
+                            if (blobObject != null) {
+                                entity.dangerousSetNoCheckButFast(curField, blobObject);
+                            } else {
+                                if (originalObject instanceof Blob) {
+                                    // NOTE using SerialBlob here instead of the Blob from the database to make sure we can pass it around, serialize it, etc
+                                    entity.dangerousSetNoCheckButFast(curField, new SerialBlob((Blob) originalObject));
+                                } else {
+                                    entity.dangerousSetNoCheckButFast(curField, originalObject);
+                                }
                             }
                         }
-                    }
 
-                    break;
-                case 13:
-                    entity.dangerousSetNoCheckButFast(curField, new SerialClob(rs.getClob(ind)));
-                    break;
-                case 14:
-                case 15:
-                    entity.dangerousSetNoCheckButFast(curField, rs.getObject(ind));
-                    break;
+                        break;
+                    case 13:
+                        entity.dangerousSetNoCheckButFast(curField, new SerialClob(rs.getClob(ind)));
+                        break;
+                    case 14:
+                    case 15:
+                        entity.dangerousSetNoCheckButFast(curField, rs.getObject(ind));
+                        break;
+                    case 16:
+                        PGobject po = (PGobject) rs.getObject(ind);
+                        entity.dangerousSetNoCheckButFast(curField, JsonValue.create(curField, po.getValue()));
+                        break;
                 }
             } else {
                 switch (typeValue) {
-                case 5:
-                    int intValue = rs.getInt(ind);
-                    if (rs.wasNull()) {
-                        entity.dangerousSetNoCheckButFast(curField, null);
-                    } else {
-                        entity.dangerousSetNoCheckButFast(curField, Integer.valueOf(intValue));
-                    }
-                    break;
+                    case 5:
+                        int intValue = rs.getInt(ind);
+                        if (rs.wasNull()) {
+                            entity.dangerousSetNoCheckButFast(curField, null);
+                        } else {
+                            entity.dangerousSetNoCheckButFast(curField, Integer.valueOf(intValue));
+                        }
+                        break;
 
-                case 6:
-                    long longValue = rs.getLong(ind);
-                    if (rs.wasNull()) {
-                        entity.dangerousSetNoCheckButFast(curField, null);
-                    } else {
-                        entity.dangerousSetNoCheckButFast(curField, Long.valueOf(longValue));
-                    }
-                    break;
+                    case 6:
+                        long longValue = rs.getLong(ind);
+                        if (rs.wasNull()) {
+                            entity.dangerousSetNoCheckButFast(curField, null);
+                        } else {
+                            entity.dangerousSetNoCheckButFast(curField, Long.valueOf(longValue));
+                        }
+                        break;
 
-                case 7:
-                    float floatValue = rs.getFloat(ind);
-                    if (rs.wasNull()) {
-                        entity.dangerousSetNoCheckButFast(curField, null);
-                    } else {
-                        entity.dangerousSetNoCheckButFast(curField, Float.valueOf(floatValue));
-                    }
-                    break;
+                    case 7:
+                        float floatValue = rs.getFloat(ind);
+                        if (rs.wasNull()) {
+                            entity.dangerousSetNoCheckButFast(curField, null);
+                        } else {
+                            entity.dangerousSetNoCheckButFast(curField, Float.valueOf(floatValue));
+                        }
+                        break;
 
-                case 8:
-                    double doubleValue = rs.getDouble(ind);
-                    if (rs.wasNull()) {
-                        entity.dangerousSetNoCheckButFast(curField, null);
-                    } else {
-                        entity.dangerousSetNoCheckButFast(curField, Double.valueOf(doubleValue));
-                    }
-                    break;
+                    case 8:
+                        double doubleValue = rs.getDouble(ind);
+                        if (rs.wasNull()) {
+                            entity.dangerousSetNoCheckButFast(curField, null);
+                        } else {
+                            entity.dangerousSetNoCheckButFast(curField, Double.valueOf(doubleValue));
+                        }
+                        break;
 
-                case 9:
-                    BigDecimal bigDecimalValue = rs.getBigDecimal(ind);
-                    if (rs.wasNull()) {
-                        entity.dangerousSetNoCheckButFast(curField, null);
-                    } else {
-                        entity.dangerousSetNoCheckButFast(curField, bigDecimalValue);
-                    }
-                    break;
-
-                case 10:
-                    boolean booleanValue = rs.getBoolean(ind);
-                    if (rs.wasNull()) {
-                        entity.dangerousSetNoCheckButFast(curField, null);
-                    } else {
-                        entity.dangerousSetNoCheckButFast(curField, Boolean.valueOf(booleanValue));
-                    }
-                    break;
+                    case 9:
+                        BigDecimal bigDecimalValue = rs.getBigDecimal(ind);
+                        if (rs.wasNull()) {
+                            entity.dangerousSetNoCheckButFast(curField, null);
+                        } else {
+                            entity.dangerousSetNoCheckButFast(curField, bigDecimalValue);
+                        }
+                        break;
+                    case 10:
+                        boolean booleanValue = rs.getBoolean(ind);
+                        if (rs.wasNull()) {
+                            entity.dangerousSetNoCheckButFast(curField, null);
+                        } else {
+                            entity.dangerousSetNoCheckButFast(curField, Boolean.valueOf(booleanValue));
+                        }
+                        break;
                 }
             }
         } catch (SQLException sqle) {
@@ -751,10 +763,12 @@ public class SqlJdbcUtil {
                 in = new ObjectInputStream(binaryInput);
                 return in.readObject();
             } catch (IOException ex) {
-                if (Debug.verboseOn()) Debug.logVerbose("Unable to read BLOB data from input stream while getting value : " + curField.getName() + " [" + curField.getColName() + "] (" + ind + "): " + ex.toString(), module);
+                if (Debug.verboseOn())
+                    Debug.logVerbose("Unable to read BLOB data from input stream while getting value : " + curField.getName() + " [" + curField.getColName() + "] (" + ind + "): " + ex.toString(), module);
                 return null;
             } catch (ClassNotFoundException ex) {
-                if (Debug.verboseOn()) Debug.logVerbose("Class not found: Unable to cast BLOB data to an Java object while getting value: " + curField.getName() + " [" + curField.getColName() + "] (" + ind + "); most likely because it is a straight byte[], so just using the raw bytes" + ex.toString(), module);
+                if (Debug.verboseOn())
+                    Debug.logVerbose("Class not found: Unable to cast BLOB data to an Java object while getting value: " + curField.getName() + " [" + curField.getColName() + "] (" + ind + "); most likely because it is a straight byte[], so just using the raw bytes" + ex.toString(), module);
                 return null;
             } finally {
                 if (in != null) {
@@ -804,8 +818,8 @@ public class SqlJdbcUtil {
                 throw new GenericDataSourceException("SQL Exception while setting value on field [" + modelField.getName() + "] of entity " + entityName + ": ", e);
             }
         } else {
-            Debug.logWarning("JdbcValueHandler not found for java-type " + mft.getJavaType() + 
-                    ", falling back on switch statement. Entity = " + 
+            Debug.logWarning("JdbcValueHandler not found for java-type " + mft.getJavaType() +
+                    ", falling back on switch statement. Entity = " +
                     modelField.getModelEntity().getEntityName() +
                     ", field = " + modelField.getName() + ".", module);
         }
@@ -836,75 +850,78 @@ public class SqlJdbcUtil {
             int typeValue = getType(fieldType);
 
             switch (typeValue) {
-            case 1:
-                sqlP.setValue((String) fieldValue);
-                break;
+                case 1:
+                    sqlP.setValue((String) fieldValue);
+                    break;
 
-            case 2:
-                sqlP.setValue((java.sql.Timestamp) fieldValue);
-                break;
+                case 2:
+                    sqlP.setValue((java.sql.Timestamp) fieldValue);
+                    break;
 
-            case 3:
-                sqlP.setValue((java.sql.Time) fieldValue);
-                break;
+                case 3:
+                    sqlP.setValue((java.sql.Time) fieldValue);
+                    break;
 
-            case 4:
-                sqlP.setValue((java.sql.Date) fieldValue);
-                break;
+                case 4:
+                    sqlP.setValue((java.sql.Date) fieldValue);
+                    break;
 
-            case 5:
-                sqlP.setValue((java.lang.Integer) fieldValue);
-                break;
+                case 5:
+                    sqlP.setValue((java.lang.Integer) fieldValue);
+                    break;
 
-            case 6:
-                sqlP.setValue((java.lang.Long) fieldValue);
-                break;
+                case 6:
+                    sqlP.setValue((java.lang.Long) fieldValue);
+                    break;
 
-            case 7:
-                sqlP.setValue((java.lang.Float) fieldValue);
-                break;
+                case 7:
+                    sqlP.setValue((java.lang.Float) fieldValue);
+                    break;
 
-            case 8:
-                sqlP.setValue((java.lang.Double) fieldValue);
-                break;
+                case 8:
+                    sqlP.setValue((java.lang.Double) fieldValue);
+                    break;
 
-            case 9:
-                sqlP.setValue((java.math.BigDecimal) fieldValue);
-                break;
+                case 9:
+                    sqlP.setValue((java.math.BigDecimal) fieldValue);
+                    break;
 
-            case 10:
-                sqlP.setValue((java.lang.Boolean) fieldValue);
-                break;
+                case 10:
+                    sqlP.setValue((java.lang.Boolean) fieldValue);
+                    break;
 
-            case 11:
-                sqlP.setBinaryStream(fieldValue);
-                break;
+                case 11:
+                    sqlP.setBinaryStream(fieldValue);
+                    break;
 
-            case 12:
-                if (fieldValue instanceof byte[]) {
-                    sqlP.setBytes((byte[]) fieldValue);
-                } else if (fieldValue instanceof ByteBuffer) {
-                    sqlP.setBytes(((ByteBuffer) fieldValue).array());
-                } else {
-                    sqlP.setValue((java.sql.Blob) fieldValue);
-                }
-                break;
+                case 12:
+                    if (fieldValue instanceof byte[]) {
+                        sqlP.setBytes((byte[]) fieldValue);
+                    } else if (fieldValue instanceof ByteBuffer) {
+                        sqlP.setBytes(((ByteBuffer) fieldValue).array());
+                    } else {
+                        sqlP.setValue((java.sql.Blob) fieldValue);
+                    }
+                    break;
 
-            case 13:
-                sqlP.setValue((java.sql.Clob) fieldValue);
-                break;
+                case 13:
+                    sqlP.setValue((java.sql.Clob) fieldValue);
+                    break;
 
-            case 14:
-                if (fieldValue != null) {
-                    sqlP.setValue(new java.sql.Date(((java.util.Date) fieldValue).getTime()));
-                } else {
-                    sqlP.setValue((java.sql.Date) null);
-                }
-                break;
+                case 14:
+                    if (fieldValue != null) {
+                        sqlP.setValue(new java.sql.Date(((java.util.Date) fieldValue).getTime()));
+                    } else {
+                        sqlP.setValue((java.sql.Date) null);
+                    }
+                    break;
 
-            case 15:
-                sqlP.setValue(UtilGenerics.<Collection<?>>cast(fieldValue));
-                break;
+                case 15:
+                    sqlP.setValue(UtilGenerics.<Collection<?>>cast(fieldValue));
+                    break;
+                case 16:
+                    sqlP.setValue(fieldValue);
+                    break;
             }
         } catch (GenericNotImplementedException e) {
             throw new GenericNotImplementedException("Not Implemented Exception while setting value on field [" + modelField.getName() + "] of entity " + entityName + ": " + e.toString(), e);
@@ -914,6 +931,7 @@ public class SqlJdbcUtil {
     }
 
     protected static Map<String, Integer> fieldTypeMap = new HashMap<String, Integer>();
+
     static {
         fieldTypeMap.put("java.lang.String", 1);
         fieldTypeMap.put("String", 1);
@@ -955,6 +973,8 @@ public class SqlJdbcUtil {
         fieldTypeMap.put("java.util.HashSet", 15);
         fieldTypeMap.put("java.util.LinkedHashSet", 15);
         fieldTypeMap.put("java.util.LinkedList", 15);
+
+        fieldTypeMap.put("org.ofbiz.entity.field.JsonValue", 16);
     }
 
     public static int getType(String fieldType) throws GenericNotImplementedException {

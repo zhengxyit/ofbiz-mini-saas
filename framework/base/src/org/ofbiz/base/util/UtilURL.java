@@ -128,7 +128,7 @@ public class UtilURL {
 
         try {
             if (file.exists()) url = file.toURI().toURL();
-        } catch (java.net.MalformedURLException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
             url = null;
         }

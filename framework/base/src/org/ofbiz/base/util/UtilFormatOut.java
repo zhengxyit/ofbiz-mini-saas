@@ -316,7 +316,7 @@ public class UtilFormatOut {
         if (timestamp == null)
             return "";
         DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.FULL);
-        java.util.Date date = timestamp;
+        Date date = timestamp;
         return df.format(date);
     }
 

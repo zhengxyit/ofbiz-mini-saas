@@ -18,13 +18,13 @@
  *******************************************************************************/
 package org.ofbiz.service.calendar;
 
+import com.ibm.icu.util.Calendar;
+
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import com.ibm.icu.util.Calendar;
 
 /**
  * Recurrence Utilities

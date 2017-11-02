@@ -158,7 +158,7 @@ OUTER:
     }
 
     /** Registers a <code>ConverterCreater</code> instance to be used by the
-     * {@link org.ofbiz.base.conversion.Converters#getConverter(Class, Class)}
+     * {@link Converters#getConverter(Class, Class)}
      * method, when a converter can't be found.
      *
      * @param <S> The source object type
@@ -172,7 +172,7 @@ OUTER:
     }
 
     /** Registers a <code>Converter</code> instance to be used by the
-     * {@link org.ofbiz.base.conversion.Converters#getConverter(Class, Class)}
+     * {@link Converters#getConverter(Class, Class)}
      * method.
      *
      * @param <S> The source object type

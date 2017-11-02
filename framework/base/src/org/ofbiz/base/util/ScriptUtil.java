@@ -435,7 +435,7 @@ public final class ScriptUtil {
         public boolean containsValue(Object value) {
             return bindings.containsValue(value);
         }
-        public Set<java.util.Map.Entry<String, Object>> entrySet() {
+        public Set<Entry<String, Object>> entrySet() {
             return bindings.entrySet();
         }
         @Override
@@ -465,7 +465,7 @@ public final class ScriptUtil {
             return bindings.put(key, value);
         }
         public void putAll(Map<? extends String, ? extends Object> map) {
-            for (Map.Entry<? extends String, ? extends Object> entry : map.entrySet()) {
+            for (Entry<? extends String, ? extends Object> entry : map.entrySet()) {
                 Assert.notNull("key", entry.getKey());
                 if (!protectedKeys.contains(entry.getKey())) {
                     bindings.put(entry.getKey(), entry.getValue());

@@ -54,7 +54,7 @@ public class TestFailAuthenticator implements Authenticator {
      * @param password      User's password
      * @param isServiceAuth true if authentication is for a service call
      * @return true if the user is authenticated
-     * @throws org.ofbiz.common.authentication.api.AuthenticatorException
+     * @throws AuthenticatorException
      *          when a fatal error occurs during authentication
      */
     public boolean authenticate(String username, String password, boolean isServiceAuth) throws AuthenticatorException {
@@ -66,7 +66,7 @@ public class TestFailAuthenticator implements Authenticator {
      * Logs a user out
      *
      * @param username User's username
-     * @throws org.ofbiz.common.authentication.api.AuthenticatorException
+     * @throws AuthenticatorException
      *          when logout fails
      */
     public void logout(String username) throws AuthenticatorException {
@@ -77,7 +77,7 @@ public class TestFailAuthenticator implements Authenticator {
      * Reads user information and syncs it to OFBiz (i.e. UserLogin, Person, etc)
      *
      * @param username User's username
-     * @throws org.ofbiz.common.authentication.api.AuthenticatorException
+     * @throws AuthenticatorException
      *          user synchronization fails
      */
     public void syncUser(String username) throws AuthenticatorException {
@@ -91,7 +91,7 @@ public class TestFailAuthenticator implements Authenticator {
      * @param username    User's username
      * @param password    User's current password
      * @param newPassword User's new password
-     * @throws org.ofbiz.common.authentication.api.AuthenticatorException
+     * @throws AuthenticatorException
      *          when update password fails
      */
     public void updatePassword(String username, String password, String newPassword) throws AuthenticatorException {

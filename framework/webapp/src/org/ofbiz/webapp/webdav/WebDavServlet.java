@@ -18,23 +18,17 @@
  *******************************************************************************/
 package org.ofbiz.webapp.webdav;
 
-import java.io.IOException;
-
-import javax.servlet.GenericServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.DelegatorFactory;
 import org.ofbiz.service.LocalDispatcher;
 import org.ofbiz.service.ServiceContainer;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /** Implements a WebDAV servlet. The servlet simply forwards WebDAV requests
  * to a <code>RequestHandlerFactory</code> instance, whose class is specified
@@ -54,7 +48,7 @@ public class WebDavServlet extends GenericServlet {
     protected RequestHandlerFactory handlerFactory = null;
 
     @Override
-    public void init(ServletConfig config) throws ServletException{
+    public void init(ServletConfig config) throws ServletException {
         try {
             super.init(config);
             ServletContext context = this.getServletContext();

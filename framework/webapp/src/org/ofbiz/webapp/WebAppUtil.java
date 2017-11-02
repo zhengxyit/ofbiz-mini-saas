@@ -18,17 +18,11 @@
  *******************************************************************************/
 package org.ofbiz.webapp;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map.Entry;
-
-import org.apache.tomcat.util.digester.Digester;
 import org.apache.tomcat.util.descriptor.DigesterFactory;
 import org.apache.tomcat.util.descriptor.web.ServletDef;
 import org.apache.tomcat.util.descriptor.web.WebRuleSet;
 import org.apache.tomcat.util.descriptor.web.WebXml;
+import org.apache.tomcat.util.digester.Digester;
 import org.ofbiz.base.component.ComponentConfig;
 import org.ofbiz.base.component.ComponentConfig.WebappInfo;
 import org.ofbiz.base.util.Assert;
@@ -40,6 +34,12 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map.Entry;
 
 /**
  * Web application utilities.

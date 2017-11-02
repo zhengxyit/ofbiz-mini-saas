@@ -25,111 +25,57 @@ under the License.
     <description>None</description>
     <version>1.0</version>
 
-    <entity entity-name="LoginUser" package-name="org.ofbiz.sso" title="User Login Token Record"
+    <entity entity-name="Account" package-name="org.ofbiz.sso" title="Account"
             no-auto-stamp="true">
         <description>用户登录信息</description>
-        <field name="loginUserId" type="id-ne"></field>
-        <field name="username1" type="short-varchar"></field>
-        <field name="username2" type="short-varchar"></field>
-        <field name="currentPassword" type="short-varchar"></field>
-        <field name="registrationId" type="short-varchar"></field>
-        <field name="userInfoId" type="id-ne"></field>
-        <prim-key field="loginUserId"/>
-        <relation type="one-nofk" fk-name="USER_LOGIN_INFO" rel-entity-name="UserInfo">
-            <key-map field-name="userInfoId"/>
-        </relation>
+        <field name="accountId" type="id-ne" />
+        <field name="username1" type="short-varchar" />
+        <field name="username2" type="short-varchar" />
+        <field name="currentPassword" type="short-varchar" />
+        <field name="registrationId" type="short-varchar" />
+        <field name="accountStatus" type="integer"><description>0需要设置密码1正常2停用</description></field>
+        <field name="accountType" type="short-varchar"><description>A分域帐户P平台管理帐户</description></field>
+        <field name="tenants" type="short-varchar"><description>支持多个企业登录</description></field>
+        <prim-key field="accountId"/>
     </entity>
 
     <entity entity-name="LoginToken" package-name="org.ofbiz.sso" title="User Login Token Record"
             no-auto-stamp="true">
         <description>用于存储用户登录的Token和用户信息</description>
-        <field name="ticket" type="id-vlong-ne"></field>
-        <field name="expirationTime" type="date-time"></field>
-        <field name="unicode" type="short-varchar"></field>
-        <field name="cacheData" type="very-long"></field>
-        <field name="permissionData" type="very-long"></field>
-        <field name="loginUserId" type="id-ne"></field>
+        <field name="ticket" type="id-vlong-ne" />
+        <field name="expirationTime" type="date-time" />
+        <field name="unicode" type="short-varchar" />
+        <field name="cacheData" type="very-long" />
+        <field name="permissionData" type="very-long"><description>权限数据</description></field>
+        <field name="accountId" type="id-ne" />
         <prim-key field="ticket"/>
-        <relation type="one" fk-name="USER_TOKEN_LOGIN" rel-entity-name="LoginUser">
-            <key-map field-name="loginUserId"/>
-        </relation>
-    </entity>
-
-    <entity entity-name="UserInfo" package-name="org.ofbiz.sso" title="UserInfo" no-auto-stamp="true">
-        <description>用户信息</description>
-        <field name="userInfoId" type="id-ne"></field>
-        <field name="mobile" type="short-varchar"></field>
-        <field name="email" type="email"></field>
-        <field name="userName" type="name"></field>
-        <field name="headPic" type="url"></field>
-        <field name="sex" type="short-varchar"></field>
-        <field name="userStatus" type="integer"></field>
-        <prim-key field="userInfoId"/>
-        <relation type="many" rel-entity-name="UserPermission">
-            <key-map field-name="userInfoId"/>
-        </relation>
-    </entity>
-    <entity entity-name="UserPermission" package-name="org.ofbiz.sso" title="UserPermission" is-tenant="true"
-            no-auto-stamp="true">
-        <description>用户信息</description>
-        <field name="userPermissionId" type="id-ne"></field>
-        <field name="userInfoId" type="id-ne"></field>
-        <field name="permissionCode" type="short-varchar"></field>
-
-        <prim-key field="userPermissionId"/>
-    </entity>
-
-    <entity entity-name="SecurityPermission"
-            package-name="org.ofbiz.sso"
-            default-resource-name="SecurityEntityLabels"
-            title="Security Component - Security Permission Entity">
-        <field name="permissionId" type="id-long-ne"></field>
-        <field name="description" type="description"></field>
-        <prim-key field="permissionId"/>
+        <relation type="one" fk-name="USER_TOKEN_LOGIN" rel-entity-name="Account"><key-map field-name="accountId"/></relation>
     </entity>
 
     <entity entity-name="SmsRecord" package-name="org.ofbiz.sso" title="SmsRecord view" no-auto-stamp="true">
-        <field name="mobile" type="id-ne"></field>
-        <field name="smsCount" type="numeric"></field>
-        <field name="model" type="short-varchar">
-            <description>对应配置的模版</description>
-        </field>
-        <field name="smsMessage" type="short-varchar">
-            <description>模版中第一个位置内容</description>
-        </field>
-        <field name="lockTime" type="date-time">
-            <description>锁定时间</description>
-        </field>
-        <field name="lastTime" type="date-time"></field>
+        <field name="mobile" type="id-ne" />
+        <field name="smsCount" type="numeric" />
+        <field name="model" type="short-varchar"><description>对应配置的模版</description></field>
+        <field name="smsMessage" type="short-varchar"><description>模版中第一个位置内容</description></field>
+        <field name="lockTime" type="date-time"><description>锁定时间</description></field>
+        <field name="lastTime" type="date-time" />
         <prim-key field="mobile"/>
     </entity>
 
     <entity entity-name="Enterprise" package-name="org.ofbiz.sso" title="Enterprise">
-        <field name="enterpriseId" type="id-ne"></field>
-        <field name="manager" type="id-ne"></field>
-        <field name="domainName" type="short-varchar">
-            <description>对应的三级域名</description>
-        </field>
-        <field name="fullName" type="short-varchar"></field>
-        <field name="shortName" type="short-varchar"></field>
-        <field name="address" type="long-varchar"></field>
-        <field name="configs" type="very-long"></field>
-
+        <field name="enterpriseId" type="id-ne" />
+        <field name="manager" type="short-varchar"><description>手机号</description></field>
+        <field name="managerName" type="short-varchar"><description>姓名</description></field>
+        <field name="domainName" type="short-varchar"><description>tenantId的值</description></field>
+        <field name="fullName" type="short-varchar" />
+        <field name="shortName" type="short-varchar" />
+        <field name="address" type="long-varchar" />
+        <field name="wxAppId" type="short-varchar" />
+        <field name="wxSecret" type="short-varchar" />
+        <field name="templateId" type="short-varchar" ><description>消息模版ID</description></field>
+        <field name="template2Id" type="short-varchar" ><description>员工消息模版ID</description></field>
+        <field name="subCode" type="short-varchar" ><description>关注的ID</description></field>
         <prim-key field="enterpriseId"/>
-        <relation type="one-nofk" fk-name="ENTERPRISE_MANAGER" rel-entity-name="UserInfo">
-            <key-map field-name="manager" rel-field-name="userInfoId"/>
-        </relation>
-    </entity>
-
-    <entity entity-name="Draft" package-name="org.ofbiz.sso" title="Draft" is-tenant="true">
-        <field name="draftId" type="id-ne"></field>
-        <field name="userInfoId" type="id-ne"></field>
-        <field name="otype" type="short-varchar"></field>
-        <field name="content" type="very-long"></field>
-        <prim-key field="draftId"/>
-        <relation type="one-nofk" rel-entity-name="UserInfo">
-            <key-map field-name="userInfoId"/>
-        </relation>
     </entity>
 
 </entitymodel>

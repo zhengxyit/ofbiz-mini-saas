@@ -18,14 +18,14 @@
  *******************************************************************************/
 package org.ofbiz.service.config.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.ofbiz.base.lang.ThreadSafe;
 import org.ofbiz.base.util.UtilXml;
 import org.ofbiz.service.config.ServiceConfigException;
 import org.w3c.dom.Element;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * An object that models the <code>&lt;notification-group&gt;</code> element.

@@ -77,7 +77,7 @@ public class ComponentContainer implements Container {
     }
 
     /**
-     * @see org.ofbiz.base.container.Container#start()
+     * @see Container#start()
      */
     public boolean start() throws ContainerException {
         return loaded.get();
@@ -243,7 +243,7 @@ public class ComponentContainer implements Container {
     }
 
     /**
-     * @see org.ofbiz.base.container.Container#stop()
+     * @see Container#stop()
      */
     public void stop() throws ContainerException {
     }

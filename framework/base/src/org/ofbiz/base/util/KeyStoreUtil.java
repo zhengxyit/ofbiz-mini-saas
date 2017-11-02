@@ -133,7 +133,7 @@ public class KeyStoreUtil {
         return (X509Certificate) cf.generateCertificate(bais);
     }
 
-    public static Map<String, String> getCertX500Map(java.security.cert.X509Certificate cert) {
+    public static Map<String, String> getCertX500Map(X509Certificate cert) {
         return getX500Map(cert.getSubjectX500Principal());
     }
 

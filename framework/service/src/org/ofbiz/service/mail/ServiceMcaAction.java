@@ -18,9 +18,6 @@
  *******************************************************************************/
 package org.ofbiz.service.mail;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilValidate;
@@ -29,6 +26,9 @@ import org.ofbiz.service.GenericServiceException;
 import org.ofbiz.service.LocalDispatcher;
 import org.ofbiz.service.ServiceUtil;
 import org.w3c.dom.Element;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("serial")
 public class ServiceMcaAction implements java.io.Serializable {

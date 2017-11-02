@@ -18,10 +18,6 @@
  *******************************************************************************/
 package org.ofbiz.service.test;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.ofbiz.base.util.UtilDateTime;
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilProperties;
@@ -29,6 +25,10 @@ import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.util.EntityQuery;
 import org.ofbiz.service.ServiceUtil;
 import org.ofbiz.service.testtools.OFBizTestCase;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class ServiceEntityAutoTests extends OFBizTestCase {
 

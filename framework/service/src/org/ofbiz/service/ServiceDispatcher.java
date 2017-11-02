@@ -18,22 +18,12 @@
  *******************************************************************************/
 package org.ofbiz.service;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.transaction.Transaction;
-
+import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import org.ofbiz.base.config.GenericConfigException;
 import org.ofbiz.base.util.*;
 import org.ofbiz.entity.Delegator;
-import org.ofbiz.entity.DelegatorFactory;
 import org.ofbiz.entity.GenericDelegator;
 import org.ofbiz.entity.GenericEntityException;
-import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.transaction.DebugXaResource;
 import org.ofbiz.entity.transaction.GenericTransactionException;
 import org.ofbiz.entity.transaction.TransactionUtil;
@@ -43,13 +33,13 @@ import org.ofbiz.service.eca.ServiceEcaRule;
 import org.ofbiz.service.eca.ServiceEcaUtil;
 import org.ofbiz.service.engine.GenericEngine;
 import org.ofbiz.service.engine.GenericEngineFactory;
-import org.ofbiz.service.group.ServiceGroupReader;
-import org.ofbiz.service.jms.JmsListenerFactory;
 import org.ofbiz.service.job.JobManager;
 import org.ofbiz.service.job.JobManagerException;
 import org.ofbiz.service.semaphore.ServiceSemaphore;
 
-import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
+import javax.transaction.Transaction;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The global service dispatcher. This is the "engine" part of the
@@ -74,11 +64,9 @@ public class ServiceDispatcher {
     protected Map<String, DispatchContext> localContext = new HashMap<String, DispatchContext>();
     protected Map<String, List<GenericServiceCallback>> callbacks = new HashMap<String, List<GenericServiceCallback>>();
     protected JobManager jm = null;
-    protected JmsListenerFactory jlf = null;
 
     protected ServiceDispatcher(Delegator delegator, boolean enableJM, boolean enableJMS) {
-        factory = new GenericEngineFactory(this);
-        ServiceGroupReader.readConfig();
+        factory = new GenericEngineFactory(this);;
         ServiceEcaUtil.readConfig();
 
         this.delegator = delegator;
@@ -101,11 +89,6 @@ public class ServiceDispatcher {
             this.jm = JobManager.getInstance(origDelegator, enableJM);
         } catch (GeneralRuntimeException e) {
             Debug.logWarning(e.getMessage(), module);
-        }
-
-        // make sure we haven't disabled these features from running
-        if (enableJMS) {
-            this.jlf = JmsListenerFactory.getInstance(delegator);
         }
     }
 
@@ -240,12 +223,6 @@ public class ServiceDispatcher {
      * @throws GenericServiceException
      */
     public Map<String, Object> runSync(String localName, ModelService modelService, Map<String, ? extends Object> params, boolean validateOut) throws ServiceAuthException, ServiceValidationException, GenericServiceException {
-        if (modelService.baseModule != null) {
-            if (!delegator.checkEnterpriseHasModules(modelService.baseModule)) {
-                throw new ServiceModuleException("The Enterprise not support module [" + modelService.baseModule + "]");
-            }
-        }
-
         long serviceStartTime = System.currentTimeMillis();
         Map<String, Object> result = new HashMap<String, Object>();
         ServiceSemaphore lock = null;
@@ -531,6 +508,9 @@ public class ServiceDispatcher {
                     } catch (GenericTransactionException e) {
                         Debug.logError(e, "Could not rollback transaction: " + e.toString(), module);
                     }
+
+                    // 抛出去，否则接不到
+                    throw new GenericServiceException(ServiceUtil.getErrorMessage(result));
                 } else {
                     // commit the transaction
                     try {
@@ -602,6 +582,11 @@ public class ServiceDispatcher {
         if (modelService.metrics != null) {
             modelService.metrics.recordServiceRate(1, timeToRun);
         }
+
+        if (modelService.formatInfo.keySet() == null || modelService.formatInfo.keySet().size() != 0) {
+            // result.put("format", format);
+        }
+
         return result;
     }
 
@@ -799,15 +784,6 @@ public class ServiceDispatcher {
     }
 
     /**
-     * Gets the JmsListenerFactory which holds the message listeners.
-     *
-     * @return JmsListenerFactory
-     */
-    public JmsListenerFactory getJMSListenerFactory() {
-        return this.jlf;
-    }
-
-    /**
      * Gets the Delegator associated with this dispatcher
      *
      * @return Delegator associated with this dispatcher
@@ -847,10 +823,6 @@ public class ServiceDispatcher {
 
     protected void shutdown() throws GenericServiceException {
         Debug.logImportant("Shutting down the service engine...", module);
-        if (jlf != null) {
-            // shutdown JMS listeners
-            jlf.closeListeners();
-        }
     }
 
     // checks the locale object in the context

@@ -18,8 +18,6 @@
  *******************************************************************************/
 package org.ofbiz.webapp.website;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.ofbiz.base.lang.ThreadSafe;
 import org.ofbiz.base.start.Start;
 import org.ofbiz.base.util.Assert;
@@ -28,6 +26,8 @@ import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.util.EntityQuery;
 import org.ofbiz.entity.util.EntityUtilProperties;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Web site properties.

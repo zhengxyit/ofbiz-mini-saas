@@ -8,13 +8,23 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class EnterpriseModulesCache {
     // 暂时用一个Map缓存
-    private static Map<String, String> cacheMap = new ConcurrentHashMap<String, String>();
+    private static Map<String, String> flatFieldsCacheMap = new ConcurrentHashMap<String, String>();
 
-    public static String getModulesByTenant(String tenant) {
-        return cacheMap.get(tenant);
+    private static Map<String, String> treeFieldsCacheMap = new ConcurrentHashMap<String, String>();
+
+    public static String getFlatFieldsByTenant(String tenant) {
+        return flatFieldsCacheMap.get(tenant);
     }
 
-    public static void putModules(String tenant, String supportModules) {
-        cacheMap.put(tenant, supportModules);
+    public static String getTreeFieldsByTenant(String tenant) {
+        return treeFieldsCacheMap.get(tenant);
+    }
+
+    public static void setFlatFieldsByTenant(String tenant, String fields) {
+        flatFieldsCacheMap.put(tenant, fields);
+    }
+
+    public static void setTreeFieldsByTenant(String tenant, String fields) {
+        treeFieldsCacheMap.put(tenant, fields);
     }
 }

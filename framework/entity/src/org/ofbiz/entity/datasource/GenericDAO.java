@@ -267,6 +267,7 @@ public class GenericDAO {
 
         try {
             sqlP.prepareStatement(sql.toString());
+            System.out.println(sql.toString());
             SqlJdbcUtil.setValues(sqlP, fieldsToSave, entity, modelFieldTypeReader);
             SqlJdbcUtil.setPkValues(sqlP, modelEntity, entity, modelFieldTypeReader);
             retVal = sqlP.executeUpdate();

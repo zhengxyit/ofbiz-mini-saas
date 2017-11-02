@@ -32,10 +32,7 @@ import org.ofbiz.base.component.ComponentConfig;
 import org.ofbiz.base.container.Container;
 import org.ofbiz.base.container.ContainerConfig;
 import org.ofbiz.base.container.ContainerException;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.StringUtil;
-import org.ofbiz.base.util.UtilURL;
-import org.ofbiz.base.util.UtilValidate;
+import org.ofbiz.base.util.*;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.DelegatorFactory;
 import org.ofbiz.entity.GenericEntityException;
@@ -205,7 +202,7 @@ public class EntityDataLoadContainer implements Container {
     }
 
     /**
-     * @see org.ofbiz.base.container.Container#start()
+     * @see Container#start()
      */
     @Override
     public boolean start() throws ContainerException {
@@ -272,12 +269,12 @@ public class EntityDataLoadContainer implements Container {
         // store all components
         Collection<ComponentConfig> allComponents = ComponentConfig.getAllComponents();
         for (ComponentConfig config : allComponents) {
-            //Debug.logInfo("- Stored component : " + config.getComponentName(), module);
+            Debug.logInfo("- Stored component : " + config.getComponentName(), module);
             GenericValue componentEntry = baseDelegator.makeValue("Component");
             componentEntry.set("componentName", config.getComponentName());
             componentEntry.set("rootLocation", config.getRootLocation());
             try {
-                GenericValue componentCheck = EntityQuery.use(baseDelegator).from("Component").where("componentName", config.getComponentName()).queryOne();
+                GenericValue componentCheck = baseDelegator.findOne("Component", UtilMisc.toMap("componentName", config.getComponentName()), false);
                 if (UtilValidate.isEmpty(componentCheck)) {
                     componentEntry.create();
                 } else {
@@ -516,7 +513,7 @@ public class EntityDataLoadContainer implements Container {
     }
 
     /**
-     * @see org.ofbiz.base.container.Container#stop()
+     * @see Container#stop()
      */
     @Override
     public void stop() throws ContainerException {

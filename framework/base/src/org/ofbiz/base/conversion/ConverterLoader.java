@@ -27,7 +27,7 @@ public interface ConverterLoader {
      * conversion framework. If the converter extends one of the
      * converter abstract classes, then the converter will register
      * itself when an instance is created. Otherwise, call
-     * {@link org.ofbiz.base.conversion.Converters#registerConverter(Converter)}
+     * {@link Converters#registerConverter(Converter)}
      * with the <code>Converter</code> instance.
      *
      */

@@ -19,7 +19,7 @@ under the License.
 -->
 
 <entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://ofbiz.apache.org/dtds/entitymodel.xsd">
+    xsi:noNamespaceSchemaLocation="../dtd/entitymodel.xsd">
     <!-- ========================================================= -->
     <!-- ======================== Defaults ======================= -->
     <!-- ========================================================= -->
@@ -33,7 +33,6 @@ under the License.
     <!--  - org.ofbiz.entity.audit -->
     <!--  - org.ofbiz.entity.crypto -->
     <!--  - org.ofbiz.entity.sequence -->
-    <!--  - org.ofbiz.entity.tenant -->
     <!-- ========================================================= -->
 
     <entity entity-name="EntityAuditLog" package-name="org.ofbiz.entity.audit" title="Entity Audit Log">
@@ -57,6 +56,45 @@ under the License.
       <field name="seqName" type="id-long-ne"></field>
       <field name="seqId" type="numeric"></field>
       <prim-key field="seqName"/>
+    </entity>
+
+    <!--  org.ofbiz.entity.generic -->
+    <!-- 仅作为存储,状态字段自动同步，二级模型 -->
+    <entity entity-name="GenericStatus" package-name="org.ofbiz.entity.generic" title="Entity status field model" is-tenant="true">
+        <field name="statusId" type="id-ne"><description>primary key</description></field>
+        <field name="entityName" type="short-varchar"><description>实体名称</description></field>
+        <field name="tenant" type="id-ne" />
+        <prim-key field="statusId"/>
+    </entity>
+    <!-- 用户可配置,每条都可以配置一个流程或事件 -->
+    <entity entity-name="GenericStatusItem" package-name="org.ofbiz.entity.generic" title="Entity status item" is-tenant="true">
+        <field name="statusItemId" type="id-ne"><description>primary key</description></field>
+        <field name="statusId" type="id-ne"><description>状态名称</description></field>
+        <field name="statusItemName" type="short-varchar"><description>实体名称</description></field>
+        <field name="tenant" type="id-ne" />
+        <prim-key field="statusItemId"/>
+    </entity>
+    <!-- 实体分类，一级模型设计，每个分类都可以定制结构（一个实体可以有多个分类） -->
+    <entity entity-name="GenericClassify" package-name="org.ofbiz.entity.generic" title="Entity classify" is-tenant="true">
+        <field name="classifyId" type="id-ne"><description>primary key</description></field>
+        <field name="classifyName" type="short-varchar" />
+        <field name="parentId" type="id-ne" ><description>上一级ID</description></field>
+        <field name="path" type="short-varchar" ><description>路径,号隔开</description></field>
+        <field name="grade" type="integer" />
+        <field name="tenant" type="id-ne" />
+        <prim-key field="classifyId"/>
+    </entity>
+    <entity entity-name="GenericClassifyModel" package-name="org.ofbiz.entity.generic" title="Entity classify customize field" is-tenant="true">
+        <field name="genericClassifyModelId" type="id-ne"><description>primary key</description></field>
+        <field name="classifyId" type="id-ne" />
+        <field name="fieldKey" type="id-ne" ><description>自定义字段key值</description></field>
+        <field name="fieldName" type="short-varchar" ><description>自定义字段title值(暂未考虑国际化)</description></field>
+        <field name="fieldType" type="integer" ><description>自定义字段类型0(默认)字符串1数字2字典3日期</description></field>
+        <field name="fieldLength" type="integer" ><description>自定义字段长度</description></field>
+        <field name="fieldDictionary" type="json" ><description>自定义字典</description></field>
+        <field name="fieldDefaultValue" type="short-varchar" ><description>自定义默认值</description></field>
+        <field name="tenant" type="id-ne" />
+        <prim-key field="genericClassifyModelId"/>
     </entity>
 
 </entitymodel>

@@ -18,17 +18,16 @@
  *******************************************************************************/
 package org.ofbiz.webapp.event;
 
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.ServletContext;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.GeneralRuntimeException;
 import org.ofbiz.base.util.ObjectType;
 import org.ofbiz.webapp.control.ConfigXMLReader;
+
+import javax.servlet.ServletContext;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * EventFactory - Event Handler Factory

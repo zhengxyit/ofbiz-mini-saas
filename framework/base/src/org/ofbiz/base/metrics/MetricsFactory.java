@@ -39,7 +39,7 @@ import org.ofbiz.base.util.cache.UtilCache;
 import org.w3c.dom.Element;
 
 /**
- * A {@link org.ofbiz.base.metrics.Metrics} factory.
+ * A {@link Metrics} factory.
  */
 @ThreadSafe
 public final class MetricsFactory {

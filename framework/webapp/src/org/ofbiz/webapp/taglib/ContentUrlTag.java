@@ -18,15 +18,15 @@
  *******************************************************************************/
 package org.ofbiz.webapp.taglib;
 
-import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilProperties;
 import org.ofbiz.base.util.UtilValidate;
-import org.ofbiz.webapp.website.WebSiteWorker;
 import org.ofbiz.entity.GenericValue;
+import org.ofbiz.webapp.website.WebSiteWorker;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * ContentUrlTag - Creates a URL string prepending the content prefix from url.properties

@@ -65,4 +65,6 @@ under the License.
     <field-type-def type="id-long-ne" sql-type="VARCHAR(60)" java-type="String"/>
     <field-type-def type="id-vlong-ne" sql-type="VARCHAR(250)" java-type="String"/>
     <field-type-def type="tel-number" sql-type="VARCHAR(60)" java-type="String"/>
+    <!-- 5.7以上 -->
+    <field-type-def type="json" sql-type="JSON" java-type="org.ofbiz.entity.field.JsonValue"/>
 </fieldtypemodel>

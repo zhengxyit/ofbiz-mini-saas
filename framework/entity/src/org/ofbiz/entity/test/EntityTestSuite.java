@@ -87,7 +87,7 @@ public class EntityTestSuite extends EntityTestCase {
         assertNotNull("TestingType entity model not null", modelEntity);
         ModelField modelField = modelEntity.getField("description");
         assertNotNull("TestingType.description field model not null", modelField);
-        modelField = ModelField.create(modelEntity, null, "newDesc", modelField.getType(), "NEW_DESC", null, null, false, false, false, false, false,null, null);
+        modelField = ModelField.create(modelEntity, null, "newDesc", modelField.getType(), "NEW_DESC", null, null, false, false, false, false, false, false, false, null, null);
         modelEntity.addField(modelField);
         modelField = modelEntity.getField("newDesc");
         assertNotNull("TestingType.newDesc field model not null", modelField);
@@ -95,7 +95,7 @@ public class EntityTestSuite extends EntityTestCase {
         modelField = modelEntity.getField("newDesc");
         assertNull("TestingType.newDesc field model is null", modelField);
     }
-    
+
     /*
      * Tests storing values with the delegator's .create, .makeValue, and .storeAll methods
      */
@@ -115,10 +115,10 @@ public class EntityTestSuite extends EntityTestCase {
 
         // finds a List of newly created values.  the second parameter specifies the fields to order results by.
         List<GenericValue> newlyCreatedValues = EntityQuery.use(delegator)
-                                                           .from("TestingType")
-                                                           .where(EntityCondition.makeCondition("testingTypeId", EntityOperator.LIKE, "TEST-MAKE-%"))
-                                                           .orderBy("testingTypeId")
-                                                           .queryList();
+                .from("TestingType")
+                .where(EntityCondition.makeCondition("testingTypeId", EntityOperator.LIKE, "TEST-MAKE-%"))
+                .orderBy("testingTypeId")
+                .queryList();
         assertEquals("4 TestingTypes(for make) found", 4, newlyCreatedValues.size());
     }
 
@@ -221,7 +221,7 @@ public class EntityTestSuite extends EntityTestCase {
         int qtyChanged = delegator.storeByCondition("TestingType", UtilMisc.toMap("description", "New Testing Type #Cache-0"), storeByCondition);
         assertEquals("Delegator.storeByCondition updated one value", 1, qtyChanged);
         testValue = EntityQuery.use(delegator).from("TestingType").where("testingTypeId", "TEST-CACHE-1").cache(true).queryFirst();
-        
+
         assertEquals("Retrieved from cache value has the correct description", "New Testing Type #Cache-0", testValue.getString("description"));
         // Test removeByCondition updates the cache
         qtyChanged = delegator.removeByCondition("TestingType", storeByCondition);
@@ -235,17 +235,17 @@ public class EntityTestSuite extends EntityTestCase {
         assertEquals("Retrieved from cache value is null", null, testValue);
         // Test entity condition cache
         List<GenericValue> testList = EntityQuery.use(delegator)
-                                                 .from("TestingType")
-                                                 .where(EntityCondition.makeCondition("description", EntityOperator.EQUALS, "Testing Type #Cache-2"))
-                                                 .cache(true)
-                                                 .queryList();
+                .from("TestingType")
+                .where(EntityCondition.makeCondition("description", EntityOperator.EQUALS, "Testing Type #Cache-2"))
+                .cache(true)
+                .queryList();
         assertEquals("Delegator findList returned no values", 0, testList.size());
         delegator.create("TestingType", "testingTypeId", "TEST-CACHE-2", "description", "Testing Type #Cache-2");
         testList = EntityQuery.use(delegator)
-                              .from("TestingType")
-                              .where(EntityCondition.makeCondition("description", EntityOperator.EQUALS, "Testing Type #Cache-2"))
-                              .cache(true)
-                              .queryList();
+                .from("TestingType")
+                .where(EntityCondition.makeCondition("description", EntityOperator.EQUALS, "Testing Type #Cache-2"))
+                .cache(true)
+                .queryList();
         assertEquals("Delegator findList returned one value", 1, testList.size());
         testValue = testList.get(0);
         assertEquals("Retrieved from cache value has the correct description", "Testing Type #Cache-2", testValue.getString("description"));
@@ -265,29 +265,29 @@ public class EntityTestSuite extends EntityTestCase {
         testValue.put("testingTypeId", "TEST-CACHE-3");
         testValue.create();
         testList = EntityQuery.use(delegator)
-                              .from("TestingType")
-                              .where(EntityCondition.makeCondition("description", EntityOperator.EQUALS, "Testing Type #Cache-2"))
-                              .cache(true)
-                              .queryList();
+                .from("TestingType")
+                .where(EntityCondition.makeCondition("description", EntityOperator.EQUALS, "Testing Type #Cache-2"))
+                .cache(true)
+                .queryList();
         assertEquals("Delegator findList returned two values", 2, testList.size());
         // Test entity value update operation updates the cache
         testValue.put("description", "New Testing Type #Cache-3");
         testValue.store();
         testList = EntityQuery.use(delegator)
-                              .from("TestingType")
-                              .where(EntityCondition.makeCondition("description", EntityOperator.EQUALS, "Testing Type #Cache-2"))
-                              .cache(true)
-                              .queryList();
+                .from("TestingType")
+                .where(EntityCondition.makeCondition("description", EntityOperator.EQUALS, "Testing Type #Cache-2"))
+                .cache(true)
+                .queryList();
         assertEquals("Delegator findList returned one value", 1, testList.size());
         // Test entity value remove operation updates the cache
         testValue = testList.get(0);
         testValue = (GenericValue) testValue.clone();
         testValue.remove();
         testList = EntityQuery.use(delegator)
-                              .from("TestingType")
-                              .where(EntityCondition.makeCondition("description", EntityOperator.EQUALS, "Testing Type #Cache-2"))
-                              .cache(true)
-                              .queryList();
+                .from("TestingType")
+                .where(EntityCondition.makeCondition("description", EntityOperator.EQUALS, "Testing Type #Cache-2"))
+                .cache(true)
+                .queryList();
         assertEquals("Delegator findList returned empty list", 0, testList.size());
         // Test view entities in the pk cache - updating an entity should clear pk caches for all view entities containing that entity.
         testValue = EntityQuery.use(delegator).from("TestingSubtype").where("testingTypeId", "TEST-CACHE-3").cache(true).queryOne();
@@ -335,15 +335,15 @@ public class EntityTestSuite extends EntityTestCase {
 
         // create the root
         GenericValue root = delegator.create("TestingNode",
-                        "testingNodeId", delegator.getNextSeqId("TestingNode"),
-                        "primaryParentNodeId", GenericEntity.NULL_FIELD,
-                        "description", descriptionPrefix + ":0:root");
+                "testingNodeId", delegator.getNextSeqId("TestingNode"),
+                "primaryParentNodeId", GenericEntity.NULL_FIELD,
+                "description", descriptionPrefix + ":0:root");
         int level1;
         for (level1 = 0; level1 < _level1max; level1++) {
             String nextSeqId = delegator.getNextSeqId("TestingNode");
             GenericValue v = delegator.create("TestingNode", "testingNodeId", nextSeqId,
-                                    "primaryParentNodeId", root.get("testingNodeId"),
-                                    "description", descriptionPrefix + ":1:node-level #1");
+                    "primaryParentNodeId", root.get("testingNodeId"),
+                    "description", descriptionPrefix + ":1:node-level #1");
             assertNotNull(v);
         }
         return level1 + 1;
@@ -357,9 +357,9 @@ public class EntityTestSuite extends EntityTestCase {
         delegator.removeByCondition("TestingNode", EntityCondition.makeCondition("description", EntityOperator.LIKE, "create:"));
         long created = flushAndRecreateTree("create");
         long newlyStored = EntityQuery.use(delegator)
-                                      .from("TestingNode")
-                                      .where(EntityCondition.makeCondition("description", EntityOperator.LIKE, "create:%"))
-                                      .queryCount();
+                .from("TestingNode")
+                .where(EntityCondition.makeCondition("description", EntityOperator.LIKE, "create:%"))
+                .queryCount();
         assertEquals("Created/Stored Nodes", created, newlyStored);
     }
 
@@ -373,18 +373,18 @@ public class EntityTestSuite extends EntityTestCase {
         delegator.create("TestingType", "testingTypeId", "TEST-TREE-1", "description", "Testing Type #Tree-1");
         // get the level1 nodes
         List<GenericValue> nodeLevel1 = EntityQuery.use(delegator)
-                                                   .from("TestingNode")
-                                                   .where(EntityCondition.makeCondition("primaryParentNodeId", EntityOperator.NOT_EQUAL, GenericEntity.NULL_FIELD))
-                                                   .queryList();
+                .from("TestingNode")
+                .where(EntityCondition.makeCondition("primaryParentNodeId", EntityOperator.NOT_EQUAL, GenericEntity.NULL_FIELD))
+                .queryList();
 
         List<GenericValue> newValues = new LinkedList<GenericValue>();
         Timestamp now = UtilDateTime.nowTimestamp();
 
-        for (GenericValue node: nodeLevel1) {
+        for (GenericValue node : nodeLevel1) {
             GenericValue testing = delegator.makeValue("Testing",
-                            "testingId", delegator.getNextSeqId("Testing"),
-                            "testingTypeId", "TEST-TREE-1"
-                   );
+                    "testingId", delegator.getNextSeqId("Testing"),
+                    "testingTypeId", "TEST-TREE-1"
+            );
             testing.put("testingName", "leaf-#" + node.getString("testingNodeId"));
             testing.put("description", "level1 leaf");
             testing.put("comments", "No-comments");
@@ -393,9 +393,9 @@ public class EntityTestSuite extends EntityTestCase {
 
             newValues.add(testing);
             GenericValue member = delegator.makeValue("TestingNodeMember",
-                            "testingNodeId", node.get("testingNodeId"),
-                            "testingId", testing.get("testingId")
-                   );
+                    "testingNodeId", node.get("testingNodeId"),
+                    "testingId", testing.get("testingId")
+            );
 
             member.put("fromDate", now);
             member.put("thruDate", UtilDateTime.getNextDayStart(now));
@@ -416,17 +416,17 @@ public class EntityTestSuite extends EntityTestCase {
         delegator.create("TestingType", "testingTypeId", typeId, "description", typeDescription);
         int i = 0;
         Timestamp now = UtilDateTime.nowTimestamp();
-        
-        for (GenericValue node: EntityQuery.use(delegator)
-                                           .from("TestingNode")
-                                           .where(EntityCondition.makeCondition("description", EntityOperator.LIKE, descriptionPrefix + "%"))
-                                           .queryList()
-        ) {
+
+        for (GenericValue node : EntityQuery.use(delegator)
+                .from("TestingNode")
+                .where(EntityCondition.makeCondition("description", EntityOperator.LIKE, descriptionPrefix + "%"))
+                .queryList()
+                ) {
             if (i % 2 == 0) {
                 GenericValue testing = delegator.create("Testing", "testingId", descriptionPrefix + ":" + node.get("testingNodeId"), "testingTypeId", typeId, "description", node.get("description"));
                 GenericValue member = delegator.makeValue("TestingNodeMember",
-                    "testingNodeId", node.get("testingNodeId"),
-                    "testingId", testing.get("testingId")
+                        "testingNodeId", node.get("testingNodeId"),
+                        "testingId", testing.get("testingId")
                 );
 
                 member.put("fromDate", now);
@@ -446,17 +446,17 @@ public class EntityTestSuite extends EntityTestCase {
         createNodeMembers("TEST-COUNT-VIEW", "Testing Type #Count", "count-views");
 
         EntityCondition isNodeWithMember = EntityCondition.makeCondition(
-            EntityCondition.makeCondition("testingId", EntityOperator.NOT_EQUAL, GenericEntity.NULL_FIELD),
-            EntityOperator.AND,
-            EntityCondition.makeCondition("description", EntityOperator.LIKE, "count-views:%")
+                EntityCondition.makeCondition("testingId", EntityOperator.NOT_EQUAL, GenericEntity.NULL_FIELD),
+                EntityOperator.AND,
+                EntityCondition.makeCondition("description", EntityOperator.LIKE, "count-views:%")
         );
         List<GenericValue> nodeWithMembers = EntityQuery.use(delegator).from("TestingNodeAndMember").where(isNodeWithMember).queryList();
 
-        for (GenericValue v: nodeWithMembers) {
+        for (GenericValue v : nodeWithMembers) {
             Map<String, Object> fields = v.getAllFields();
             Debug.logInfo("--------------------------", module);
             //      For values of a map
-            for (Map.Entry<String, Object> entry: fields.entrySet()) {
+            for (Map.Entry<String, Object> entry : fields.entrySet()) {
                 String field = entry.getKey();
                 Object value = entry.getValue();
                 Debug.logInfo(field.toString() + " = " + ((value == null) ? "[null]" : value), module);
@@ -472,10 +472,10 @@ public class EntityTestSuite extends EntityTestCase {
     public void testFindDistinct() throws Exception {
         delegator.removeByCondition("Testing", EntityCondition.makeCondition("testingTypeId", EntityOperator.LIKE, "TEST-DISTINCT-%"));
         List<GenericValue> testingDistinctList = EntityQuery.use(delegator)
-                                                            .from("Testing")
-                                                            .where(EntityCondition.makeCondition("testingTypeId", EntityOperator.LIKE, "TEST-DISTINCT-%"))
-                                                            .queryList();
-        
+                .from("Testing")
+                .where(EntityCondition.makeCondition("testingTypeId", EntityOperator.LIKE, "TEST-DISTINCT-%"))
+                .queryList();
+
         assertEquals("No existing Testing entities for distinct", 0, testingDistinctList.size());
         delegator.removeByCondition("TestingType", EntityCondition.makeCondition("testingTypeId", EntityOperator.LIKE, "TEST-DISTINCT-%"));
         GenericValue testValue = EntityQuery.use(delegator).from("TestingType").where("testingTypeId", "TEST-DISTINCT-1").cache(true).queryOne();
@@ -490,12 +490,12 @@ public class EntityTestSuite extends EntityTestCase {
         delegator.create("Testing", "testingId", "TEST-DISTINCT-4", "testingTypeId", "TEST-DISTINCT-1", "testingSize", Long.valueOf(11), "comments", "Some-comments");
 
         List<GenericValue> testingSize10 = EntityQuery.use(delegator)
-                                                      .select("testingSize", "comments")
-                                                      .from("Testing")
-                                                      .where("testingSize", Long.valueOf(10), "comments", "No-comments")
-                                                      .distinct()
-                                                      .cache()
-                                                      .queryList();
+                .select("testingSize", "comments")
+                .from("Testing")
+                .where("testingSize", Long.valueOf(10), "comments", "No-comments")
+                .distinct()
+                .cache()
+                .queryList();
         Debug.logInfo("testingSize10 is " + testingSize10.size(), module);
 
         assertEquals("There should only be 1 result found by findDistinct()", 1, testingSize10.size());
@@ -506,12 +506,12 @@ public class EntityTestSuite extends EntityTestCase {
      */
     public void testNotLike() throws Exception {
         List<GenericValue> nodes = EntityQuery.use(delegator)
-                                              .from("TestingNode")
-                                              .where(EntityCondition.makeCondition("description", EntityOperator.NOT_LIKE, "root%"))
-                                              .queryList();
+                .from("TestingNode")
+                .where(EntityCondition.makeCondition("description", EntityOperator.NOT_LIKE, "root%"))
+                .queryList();
         assertNotNull("Found nodes", nodes);
 
-        for (GenericValue product: nodes) {
+        for (GenericValue product : nodes) {
             String nodeId = product.getString("description");
             Debug.logInfo("Testing name - " + nodeId, module);
             assertFalse("No nodes starting w/ root", nodeId.startsWith("root"));
@@ -582,28 +582,28 @@ public class EntityTestSuite extends EntityTestCase {
         // Find the testing entities tru the node member and build a list of them
         //
         List<GenericValue> values = EntityQuery.use(delegator)
-                                               .from("TestingNodeMember")
-                                               .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "rnmat:%"))
-                                               .queryList();
+                .from("TestingNodeMember")
+                .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "rnmat:%"))
+                .queryList();
 
         ArrayList<GenericValue> testings = new ArrayList<GenericValue>();
 
-        for (GenericValue nodeMember: values) {
+        for (GenericValue nodeMember : values) {
             testings.add(nodeMember.getRelatedOne("Testing", false));
         }
         // and remove the nodeMember afterwards
         delegator.removeAll(values);
         values = EntityQuery.use(delegator)
-                            .from("TestingNodeMember")
-                            .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "rnmat:%"))
-                            .queryList();
+                .from("TestingNodeMember")
+                .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "rnmat:%"))
+                .queryList();
         assertEquals("No more Node Member entities", 0, values.size());
 
         delegator.removeAll(testings);
         values = EntityQuery.use(delegator)
-                            .from("Testing")
-                            .where(EntityCondition.makeCondition("description", EntityOperator.LIKE, "rnmat:%"))
-                            .queryList();
+                .from("Testing")
+                .where(EntityCondition.makeCondition("description", EntityOperator.LIKE, "rnmat:%"))
+                .queryList();
         assertEquals("No more Testing entities", 0, values.size());
     }
 
@@ -645,13 +645,13 @@ public class EntityTestSuite extends EntityTestCase {
         // delete them their primary key
         //
         EntityCondition isRoot = EntityCondition.makeCondition(
-            EntityCondition.makeCondition("description", EntityOperator.LIKE, "remove-by-pk:%"),
-            EntityOperator.AND,
-            EntityCondition.makeCondition("primaryParentNodeId", EntityOperator.NOT_EQUAL, GenericEntity.NULL_FIELD)
+                EntityCondition.makeCondition("description", EntityOperator.LIKE, "remove-by-pk:%"),
+                EntityOperator.AND,
+                EntityCondition.makeCondition("primaryParentNodeId", EntityOperator.NOT_EQUAL, GenericEntity.NULL_FIELD)
         );
         List<GenericValue> rootValues = EntityQuery.use(delegator).select("testingNodeId").from("TestingNode").where(isRoot).queryList();
 
-        for (GenericValue value: rootValues) {
+        for (GenericValue value : rootValues) {
             GenericPK pk = value.getPrimaryKey();
             int del = delegator.removeByPrimaryKey(pk);
             assertEquals("Removing Root by primary key", 1, del);
@@ -695,17 +695,17 @@ public class EntityTestSuite extends EntityTestCase {
             }
             delegator.storeAll(newValues);
             List<GenericValue> newlyCreatedValues = EntityQuery.use(delegator)
-                                                               .from("Testing")
-                                                               .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T1-%"))
-                                                               .orderBy("testingId")
-                                                               .queryList();
+                    .from("Testing")
+                    .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T1-%"))
+                    .orderBy("testingId")
+                    .queryList();
             assertEquals("Test to create " + TEST_COUNT + " and store all at once", TEST_COUNT, newlyCreatedValues.size());
         } finally {
             List<GenericValue> newlyCreatedValues = EntityQuery.use(delegator)
-                                                               .from("Testing")
-                                                               .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T1-%"))
-                                                               .orderBy("testingId")
-                                                               .queryList();
+                    .from("Testing")
+                    .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T1-%"))
+                    .orderBy("testingId")
+                    .queryList();
             delegator.removeAll(newlyCreatedValues);
         }
     }
@@ -719,17 +719,17 @@ public class EntityTestSuite extends EntityTestCase {
                 delegator.create(delegator.makeValue("Testing", "testingId", getTestId("T2-", i)));
             }
             List<GenericValue> newlyCreatedValues = EntityQuery.use(delegator)
-                                                               .from("Testing")
-                                                               .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T2-%"))
-                                                               .orderBy("testingId")
-                                                               .queryList();
+                    .from("Testing")
+                    .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T2-%"))
+                    .orderBy("testingId")
+                    .queryList();
             assertEquals("Test to create " + TEST_COUNT + " and store one at a time: ", TEST_COUNT, newlyCreatedValues.size());
         } finally {
             List<GenericValue> newlyCreatedValues = EntityQuery.use(delegator)
-                                                               .from("Testing")
-                                                               .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T2-%"))
-                                                               .orderBy("testingId")
-                                                               .queryList();
+                    .from("Testing")
+                    .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T2-%"))
+                    .orderBy("testingId")
+                    .queryList();
             delegator.removeAll(newlyCreatedValues);
         }
     }
@@ -745,19 +745,19 @@ public class EntityTestSuite extends EntityTestCase {
             }
             delegator.storeAll(newValues);
             List<GenericValue> newlyCreatedValues = EntityQuery.use(delegator)
-                                                               .from("Testing")
-                                                               .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T3-%"))
-                                                               .orderBy("testingId")
-                                                               .queryList();
+                    .from("Testing")
+                    .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T3-%"))
+                    .orderBy("testingId")
+                    .queryList();
             assertEquals("Test to create " + TEST_COUNT + " and store all at once", TEST_COUNT, newlyCreatedValues.size());
             boolean beganTransaction = false;
             try {
                 beganTransaction = TransactionUtil.begin();
                 EntityListIterator iterator = EntityQuery.use(delegator)
-                                                         .from("Testing")
-                                                         .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T3-%"))
-                                                         .orderBy("testingId")
-                                                         .queryIterator();
+                        .from("Testing")
+                        .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T3-%"))
+                        .orderBy("testingId")
+                        .queryIterator();
                 assertNotNull("Test if EntityListIterator was created: ", iterator);
 
                 int i = 0;
@@ -767,7 +767,7 @@ public class EntityTestSuite extends EntityTestCase {
                     item = iterator.next();
                     i++;
                 }
-                assertEquals("Test if EntitlyListIterator iterates exactly " + TEST_COUNT + " times: " , TEST_COUNT, i);
+                assertEquals("Test if EntitlyListIterator iterates exactly " + TEST_COUNT + " times: ", TEST_COUNT, i);
                 iterator.close();
             } catch (GenericEntityException e) {
                 TransactionUtil.rollback(beganTransaction, "GenericEntityException occurred while iterating with EntityListIterator", e);
@@ -778,9 +778,9 @@ public class EntityTestSuite extends EntityTestCase {
             }
         } finally {
             List<GenericValue> entitiesToRemove = EntityQuery.use(delegator)
-                                                             .from("Testing")
-                                                             .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T3-%"))
-                                                             .queryList();
+                    .from("Testing")
+                    .where(EntityCondition.makeCondition("testingId", EntityOperator.LIKE, "T3-%"))
+                    .queryList();
             delegator.removeAll(entitiesToRemove);
         }
     }
@@ -806,7 +806,7 @@ public class EntityTestSuite extends EntityTestCase {
             GenericValue testValue = delegator.makeValue("Testing", "testingId", "timeout-test");
             boolean transBegin = TransactionUtil.begin(10); // timeout set to 10 seconds
             delegator.create(testValue);
-            Thread.sleep(20*1000);
+            Thread.sleep(20 * 1000);
             TransactionUtil.commit(transBegin);
         } catch (GenericTransactionException e) {
             caught = e;
@@ -825,7 +825,7 @@ public class EntityTestSuite extends EntityTestCase {
             boolean transBegin = TransactionUtil.begin();
             TransactionUtil.setTransactionTimeout(20); // now set timeout to 20 seconds
             delegator.create(testValue);
-            Thread.sleep(10*1000);
+            Thread.sleep(10 * 1000);
             TransactionUtil.commit(transBegin);
         } finally {
             delegator.removeByAnd("Testing", "testingId", "timeout-test");
@@ -930,16 +930,16 @@ public class EntityTestSuite extends EntityTestCase {
     private String getTestId(String strTestBase, int iNum) {
         StringBuilder strBufTemp = new StringBuilder(strTestBase);
         if (iNum < 10000) {
-           strBufTemp.append("0");
+            strBufTemp.append("0");
         }
         if (iNum < 1000) {
-           strBufTemp.append("0");
+            strBufTemp.append("0");
         }
         if (iNum < 100) {
-           strBufTemp.append("0");
+            strBufTemp.append("0");
         }
         if (iNum < 10) {
-           strBufTemp.append("0");
+            strBufTemp.append("0");
         }
         strBufTemp.append(iNum);
         return strBufTemp.toString();
@@ -1041,13 +1041,13 @@ public class EntityTestSuite extends EntityTestCase {
      * Tests EntitySaxReader, verification loading data with tag create, create-update, create-replace, delete 
      */
     public void testEntitySaxReaderCreation() throws Exception {
-        String xmlContentLoad = 
+        String xmlContentLoad =
                 "<TestingType testingTypeId=\"JUNIT-TEST\" description=\"junit test\"/>" +
-                "<create>" +
-                "    <TestingType testingTypeId=\"JUNIT-TEST2\" description=\"junit test\"/>" +
-                "    <Testing testingId=\"T1\" testingTypeId=\"JUNIT-TEST\" testingName=\"First test\" testingSize=\"10\" testingDate=\"2010-01-01 00:00:00\"/>" +
-                "</create>" +
-                "<Testing testingId=\"T2\" testingTypeId=\"JUNIT-TEST2\" testingName=\"Second test\" testingSize=\"20\" testingDate=\"2010-02-01 00:00:00\"/>";
+                        "<create>" +
+                        "    <TestingType testingTypeId=\"JUNIT-TEST2\" description=\"junit test\"/>" +
+                        "    <Testing testingId=\"T1\" testingTypeId=\"JUNIT-TEST\" testingName=\"First test\" testingSize=\"10\" testingDate=\"2010-01-01 00:00:00\"/>" +
+                        "</create>" +
+                        "<Testing testingId=\"T2\" testingTypeId=\"JUNIT-TEST2\" testingName=\"Second test\" testingSize=\"20\" testingDate=\"2010-02-01 00:00:00\"/>";
         EntitySaxReader reader = new EntitySaxReader(delegator);
         long numberLoaded = reader.parse(xmlContentLoad);
         assertEquals("Create Entity loaded ", 4, numberLoaded);
@@ -1069,13 +1069,13 @@ public class EntityTestSuite extends EntityTestCase {
     public void testEntitySaxReaderCreateSkip() throws Exception {
         String xmlContentLoad =
                 "<TestingType testingTypeId=\"reader-create-skip\" description=\"reader create skip\"/>" +
-                "<Testing testingId=\"reader-create-skip\" testingTypeId=\"reader-create-skip\" testingName=\"reader create skip\" testingSize=\"10\" testingDate=\"2010-01-01 00:00:00\"/>";
+                        "<Testing testingId=\"reader-create-skip\" testingTypeId=\"reader-create-skip\" testingName=\"reader create skip\" testingSize=\"10\" testingDate=\"2010-01-01 00:00:00\"/>";
         EntitySaxReader reader = new EntitySaxReader(delegator);
         long numberLoaded = reader.parse(xmlContentLoad);
         xmlContentLoad =
                 "<create>" +
-                "    <Testing testingId=\"reader-create-skip\" testingName=\"reader create skip updated\" testingSize=\"20\" testingDate=\"2012-02-02 02:02:02\"/>" +
-                "</create>";
+                        "    <Testing testingId=\"reader-create-skip\" testingName=\"reader create skip updated\" testingSize=\"20\" testingDate=\"2012-02-02 02:02:02\"/>" +
+                        "</create>";
         reader = new EntitySaxReader(delegator);
         numberLoaded += reader.parse(xmlContentLoad);
         assertEquals("Create Skip Entity loaded ", 3, numberLoaded);
@@ -1090,12 +1090,12 @@ public class EntityTestSuite extends EntityTestCase {
     public void testEntitySaxReaderUpdate() throws Exception {
         String xmlContentLoad =
                 "<TestingType testingTypeId=\"create-update\" description=\"create update\"/>" +
-                "<TestingType testingTypeId=\"create-updated\" description=\"create update updated\"/>" +
-                "<Testing testingId=\"create-update-T3\" testingTypeId=\"create-update\" testingName=\"Test 3\" testingSize=\"10\" testingDate=\"2010-01-01 00:00:00\"/>" +
-                "<create-update>" +
-                "    <Testing testingId=\"create-update-T1\" testingTypeId=\"create-update\" testingName=\"First test update\" testingSize=\"20\" testingDate=\"2010-01-01 00:00:00\"/>" +
-                "    <Testing testingId=\"create-update-T3\" testingTypeId=\"create-updated\" testingName=\"Third test\" testingSize=\"30\" testingDate=\"2010-03-01 00:00:00\"/>" +
-                "</create-update>";
+                        "<TestingType testingTypeId=\"create-updated\" description=\"create update updated\"/>" +
+                        "<Testing testingId=\"create-update-T3\" testingTypeId=\"create-update\" testingName=\"Test 3\" testingSize=\"10\" testingDate=\"2010-01-01 00:00:00\"/>" +
+                        "<create-update>" +
+                        "    <Testing testingId=\"create-update-T1\" testingTypeId=\"create-update\" testingName=\"First test update\" testingSize=\"20\" testingDate=\"2010-01-01 00:00:00\"/>" +
+                        "    <Testing testingId=\"create-update-T3\" testingTypeId=\"create-updated\" testingName=\"Third test\" testingSize=\"30\" testingDate=\"2010-03-01 00:00:00\"/>" +
+                        "</create-update>";
         EntitySaxReader reader = new EntitySaxReader(delegator);
         long numberLoaded = reader.parse(xmlContentLoad);
         assertEquals("Update Entity loaded ", 5, numberLoaded);
@@ -1117,11 +1117,11 @@ public class EntityTestSuite extends EntityTestCase {
     public void testEntitySaxReaderReplace() throws Exception {
         String xmlContentLoad =
                 "<TestingType testingTypeId=\"create-replace\" description=\"reader create skip\"/>" +
-                "<Testing testingTypeId=\"create-replace\" testingId=\"create-replace-T1\" testingName=\"First test\" testingSize=\"10\" testingDate=\"2010-01-01 00:00:00\"/>" +
-                "<create-replace>" +
-                "    <Testing testingTypeId=\"create-replace\" testingId=\"create-replace-T1\" testingName=\"First test replace\" />" +
-                "</create-replace>" +
-                "<Testing testingTypeId=\"create-replace\" testingId=\"create-replace-T2\" testingName=\"Second test update\" testingSize=\"20\" testingDate=\"2010-02-01 00:00:00\"/>";
+                        "<Testing testingTypeId=\"create-replace\" testingId=\"create-replace-T1\" testingName=\"First test\" testingSize=\"10\" testingDate=\"2010-01-01 00:00:00\"/>" +
+                        "<create-replace>" +
+                        "    <Testing testingTypeId=\"create-replace\" testingId=\"create-replace-T1\" testingName=\"First test replace\" />" +
+                        "</create-replace>" +
+                        "<Testing testingTypeId=\"create-replace\" testingId=\"create-replace-T2\" testingName=\"Second test update\" testingSize=\"20\" testingDate=\"2010-02-01 00:00:00\"/>";
         EntitySaxReader reader = new EntitySaxReader(delegator);
         long numberLoaded = reader.parse(xmlContentLoad);
         assertEquals("Replace Entity loaded ", 4, numberLoaded);
@@ -1141,8 +1141,8 @@ public class EntityTestSuite extends EntityTestCase {
     }
 
     public void testEntitySaxReaderDelete() throws Exception {
-        String xmlContentLoad = 
-                        "<delete>" +
+        String xmlContentLoad =
+                "<delete>" +
                         "    <Testing testingId=\"T1\"/>" +
                         "    <Testing testingId=\"T2\"/>" +
                         "    <Testing testingId=\"T3\"/>" +
@@ -1166,8 +1166,8 @@ public class EntityTestSuite extends EntityTestCase {
 
     public void testSequenceValueItem() {
         SequenceUtil sequencer = new SequenceUtil(delegator.getGroupHelperInfo(delegator.getEntityGroupName("SequenceValueItem")),
-                                                  delegator.getModelEntity("SequenceValueItem"),
-                                                  "seqName", "seqId");
+                delegator.getModelEntity("SequenceValueItem"),
+                "seqName", "seqId");
         UUID id = UUID.randomUUID();
         String sequenceName = "BogusSequence" + id.toString();
         for (int i = 10000; i <= 10015; i++) {
@@ -1181,8 +1181,8 @@ public class EntityTestSuite extends EntityTestCase {
 
     public void testSequenceValueItemWithConcurrentThreads() {
         final SequenceUtil sequencer = new SequenceUtil(delegator.getGroupHelperInfo(delegator.getEntityGroupName("SequenceValueItem")),
-                                                  delegator.getModelEntity("SequenceValueItem"),
-                                                  "seqName", "seqId");
+                delegator.getModelEntity("SequenceValueItem"),
+                "seqName", "seqId");
         UUID id = UUID.randomUUID();
         final String sequenceName = "BogusSequence" + id.toString();
         final ConcurrentMap<Long, Long> seqIds = new ConcurrentHashMap<Long, Long>();
@@ -1191,25 +1191,25 @@ public class EntityTestSuite extends EntityTestCase {
 
         List<Future<Void>> futures = new ArrayList<Future<Void>>();
         Callable<Void> getSeqIdTask = new Callable<Void>() {
-                    public Void call() throws Exception {
-                        Long seqId = sequencer.getNextSeqId(sequenceName, 1, null);
-                        if (seqId == null) {
-                            nullSeqIdReturned.set(true);
-                            return null;
-                        }
-                        Long existingValue = seqIds.putIfAbsent(seqId, seqId);
-                        if (existingValue != null) {
-                            duplicateFound.set(true);
-                        }
-                        return null;
-                    }
-                };
+            public Void call() throws Exception {
+                Long seqId = sequencer.getNextSeqId(sequenceName, 1, null);
+                if (seqId == null) {
+                    nullSeqIdReturned.set(true);
+                    return null;
+                }
+                Long existingValue = seqIds.putIfAbsent(seqId, seqId);
+                if (existingValue != null) {
+                    duplicateFound.set(true);
+                }
+                return null;
+            }
+        };
         Callable<Void> refreshTask = new Callable<Void>() {
-                            public Void call() throws Exception {
-                                sequencer.forceBankRefresh(sequenceName, 1);
-                                return null;
-                            }
-                        };
+            public Void call() throws Exception {
+                sequencer.forceBankRefresh(sequenceName, 1);
+                return null;
+            }
+        };
         double probabilityOfRefresh = 0.1;
         for (int i = 1; i <= 1000; i++) {
             Callable<Void> randomTask = Math.random() < probabilityOfRefresh ? refreshTask : getSeqIdTask;
@@ -1252,7 +1252,8 @@ public class EntityTestSuite extends EntityTestCase {
         } catch (Exception e) {
             try {
                 TransactionUtil.rollback(transactionStarted, "", e);
-            } catch (Exception e2) {}
+            } catch (Exception e2) {
+            }
             noErrors = false;
         }
         long endTime = System.currentTimeMillis();
@@ -1272,7 +1273,8 @@ public class EntityTestSuite extends EntityTestCase {
         } catch (Exception e) {
             try {
                 TransactionUtil.rollback(transactionStarted, "", e);
-            } catch (Exception e2) {}
+            } catch (Exception e2) {
+            }
             noErrors = false;
         }
         endTime = System.currentTimeMillis();

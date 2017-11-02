@@ -18,14 +18,14 @@
  */
 package org.ofbiz.service.test;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.ofbiz.base.util.UtilDateTime;
 import org.ofbiz.base.util.UtilGenerics;
 import org.ofbiz.entity.GenericValue;
 import org.ofbiz.service.testtools.OFBizTestCase;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ServiceSOAPTests extends OFBizTestCase {
 

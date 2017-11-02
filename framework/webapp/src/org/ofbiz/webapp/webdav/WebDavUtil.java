@@ -18,6 +18,12 @@
  *******************************************************************************/
 package org.ofbiz.webapp.webdav;
 
+import org.ofbiz.base.util.*;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -26,17 +32,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.ofbiz.base.util.Base64;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.UtilProperties;
-import org.ofbiz.base.util.UtilValidate;
-import org.ofbiz.base.util.UtilXml;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 /** Utility methods needed to implement a WebDAV servlet. */
 public class WebDavUtil {

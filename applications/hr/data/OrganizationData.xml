@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entity-engine-xml>
+    <!-- 员工信息 -->
+    <HrEmployee employeeId="1" employeeName="张三" mobile="18612345678" tenant="tech" isPc="Y"/>
+
+</entity-engine-xml>

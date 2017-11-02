@@ -18,14 +18,14 @@
  *******************************************************************************/
 package org.ofbiz.webapp.website;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.util.EntityQuery;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
 
 /**
  * WebSiteWorker - Worker class for web site related functionality

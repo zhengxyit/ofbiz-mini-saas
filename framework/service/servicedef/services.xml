@@ -26,7 +26,7 @@ under the License.
 
     <!-- Service Engine Services -->
     <service name="purgeOldJobs" engine="java"
-            location="org.ofbiz.service.ServiceUtil" invoke="purgeOldJobs" auth="true" use-transaction="false" semaphore="wait">
+             location="org.ofbiz.service.ServiceUtil" invoke="purgeOldJobs" auth="true" use-transaction="false" semaphore="wait">
         <description>Cleans out old jobs which have been around longer then what is defined in serviceengine.xml</description>
         <required-permissions join-type="AND">
             <check-permission permission="SERVICE_INVOKE_ANY"/>
@@ -35,7 +35,7 @@ under the License.
     </service>
 
     <service name="cancelScheduledJob" engine="java"
-            location="org.ofbiz.service.ServiceUtil" invoke="cancelJob" auth="true">
+             location="org.ofbiz.service.ServiceUtil" invoke="cancelJob" auth="true">
         <description>Cancels a schedule job</description>
         <required-permissions join-type="AND">
             <check-permission permission="SERVICE_INVOKE_ANY"/>
@@ -46,7 +46,7 @@ under the License.
     </service>
 
     <service name="cancelJobRetries" engine="java"
-            location="org.ofbiz.service.ServiceUtil" invoke="cancelJobRetries" auth="true">
+             location="org.ofbiz.service.ServiceUtil" invoke="cancelJobRetries" auth="true">
         <description>Cancels a job retry flag</description>
         <required-permissions join-type="AND">
             <check-permission permission="SERVICE_INVOKE_ANY"/>
@@ -55,7 +55,7 @@ under the License.
     </service>
 
     <service name="resetScheduledJob" engine="java"
-            location="org.ofbiz.service.ServiceUtil" invoke="resetJob" auth="true">
+             location="org.ofbiz.service.ServiceUtil" invoke="resetJob" auth="true">
         <description>Resets a stale job so it can be re-run</description>
         <required-permissions join-type="AND">
             <check-permission permission="SERVICE_INVOKE_ANY"/>
@@ -123,7 +123,7 @@ under the License.
 
     <!-- simple condition implementation -->
     <service name="effectiveDateEcaCondition" engine="java" auth="false" use-transaction="false"
-            location="org.ofbiz.service.ServiceUtil" invoke="genericDateCondition">
+             location="org.ofbiz.service.ServiceUtil" invoke="genericDateCondition">
         <implements service="serviceEcaConditionInterface"/>
         <attribute name="fromDate" mode="IN" type="java.sql.Timestamp" optional="true"/>
         <attribute name="thruDate" mode="IN" type="java.sql.Timestamp" optional="true"/>

@@ -1,5 +1,6 @@
 package org.ofbiz.sso;
 
+import com.alibaba.fastjson.JSONObject;
 import org.ofbiz.base.util.*;
 import org.ofbiz.base.util.Base64;
 import org.ofbiz.entity.Delegator;
@@ -11,6 +12,7 @@ import org.ofbiz.entity.condition.EntityConditionList;
 import org.ofbiz.entity.condition.EntityExpr;
 import org.ofbiz.entity.condition.EntityOperator;
 import org.ofbiz.entity.util.EntityFindOptions;
+import org.ofbiz.entity.util.EntityQuery;
 import org.ofbiz.entity.util.EntityUtil;
 import org.ofbiz.service.TicketUtil;
 
@@ -20,6 +22,7 @@ import java.sql.Timestamp;
 import java.util.*;
 
 /**
+ * 现在只适合后台登录
  * Created by Ted Zheng on 2016/4/8.
  */
 public class LoginService {
@@ -30,17 +33,14 @@ public class LoginService {
 
     public static String basicLogin(HttpServletRequest request, HttpServletResponse response) {
         // 先使用默认的查用户的租户信息
-        Delegator deDelegator = DelegatorFactory.getDelegator("default");
-
         String registrationID = request.getParameter("registrationID"); // 极光推送使用
+        String platform = request.getParameter("platform"); // 平台 P:PC Web A:App X:平台管理员，自己人
+        String openId = request.getParameter("openId");
+        if (platform == null) {
+            platform = "A"; // 默认来源是App
+        }
 
         String auth = request.getHeader("Authorization");
-
-        // 找到TenantId
-        String tenant = TicketUtil.getTenantIdFromRequest(request);
-        if (EntityUtil.isMultiTenantEnabled() && tenant == null) {
-            return authErrorMsg(request, response, UtilProperties.getMessage(LoginService.resourceError, "NoTenant", UtilHttp.getLocale(request)));
-        }
 
         if (auth != null && auth.length() > 6) {
             auth = auth.substring(6, auth.length());
@@ -48,182 +48,209 @@ public class LoginService {
             String decodedAuth = Base64.base64Decode(auth);
 
             String[] strs = decodedAuth.split(":");
+            if (strs == null || strs.length != 2) {
+                return authErrorMsg(request, response, "1000", "用户名或密码错误!(52)");
+            }
+
             String username = strs[0];
             String password = strs[1];
             try {
                 Delegator delegator = DelegatorFactory.getDelegator("default");
-                if (EntityUtil.isMultiTenantEnabled()) {
-                    delegator.setTenantId(tenant);
+
+                // 验证用户名密码,两种登录都支持
+                List usernameList = UtilMisc.toList(new EntityExpr("username1", EntityOperator.EQUALS, username), new EntityExpr("username2", EntityOperator.EQUALS, username));
+                EntityConditionList userConditions = new EntityConditionList(usernameList, EntityOperator.OR);
+
+                GenericValue loginUser = EntityQuery.use(delegator).from("Account").where(userConditions).queryFirst();
+                // 找登录LoginUser
+                if (loginUser == null) {
+                    return authErrorMsg(request, response, "1000", "用户名或密码错误!(67)");
+                }
+                if (loginUser.get("accountStatus") == null || loginUser.getInteger("accountStatus") == 0) {
+                    return authErrorMsg(request, response, "1000", "该用户被禁止登录，请联系企业管理员!");
+                }
+                if (loginUser.get("accountStatus") == null || loginUser.getInteger("accountStatus") == 2) {
+                    return authErrorMsg(request, response, "1001", "需要更改密码才能登录!");
+                }
+                // 判断状态后再判断密码
+                if (!Base64.base64Encode(password).equals(loginUser.getString("currentPassword"))) {
+                    return authErrorMsg(request, response, "1000", "用户名或密码错误!(77)");
                 }
 
-                // 验证用户名密码
-                GenericValue loginUser = checkUserLogin(username, password);
+                String[] tenants = TicketUtil.asArrayByString(loginUser.getString("tenants"));
+                String tenant = tenants[0];
+                System.out.println(tenant);
+                // TODO 先当一个处理
+                delegator.setTenantId(tenant);
+
+                Map<String, Object> userLoginToken = new HashMap<String, Object>();
+
                 if (loginUser != null) {
-                    Map<String, Object> userLoginToken = new HashMap<String, Object>();
-                    // ticket
-                    String ticket = null;
-                    if (EntityUtil.isMultiTenantEnabled()) {
-                        ticket = TicketUtil.makeTicket() + "#" + tenant;
-                    } else {
-                        ticket = TicketUtil.makeTicket();
+                    String mobile = loginUser.get("username1").toString();
+                    String permissionData = "BUSY"; // 默认
+                    JSONObject personal = new JSONObject();
+
+                    // 从员工信息中读
+                    GenericValue employee = EntityQuery.use(delegator).from("HrEmployee").where("mobile", mobile).queryFirst();
+                    if (employee == null) {
+                        return authErrorMsg(request, response, "1000", "用户名或密码错误!(95)");
                     }
 
-                    userLoginToken.put("ticket", ticket);
-                    userLoginToken.put("expirationTime", UtilDateTime.getDayEnd(new Timestamp(Calendar.getInstance().getTimeInMillis()), 7l));
-                    userLoginToken.put("unicode", ""); // 唯一标识是生成的
+                    if ("A".equals(platform) && !"Y".equals(employee.get("isApp"))) {
+                        return authErrorMsg(request, response, "1000", "该用户被禁止在移动端登录，请联系企业管理员!");
+                    }
+                    if ("P".equals(platform) && !"Y".equals(employee.get("isPc"))) {
+                        return authErrorMsg(request, response, "1000", "该用户被禁止在管理后台登录，请联系企业管理员!");
+                    }
 
-                    // 查询员工信息
-                    String mobile = loginUser.get("username1") == null ? "" : loginUser.get("username1").toString();
-                    String email = loginUser.get("username2") == null ? "" : loginUser.get("username2").toString();
-
-                    GenericValue userInfo = loginUser.getRelatedOne("UserInfo", false);
-                    // 将当前的用户信息放在缓存中 未来会用Redis代替
-                    userLoginToken.put("cacheData", userInfo.toString());
+                    personal.put("accountId", loginUser.get("accountId"));
+                    personal.put("platform", platform);
+                    personal.put("employeeId", employee.get("employeeId"));
+                    personal.put("name", employee.get("employeeName"));
+                    personal.put("mobile", employee.get("mobile"));
+                    personal.put("email", employee.get("email"));
+                    personal.put("code", employee.get("code"));
+                    personal.put("headPic", employee.get("headPic"));
+                    personal.put("employeeStatus", employee.get("employeeStatus"));
+                    personal.put("openId", openId);
+                    personal.put("tenant", tenant);
 
                     if (registrationID != null && !"".equals(registrationID)) {
                         // 极光推送注册ID更新
                         loginUser.put("registrationId", registrationID);
                         loginUser.store();
                     }
+                    if (openId != null && !"".equals(openId)) {
+                        employee.put("openId", openId);
+                        employee.store();
+                    }
 
-                    // 查找权限信息并设置
-                    List<GenericValue> authList = userInfo.getRelated("UserPermission", null, null, false);
-                    String permissionData = "";
-                    if (authList != null) {
-                        for (int i = 0; i < authList.size(); i++) {
-                            if (i != 0) {
-                                permissionData += ",";
+                    // 设备企业的缓存
+                    GenericValue enterprise = EntityQuery.use(delegator).from("Enterprise").where("domainName", tenant).queryFirst();
+                    if (enterprise == null) {
+                        return authErrorMsg(request, response, "1000", "未查询到该企业信息!");
+                    }
+
+                    if ("P".equals(platform)) {
+                        // 如果是管理员不用判断
+                        if (personal.getString("mobile").equals(enterprise.getString("manager"))) {
+                            permissionData = "ADMIN";
+                        } else {
+                            // 先查自己的角色，再查权限
+                            List<GenericValue> groupList = delegator.findList("HrGroupEmployee", EntityCondition.makeCondition("employeeId", EntityOperator.EQUALS, employee.get("employeeId")), null, null, null, true);
+                            List groups = new ArrayList<String>();
+                            for (int i = 0; i < groupList.size(); i++) {
+                                groups.add(groupList.get(i).get("groupId"));
                             }
-                            permissionData += authList.get(i).get("permissionCode").toString();
-                        }
-                    }
-                    userLoginToken.put("permissionData", permissionData);
 
-                    String enterpriseModules = null;
-                    if (EntityUtil.isMultiTenantEnabled()) {
-                        // 企业支持的模块
-                        EntityFindOptions findOptions = new EntityFindOptions();
-                        findOptions.setMaxRows(1);
-                        List<GenericValue> enterpriseList = delegator.findList("Enterprise", EntityCondition.makeCondition(UtilMisc.toMap("domainName", tenant)), UtilMisc.toSet("configs"), null, findOptions, false);
-                        if (enterpriseList == null || enterpriseList.size() != 1) {
-                            throw new GenericEntityException("Enterprise[" + tenant + "] is not found");
+                            List<GenericValue> groupRoleList = delegator.findList("HrGroupRole", EntityCondition.makeCondition("groupId", EntityOperator.IN, groups), null, null, null, true);
+                            if (groupRoleList.size() > 0) {
+                                permissionData = ""; // 如果有权限组，使用定义的
+                            }
+                            for (int j = 0; j < groupRoleList.size(); j++) {
+                                if (j != 0) {
+                                    permissionData += ",";
+                                }
+                                GenericValue gr = groupRoleList.get(j);
+                                List<GenericValue> authList = gr.getRelatedMulti("HrRole", "HrRoleAuth");
+                                for (int i = 0; i < authList.size(); i++) {
+                                    String serviceUrl = authList.get(i).get("serviceUrl").toString();
+                                    if (permissionData.contains(serviceUrl)) {
+                                        // 如果已有就不添加了
+                                        continue;
+                                    }
+                                    if (i != 0) {
+                                        permissionData += ",";
+                                    }
+                                    if ("ADMIN".equals(serviceUrl)) {
+                                        permissionData = "ADMIN";
+                                        break;
+                                    }
+                                    permissionData += serviceUrl;
+                                }
+                            }
+
+                            userLoginToken.put("permissionData", permissionData);
                         }
-                        enterpriseModules = enterpriseList.get(0).get("configs").toString();
                     }
+
+                    // ticket
+                    String ticket = null;
+                    if (tenant != null) {
+                        ticket = TicketUtil.makeTicket() + ":" + personal.get("employeeId") + ":" + platform + ":" + tenant;
+                    } else {
+                        ticket = TicketUtil.makeTicket() + ":" + personal.get("employeeId") + ":" + platform;
+                    }
+
+                    userLoginToken.put("ticket", ticket);
+                    userLoginToken.put("expirationTime", UtilDateTime.getDayEnd(new Timestamp(Calendar.getInstance().getTimeInMillis()), 7l));
+
+                    JSONObject result = new JSONObject();
+                    result.put("personal", personal);
+                    result.put("permissionData", permissionData);
+
+                    // 将当前的用户信息放在缓存中 未来会用Redis代替
+                    userLoginToken.put("cacheData", result.toString());
 
                     try {
+                        // 先踢掉所有用户
+                        List<GenericValue> tokens = delegator.findList("LoginToken", EntityCondition.makeCondition("ticket", EntityOperator.LIKE, "%:" + personal.get("employeeId") + ":" + platform + "%"), null, null, null, false);
+                        for (GenericValue t : tokens) {
+                            t.remove();
+                        }
+
                         delegator.create("LoginToken", userLoginToken);
                         request.setAttribute("success", true);
                         request.setAttribute("ticket", ticket);
-                        request.setAttribute("personal", userInfo);
-                        request.setAttribute("permissionData", permissionData);
-                        if (EntityUtil.isMultiTenantEnabled()) {
-                            request.setAttribute("enterpriseModules", enterpriseModules);
-                        }
+                        request.setAttribute("personal", result.get("personal"));
+                        request.setAttribute("permissionData", result.get("permissionData"));
                         return "success";
                     } catch (GenericEntityException e) {
-                        return authErrorMsg(request, response, e.getMessage());
+                        throw e;
                     }
                 }
             } catch (GenericEntityException e) {
-                return authErrorMsg(request, response, e.getMessage());
+                return authErrorMsg(request, response, "1000", e.getMessage());
             }
         }
 
-        return authErrorMsg(request, response, "用户名或密码错误");
+        return authErrorMsg(request, response, "1000", "用户名或密码错误!(216)");
     }
 
-    private static GenericValue checkUserLogin(String username, String password) throws GenericEntityException {
+    /**
+     * 注册帐号
+     *
+     * @param username
+     * @return
+     */
+    public static String register(String username, String password, int status) throws GenericEntityException {
         Delegator delegator = DelegatorFactory.getDelegator("default");
-        // 两种登录都支持
-        List usernameList = UtilMisc.toList(new EntityExpr("username1", EntityOperator.EQUALS, username), new EntityExpr("username2", EntityOperator.EQUALS, username));
-        EntityConditionList userConditions = new EntityConditionList(usernameList, EntityOperator.OR);
-        List conditionList = UtilMisc.toList(userConditions, new EntityExpr("currentPassword", EntityOperator.EQUALS, Base64.base64Encode(password)));
-        EntityConditionList conditions = new EntityConditionList(conditionList, EntityOperator.AND);
 
-        // 只查一条就OK
         EntityFindOptions findOptions = new EntityFindOptions();
-        findOptions.setLimit(1);
+        findOptions.setMaxRows(1);
+        // 插入登录表
+        List uList = UtilMisc.toList(new EntityExpr("username1", EntityOperator.EQUALS, username), new EntityExpr("username2", EntityOperator.EQUALS, username));
+        EntityConditionList userConditions = new EntityConditionList(uList, EntityOperator.OR);
 
-        List<GenericValue> userList = delegator.findList("LoginUser", conditions, null, null, findOptions, false);
-        if (userList.size() > 0) {
-            return userList.get(0);
+        List<GenericValue> userList = delegator.findList("Account", userConditions, null, null, findOptions, false);
+        if (userList != null && userList.size() > 0) {
+            return "该用户已存在";
+        }
+
+        GenericValue account = delegator.makeValue("Account");
+        account.put("accountId", delegator.getNextSeqId("Account").toString());
+        if (ValiUtil.isEmail(username)) {
+            account.put("username2", username);
         } else {
-            throw new GenericEntityException("未找到用户");
-        }
-    }
-
-    public static String register(HttpServletRequest request, HttpServletResponse response) {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String vcode = request.getParameter("vcode"); // 暂时不用
-
-        // 0 参数验证
-        if (username == null || password == null || vcode == null || vcode.length() != 4) {
-            return errorMsg(request, "传入参数不完整");
-        }
-        if (ValiUtil.isMobile(username) == false && ValiUtil.isEmail(username) == false) {
-            return errorMsg(request, "用户名格式不正确");
-        }
-        if (password == null || password.length() < 6) {
-            return errorMsg(request, "密码不能小于6位");
+            // 不是手机号就是邮箱
+            account.put("username1", username);
         }
 
+        account.put("accountStatus", status);
+        account.put("accountType", "A"); // 这里只能建分域帐户
+        account.put("currentPassword", Base64.base64Encode(password));
+        account.create();
 
-        Delegator deDelegator = DelegatorFactory.getDelegator("default");
-        // 验证码判断，在统一的库里
-        try {
-            Map<String, Object> fields = new HashMap<>();
-            fields.put("mobile", username);
-            GenericValue record = deDelegator.findOne("SmsRecord", fields, false);
-            if (checkSmsTime(request, record, vcode) != null) {
-                return "error";
-            }
-        } catch (GenericEntityException e) {
-            return errorMsg(request, e.getMessage());
-        }
-
-
-        // 换库
-        Delegator delegator = DelegatorFactory.getDelegator("default");
-
-        // 判断有无用户信息
-        try {
-            List usernameList = UtilMisc.toList(new EntityExpr("mobile", EntityOperator.EQUALS, username), new EntityExpr("email", EntityOperator.EQUALS, username));
-            EntityConditionList userConditions = new EntityConditionList(usernameList, EntityOperator.OR);
-            List elist = delegator.findList("B2bEmployee", userConditions, null, null, null, false);
-            if (elist == null || elist.size() == 0) {
-                return errorMsg(request, "您的手机号不在员工信息中，请联系企业用户负责人");
-            }
-        } catch (GenericEntityException e) {
-            return errorMsg(request, e.getMessage());
-        }
-
-        try {
-            // 插入登录表
-            List usernameList = UtilMisc.toList(new EntityExpr("username1", EntityOperator.EQUALS, username), new EntityExpr("username2", EntityOperator.EQUALS, username));
-            EntityConditionList userConditions = new EntityConditionList(usernameList, EntityOperator.OR);
-
-            List<GenericValue> uList = delegator.findList("LoginUser", userConditions, null, null, null, false);
-            if (uList != null && uList.size() > 0) {
-                return errorMsg(request, "该用户已存在");
-            }
-            GenericValue loginUser = delegator.makeValue("LoginUser");
-            loginUser.put("apiLoginUserId", delegator.getNextSeqId("LoginUser").toString());
-            if (ValiUtil.isMobile(username)) {
-                loginUser.put("username1", username);
-            } else {
-                // 不是手机号就是邮箱
-                loginUser.put("username2", username);
-            }
-
-            loginUser.put("currentPassword", Base64.base64Encode(password));
-            loginUser.create();
-        } catch (GenericEntityException e) {
-            return errorMsg(request, e.getMessage());
-        }
-
-        request.setAttribute("success", true);
         return null;
     }
 
@@ -231,6 +258,10 @@ public class LoginService {
         String username = request.getParameter("username");
         String vcode = request.getParameter("vcode");
         String password = request.getParameter("password");
+        String platform = request.getParameter("platform"); // 平台 P:PC Web A:App
+        if (platform == null) {
+            platform = "A"; // 默认来源是App
+        }
 
         // 0 参数都不能为空
         if (username == null || vcode == null || password == null) {
@@ -250,7 +281,7 @@ public class LoginService {
 
         List<GenericValue> list = null;
         try {
-            list = delegator.findList("LoginUser", EntityCondition.makeCondition("username1", EntityOperator.EQUALS, username), null, null, null, false);
+            list = delegator.findList("Account", EntityCondition.makeCondition("username1", EntityOperator.EQUALS, username), null, null, null, false);
         } catch (GenericEntityException e) {
             e.printStackTrace();
             return errorMsg(request, e.getMessage());
@@ -279,7 +310,7 @@ public class LoginService {
                 // 改库，以下换作对象都是换库后的
                 delegator = DelegatorFactory.getDelegator("default");
                 try {
-                    list = delegator.findList("LoginUser", EntityCondition.makeCondition("username1", EntityOperator.EQUALS, username), null, null, null, false);
+                    list = delegator.findList("Account", EntityCondition.makeCondition("username1", EntityOperator.EQUALS, username), null, null, null, false);
                 } catch (GenericEntityException e) {
                     e.printStackTrace();
                     return errorMsg(request, e.getMessage());
@@ -287,9 +318,11 @@ public class LoginService {
                 if (list == null || list.size() == 0) {
                     return errorMsg(request, "未找到用户信息");
                 } else {
-                    // TODO 多公司时需要解决
-                    user = list.get(0);
                     user.set("currentPassword", Base64.base64Encode(password));
+                    if (user.getInteger("accountStatus") == 2) {
+                        // 只有是2的时候改才会变成可用
+                        user.set("accountStatus", 1);
+                    }
                     try {
                         user.store();
                     } catch (GenericEntityException e) {
@@ -313,7 +346,7 @@ public class LoginService {
         if (record == null) {
             return errorMsg(request, "验证码输入错误");
         } else {
-            if (!vcode.equals(record.getString("message"))) {
+            if (!vcode.equals(record.getString("smsMessage"))) {
                 return errorMsg(request, "验证码输入错误");
             }
             Long currTime = new Date().getTime();
@@ -326,8 +359,25 @@ public class LoginService {
         return null;
     }
 
-    private static String authErrorMsg(HttpServletRequest request, HttpServletResponse response, String msg) {
+    /**
+     * 注销
+     *
+     * @param username
+     * @return
+     */
+    public static String removeUser(String username) throws GenericEntityException {
+        Delegator delegator = DelegatorFactory.getDelegator("default");
+        List<GenericValue> list = delegator.findList("Account", EntityCondition.makeCondition("username1", EntityOperator.EQUALS, username), null, null, null, false);
+        if (list != null && list.size() != 0) {
+            list.get(0).remove();
+        }
+
+        return null;
+    }
+
+    private static String authErrorMsg(HttpServletRequest request, HttpServletResponse response, String errorCode, String msg) {
         request.setAttribute("success", false);
+        request.setAttribute("errorCode", errorCode);
         request.setAttribute("message", msg);
         return "error";
     }

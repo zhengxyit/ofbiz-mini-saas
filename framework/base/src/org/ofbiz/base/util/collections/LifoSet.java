@@ -70,7 +70,7 @@ public class LifoSet<V> extends AbstractSet<V> implements Serializable {
     }
 
     /**
-     * @see java.util.Collection#add(java.lang.Object)
+     * @see java.util.Collection#add(Object)
      */
     @Override
     public boolean add(V obj) {
@@ -110,7 +110,7 @@ public class LifoSet<V> extends AbstractSet<V> implements Serializable {
     }
 
     /**
-     * @see java.util.Stack#push(java.lang.Object)
+     * @see java.util.Stack#push(Object)
      *
      * @param item The item to be pushed onto this stack
      */
@@ -145,7 +145,7 @@ public class LifoSet<V> extends AbstractSet<V> implements Serializable {
     }
 
     /**
-     * @see java.util.Stack#search(java.lang.Object)
+     * @see java.util.Stack#search(Object)
      *
      * @param item The desired object
      * @return The 1-based position from the top of the stack where the object is located;

@@ -43,16 +43,7 @@ under the License.
         <fileset dir="../entity/build/lib" includes="*.jar"/>
         <fileset dir="../service/lib" includes="*.jar"/>
         <fileset dir="../service/build/lib" includes="*.jar"/>
-        <fileset dir="../minilang/build/lib" includes="*.jar"/>
     </path>
-
-    <patternset id="src.exc.set">
-        <!-- JasperReports dependent files -->
-        <exclude name="org/ofbiz/webapp/view/JasperReportsPdfViewHandler.java"/>
-        <exclude name="org/ofbiz/webapp/view/JasperReportsXmlViewHandler.java"/>
-        <exclude name="org/ofbiz/webapp/view/JasperReportsJXlsViewHandler.java"/>
-        <exclude name="org/ofbiz/webapp/view/JasperReportsPoiXlsViewHandler.java"/>
-    </patternset>
 
     <target name="jar" depends="classes">
         <main-jar/>

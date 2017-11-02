@@ -179,7 +179,7 @@ public class MapContext<K, V> implements Map<K, V>, LocalizedMap<V> {
         // walk the stackList and the entries for each Map and if nothing is in for the current key, consider it an option, otherwise ignore
         Set<K> resultKeySet = new HashSet<K>();
         for (Map<K, V> curMap: this.stackList) {
-            for (Map.Entry<K, V> curEntry: curMap.entrySet()) {
+            for (Entry<K, V> curEntry: curMap.entrySet()) {
                 if (!resultKeySet.contains(curEntry.getKey())) {
                     resultKeySet.add(curEntry.getKey());
                     if (value == null) {
@@ -285,7 +285,7 @@ public class MapContext<K, V> implements Map<K, V>, LocalizedMap<V> {
         Set<K> resultKeySet = new HashSet<K>();
         List<V> resultValues = new LinkedList<V>();
         for (Map<K, V> curMap: this.stackList) {
-            for (Map.Entry<K, V> curEntry: curMap.entrySet()) {
+            for (Entry<K, V> curEntry: curMap.entrySet()) {
                 if (!resultKeySet.contains(curEntry.getKey())) {
                     resultKeySet.add(curEntry.getKey());
                     resultValues.add(curEntry.getValue());
@@ -298,12 +298,12 @@ public class MapContext<K, V> implements Map<K, V>, LocalizedMap<V> {
     /* (non-Javadoc)
      * @see java.util.Map#entrySet()
      */
-    public Set<Map.Entry<K, V>> entrySet() {
+    public Set<Entry<K, V>> entrySet() {
         // walk the stackList and the entries for each Map and if nothing is in for the current key, put it in
         Set<K> resultKeySet = new HashSet<K>();
-        Set<Map.Entry<K, V>> resultEntrySet = new ListSet<Map.Entry<K, V>>();
+        Set<Entry<K, V>> resultEntrySet = new ListSet<Entry<K, V>>();
         for (Map<K, V> curMap: this.stackList) {
-            for (Map.Entry<K, V> curEntry: curMap.entrySet()) {
+            for (Entry<K, V> curEntry: curMap.entrySet()) {
                 if (!resultKeySet.contains(curEntry.getKey())) {
                     resultKeySet.add(curEntry.getKey());
                     resultEntrySet.add(curEntry);
@@ -319,7 +319,7 @@ public class MapContext<K, V> implements Map<K, V>, LocalizedMap<V> {
         int curLevel = 0;
         for (Map<K, V> curMap: this.stackList) {
             fullMapString.append("============================== Start stack level " + curLevel + "\n");
-            for (Map.Entry<K, V> curEntry: curMap.entrySet()) {
+            for (Entry<K, V> curEntry: curMap.entrySet()) {
 
                 fullMapString.append("==>[");
                 fullMapString.append(curEntry.getKey());

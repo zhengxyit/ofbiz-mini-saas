@@ -48,21 +48,26 @@ import org.ofbiz.entity.transaction.TransactionUtil;
 
 /**
  * SQLProcessor - provides utility functions to ease database access
- *
  */
 public class SQLProcessor {
 
-    /** Module Name Used for debugging */
+    /**
+     * Module Name Used for debugging
+     */
     public static final String module = SQLProcessor.class.getName();
 
-    /** Used for testing connections when test is enabled */
+    /**
+     * Used for testing connections when test is enabled
+     */
     public static List<String> CONNECTION_TEST_LIST = new ArrayList<String>();
     public static int MAX_CONNECTIONS = 1000;
     public static boolean ENABLE_TEST = false;
 
     private final Delegator delegator;
 
-    /** The datasource helper (see entityengine.xml <datasource name="..">) */
+    /**
+     * The datasource helper (see entityengine.xml <datasource name="..">)
+     */
     private GenericHelperInfo helperInfo;
 
     // / The database resources to be used
@@ -91,7 +96,7 @@ public class SQLProcessor {
     /**
      * Construct an object based on the helper/datasource
      *
-     * @param helperInfo  The datasource helper (see entityengine.xml &lt;datasource name=".."&gt;)
+     * @param helperInfo The datasource helper (see entityengine.xml &lt;datasource name=".."&gt;)
      */
     public SQLProcessor(Delegator delegator, GenericHelperInfo helperInfo) {
         this.delegator = delegator;
@@ -103,8 +108,8 @@ public class SQLProcessor {
      * Construct an object with an connection given. The connection will not
      * be closed by this SQLProcessor, but may be by some other.
      *
-     * @param helperInfo  The datasource helper (see entityengine.xml &lt;datasource name=".."&gt;)
-     * @param connection  The connection to be used
+     * @param helperInfo The datasource helper (see entityengine.xml &lt;datasource name=".."&gt;)
+     * @param connection The connection to be used
      */
     public SQLProcessor(Delegator delegator, GenericHelperInfo helperInfo, Connection connection) {
         this.delegator = delegator;
@@ -202,7 +207,8 @@ public class SQLProcessor {
      */
     public void close() throws GenericDataSourceException {
         if (_manualTX) {
-            if (Debug.verboseOn()) Debug.logVerbose("SQLProcessor:close() calling commit : _manualTX=" + _manualTX, module);
+            if (Debug.verboseOn())
+                Debug.logVerbose("SQLProcessor:close() calling commit : _manualTX=" + _manualTX, module);
             commit();
         }
 
@@ -211,7 +217,8 @@ public class SQLProcessor {
         if (_rs != null) {
             try {
                 _rs.close();
-                if (Debug.verboseOn()) Debug.logVerbose("SQLProcessor:close() result close : _manualTX=" + _manualTX, module);
+                if (Debug.verboseOn())
+                    Debug.logVerbose("SQLProcessor:close() result close : _manualTX=" + _manualTX, module);
             } catch (SQLException sqle) {
                 Debug.logWarning(sqle.getMessage(), module);
             }
@@ -222,7 +229,8 @@ public class SQLProcessor {
         if (_ps != null) {
             try {
                 _ps.close();
-                if (Debug.verboseOn()) Debug.logVerbose("SQLProcessor:close() preparedStatement close : _manualTX=" + _manualTX, module);
+                if (Debug.verboseOn())
+                    Debug.logVerbose("SQLProcessor:close() preparedStatement close : _manualTX=" + _manualTX, module);
             } catch (SQLException sqle) {
                 Debug.logWarning(sqle.getMessage(), module);
             }
@@ -233,7 +241,8 @@ public class SQLProcessor {
         if ((_connection != null) && _bDeleteConnection) {
             try {
                 _connection.close();
-                if (Debug.verboseOn()) Debug.logVerbose("SQLProcessor:close() connection close : _manualTX=" + _manualTX, module);
+                if (Debug.verboseOn())
+                    Debug.logVerbose("SQLProcessor:close() connection close : _manualTX=" + _manualTX, module);
             } catch (SQLException sqle) {
                 Debug.logWarning(sqle.getMessage(), module);
             }
@@ -245,8 +254,7 @@ public class SQLProcessor {
     /**
      * Get a connection from the TransactionFactoryLoader
      *
-     * @return  The connection created
-     *
+     * @return The connection created
      * @throws GenericDataSourceException
      * @throws GenericEntityException
      */
@@ -298,7 +306,8 @@ public class SQLProcessor {
             if (_connection.getAutoCommit()) {
                 try {
                     _connection.setAutoCommit(false);
-                    if (Debug.verboseOn()) Debug.logVerbose("SQLProcessor:setAutoCommit(false) : manualTx=" + _manualTX, module);
+                    if (Debug.verboseOn())
+                        Debug.logVerbose("SQLProcessor:setAutoCommit(false) : manualTx=" + _manualTX, module);
                 } catch (SQLException sqle) {
                     _manualTX = false;
                 }
@@ -315,7 +324,7 @@ public class SQLProcessor {
         } catch (GenericTransactionException e) {
             // nevermind, don't worry about it, but print the exc anyway
             Debug.logWarning("[SQLProcessor.getConnection]: Exception was thrown trying to check " +
-                "transaction status: " + e.toString(), module);
+                    "transaction status: " + e.toString(), module);
         }
 
         if (Debug.verboseOn()) Debug.logVerbose("[SQLProcessor.getConnection] : con=" + _connection, module);
@@ -328,8 +337,7 @@ public class SQLProcessor {
      * Prepare a statement. In case no connection has been given, allocate a
      * new one.
      *
-     * @param sql  The SQL statement to be executed
-     *
+     * @param sql The SQL statement to be executed
      * @throws GenericDataSourceException
      * @throws GenericEntityException
      */
@@ -341,8 +349,7 @@ public class SQLProcessor {
      * Prepare a statement. In case no connection has been given, allocate a
      * new one.
      *
-     * @param sql  The SQL statement to be executed
-     *
+     * @param sql The SQL statement to be executed
      * @throws GenericDataSourceException
      * @throws GenericEntityException
      */
@@ -354,8 +361,7 @@ public class SQLProcessor {
      * Prepare a statement. In case no connection has been given, allocate a
      * new one.
      *
-     * @param sql  The SQL statement to be executed
-     *
+     * @param sql The SQL statement to be executed
      * @throws GenericDataSourceException
      * @throws GenericEntityException
      */
@@ -378,7 +384,8 @@ public class SQLProcessor {
             }
             if (maxRows > 0) {
                 _ps.setMaxRows(maxRows);
-                if (Debug.verboseOn()) Debug.logVerbose("[SQLProcessor.prepareStatement] max rows set : " + maxRows, module);
+                if (Debug.verboseOn())
+                    Debug.logVerbose("[SQLProcessor.prepareStatement] max rows set : " + maxRows, module);
             }
             this.setFetchSize(_ps, fetchSize);
         } catch (SQLException sqle) {
@@ -407,8 +414,8 @@ public class SQLProcessor {
     /**
      * Execute a query based on the SQL string given
      *
-     * @param sql  The SQL string to be executed
-     * @return  The result set of the query
+     * @param sql The SQL string to be executed
+     * @return The result set of the query
      * @throws GenericEntityException
      * @throws GenericDataSourceException
      */
@@ -420,7 +427,7 @@ public class SQLProcessor {
     /**
      * Execute updates
      *
-     * @return  The number of rows updated
+     * @return The number of rows updated
      * @throws GenericDataSourceException
      */
     public int executeUpdate() throws GenericDataSourceException {
@@ -438,7 +445,7 @@ public class SQLProcessor {
     /**
      * Execute update based on the SQL statement given
      *
-     * @param sql  SQL statement to be executed
+     * @param sql SQL statement to be executed
      * @throws GenericDataSourceException
      */
     public int executeUpdate(String sql) throws GenericDataSourceException {
@@ -465,7 +472,6 @@ public class SQLProcessor {
      * Test if there more records available
      *
      * @return true, if there more records available
-     *
      * @throws GenericDataSourceException
      */
     public boolean next() throws GenericDataSourceException {
@@ -500,7 +506,6 @@ public class SQLProcessor {
      *
      * @param sql       The SQL string to be executed
      * @param aListener The callback function object
-     *
      * @throws GenericEntityException
      */
     public void execQuery(String sql, ExecQueryCallbackFunctionIF aListener) throws GenericEntityException {
@@ -526,7 +531,7 @@ public class SQLProcessor {
 
         } catch (SQLException sqle) {
             Debug.logWarning("[SQLProcessor.execQuery]: SQL Exception while executing the following:\n" +
-                sql + "\nError was:", module);
+                    sql + "\nError was:", module);
             Debug.logWarning(sqle.getMessage(), module);
             throw new GenericEntityException("SQL Exception while executing the following:" + _sql, sqle);
         } finally {
@@ -539,7 +544,6 @@ public class SQLProcessor {
      *
      * @param handler
      * @param field
-     *
      * @throws SQLException
      */
     public <T> void setValue(JdbcValueHandler<T> handler, T field) throws SQLException {
@@ -551,7 +555,6 @@ public class SQLProcessor {
      * Set the next binding variable of the currently active prepared statement.
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(String field) throws SQLException {
@@ -559,12 +562,12 @@ public class SQLProcessor {
         //this doesn't seem to work, query not yet parsed: int colType = rsmd.getColumnType(_ind);
         if (field != null) {
             //if (field.length() > 4000) {
-                //Clob clb = new Cl
-                // doesn't work with Oracle drivers, need the funky work-around: _ps.setCharacterStream(_ind, new StringReader(field), field.length());
-                //_needClobWorkAroundWrite.put(Integer.valueOf(_ind), field);
-                //_ps.setString(_ind, " ");
+            //Clob clb = new Cl
+            // doesn't work with Oracle drivers, need the funky work-around: _ps.setCharacterStream(_ind, new StringReader(field), field.length());
+            //_needClobWorkAroundWrite.put(Integer.valueOf(_ind), field);
+            //_ps.setString(_ind, " ");
             //} else {
-                _ps.setString(_ind, field);
+            _ps.setString(_ind, field);
             //}
         } else {
             // silly workaround for Derby (Cloudscape 10 beta Bug #5928)
@@ -583,11 +586,18 @@ public class SQLProcessor {
         _ind++;
     }
 
+    public void setValue(org.ofbiz.entity.field.JsonValue field) throws SQLException {
+        if (field != null) {
+            // null 不设值
+            _ps.setObject(_ind, field, Types.OTHER);
+            _ind++;
+        }
+    }
+
     /**
      * Set the next binding variable of the currently active prepared statement.
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(java.sql.Timestamp field) throws SQLException {
@@ -603,7 +613,6 @@ public class SQLProcessor {
      * Set the next binding variable of the currently active prepared statement.
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(java.sql.Time field) throws SQLException {
@@ -619,7 +628,6 @@ public class SQLProcessor {
      * Set the next binding variable of the currently active prepared statement.
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(java.sql.Date field) throws SQLException {
@@ -635,7 +643,6 @@ public class SQLProcessor {
      * Set the next binding variable of the currently active prepared statement.
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(Integer field) throws SQLException {
@@ -651,7 +658,6 @@ public class SQLProcessor {
      * Set the next binding variable of the currently active prepared statement.
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(Long field) throws SQLException {
@@ -667,7 +673,6 @@ public class SQLProcessor {
      * Set the next binding variable of the currently active prepared statement.
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(Float field) throws SQLException {
@@ -683,7 +688,6 @@ public class SQLProcessor {
      * Set the next binding variable of the currently active prepared statement.
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(Double field) throws SQLException {
@@ -699,7 +703,6 @@ public class SQLProcessor {
      * Set the next binding variable of the currently active prepared statement.
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(BigDecimal field) throws SQLException {
@@ -715,7 +718,6 @@ public class SQLProcessor {
      * Set the next binding variable of the currently active prepared statement.
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(Boolean field) throws SQLException {
@@ -731,7 +733,6 @@ public class SQLProcessor {
      * Set the next binding variable of the currently active prepared statement.
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(Object field) throws SQLException {
@@ -747,7 +748,6 @@ public class SQLProcessor {
      * Set the next binding variable of the currently active prepared statement
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(Blob field) throws SQLException {
@@ -768,7 +768,6 @@ public class SQLProcessor {
      * Set the next binding variable of the currently active prepared statement
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setValue(Clob field) throws SQLException {
@@ -785,7 +784,6 @@ public class SQLProcessor {
      * to write the serialized data of 'field' to a BLOB.
      *
      * @param field
-     *
      * @throws SQLException
      */
     public void setBinaryStream(Object field) throws SQLException {
@@ -821,7 +819,6 @@ public class SQLProcessor {
      * to write the serialized data of 'field' to a Blob with the given bytes.
      *
      * @param bytes
-     *
      * @throws SQLException
      */
     public void setBytes(byte[] bytes) throws SQLException {

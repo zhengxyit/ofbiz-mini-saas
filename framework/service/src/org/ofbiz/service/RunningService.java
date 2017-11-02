@@ -18,9 +18,9 @@
  *******************************************************************************/
 package org.ofbiz.service;
 
-import java.sql.Timestamp;
-
 import org.ofbiz.base.util.UtilDateTime;
+
+import java.sql.Timestamp;
 
 public class RunningService {
 

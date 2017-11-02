@@ -18,23 +18,9 @@
  *******************************************************************************/
 package org.ofbiz.service.job;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.RejectedExecutionException;
-
+import com.ibm.icu.util.Calendar;
 import org.ofbiz.base.config.GenericConfigException;
-import org.ofbiz.base.util.Assert;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.UtilDateTime;
-import org.ofbiz.base.util.UtilMisc;
-import org.ofbiz.base.util.UtilProperties;
-import org.ofbiz.base.util.UtilValidate;
+import org.ofbiz.base.util.*;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
@@ -55,7 +41,11 @@ import org.ofbiz.service.calendar.RecurrenceInfoException;
 import org.ofbiz.service.config.ServiceConfigUtil;
 import org.ofbiz.service.config.model.RunFromPool;
 
-import com.ibm.icu.util.Calendar;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Job manager. The job manager queues and manages jobs. Client code can queue a job to be run immediately
@@ -557,7 +547,7 @@ public final class JobManager {
         if (UtilValidate.isEmpty(jobName)) {
             jobName = Long.toString((new Date().getTime()));
         }
-        Map<String, Object> jFields = UtilMisc.<String, Object> toMap("jobName", jobName, "runTime", new java.sql.Timestamp(startTime),
+        Map<String, Object> jFields = UtilMisc.<String, Object> toMap("jobName", jobName, "runTime", new Timestamp(startTime),
                 "serviceName", serviceName, "statusId", "SERVICE_PENDING", "recurrenceInfoId", infoId, "runtimeDataId", dataId);
         // set the pool ID
         if (UtilValidate.isNotEmpty(poolName)) {

@@ -19,13 +19,12 @@
 
 package org.ofbiz.service.test;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import junit.framework.TestCase;
-
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.ofbiz.service.xmlrpc.XmlRpcClient;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * AbstractXmlRpcTestCase

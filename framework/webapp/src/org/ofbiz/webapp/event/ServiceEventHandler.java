@@ -69,13 +69,13 @@ public class ServiceEventHandler implements EventHandler {
     public static final String ASYNC = "async";
 
     /**
-     * @see org.ofbiz.webapp.event.EventHandler#init(javax.servlet.ServletContext)
+     * @see EventHandler#init(javax.servlet.ServletContext)
      */
     public void init(ServletContext context) throws EventHandlerException {
     }
 
     /**
-     * @see org.ofbiz.webapp.event.EventHandler#invoke(ConfigXMLReader.Event, ConfigXMLReader.RequestMap, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see EventHandler#invoke(ConfigXMLReader.Event, ConfigXMLReader.RequestMap, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     public String invoke(Event event, RequestMap requestMap, HttpServletRequest request, HttpServletResponse response) throws EventHandlerException {
         // make sure we have a valid reference to the Service Engine

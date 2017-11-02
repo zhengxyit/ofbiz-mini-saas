@@ -18,36 +18,8 @@
  *******************************************************************************/
 package org.ofbiz.webapp.control;
 
-import static org.ofbiz.base.util.UtilGenerics.checkMap;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.security.cert.X509Certificate;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.ofbiz.base.start.Start;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.SSLUtil;
-import org.ofbiz.base.util.StringUtil;
-import org.ofbiz.base.util.UtilCodec;
-import org.ofbiz.base.util.UtilFormatOut;
-import org.ofbiz.base.util.UtilGenerics;
-import org.ofbiz.base.util.UtilHttp;
-import org.ofbiz.base.util.UtilMisc;
-import org.ofbiz.base.util.UtilObject;
-import org.ofbiz.base.util.UtilProperties;
-import org.ofbiz.base.util.UtilValidate;
+import org.ofbiz.base.util.*;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
@@ -58,11 +30,21 @@ import org.ofbiz.webapp.event.EventFactory;
 import org.ofbiz.webapp.event.EventHandler;
 import org.ofbiz.webapp.event.EventHandlerException;
 import org.ofbiz.webapp.stats.ServerHitBin;
-import org.ofbiz.webapp.view.ViewFactory;
-import org.ofbiz.webapp.view.ViewHandler;
-import org.ofbiz.webapp.view.ViewHandlerException;
 import org.ofbiz.webapp.website.WebSiteProperties;
 import org.ofbiz.webapp.website.WebSiteWorker;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.security.cert.X509Certificate;
+import java.util.*;
+
+import static org.ofbiz.base.util.UtilGenerics.checkMap;
 
 /**
  * RequestHandler - Request Processor Object
@@ -71,7 +53,6 @@ public class RequestHandler {
 
     public static final String module = RequestHandler.class.getName();
     private final String defaultStatusCodeString = UtilProperties.getPropertyValue("requestHandler", "status-code", "302");
-    private final ViewFactory viewFactory;
     private final EventFactory eventFactory;
     private final URL controllerConfigURL;
     private final boolean trackServerHit;
@@ -96,7 +77,6 @@ public class RequestHandler {
             // FIXME: controller.xml errors should throw an exception.
             Debug.logError(e, "Exception thrown while parsing controller.xml file: ", module);
         }
-        this.viewFactory = new ViewFactory(context, this.controllerConfigURL);
         this.eventFactory = new EventFactory(context, this.controllerConfigURL);
 
         this.trackServerHit = !"false".equalsIgnoreCase(context.getInitParameter("track-serverhit"));
@@ -148,6 +128,9 @@ public class RequestHandler {
 
         // Grab data from request object to process
         String defaultRequestUri = RequestHandler.getRequestUri(request.getPathInfo());
+        if (defaultRequestUri == null) {
+            defaultRequestUri = "/";
+        }
         if (request.getAttribute("targetRequestUri") == null) {
             if (request.getSession().getAttribute("_PREVIOUS_REQUEST_") != null) {
                 request.setAttribute("targetRequestUri", request.getSession().getAttribute("_PREVIOUS_REQUEST_"));
@@ -787,13 +770,6 @@ public class RequestHandler {
     }
 
     /**
-     * Returns the ViewFactory Object.
-     */
-    public ViewFactory getViewFactory() {
-        return viewFactory;
-    }
-
-    /**
      * Returns the EventFactory Object.
      */
     public EventFactory getEventFactory() {
@@ -818,7 +794,13 @@ public class RequestHandler {
         if (pathItemList == null) {
             return null;
         }
-        pathItemList = pathItemList.subList(1, pathItemList.size());
+
+        // 支持根路径
+        if (pathItemList.size() == 0) {
+            pathItemList.add("/");
+        } else {
+            pathItemList = pathItemList.subList(1, pathItemList.size());
+        }
 
         String nextPage = null;
         for (String pathItem : pathItemList) {
@@ -1012,33 +994,22 @@ public class RequestHandler {
             }
         }
 
-        //The only x-content-type-options defined value, "nosniff", prevents Internet Explorer from MIME-sniffing a response away from the declared content-type. 
+        //The only x-content-type-options defined value, "nosniff", prevents Internet Explorer from MIME-sniffing a response away from the declared content-type.
         // This also applies to Google Chrome, when downloading extensions.
         resp.addHeader("x-content-type-options", "nosniff");
 
-        // This header enables the Cross-site scripting (XSS) filter built into most recent web browsers. 
-        // It's usually enabled by default anyway, so the role of this header is to re-enable the filter for this particular website if it was disabled by the user. 
+        // This header enables the Cross-site scripting (XSS) filter built into most recent web browsers.
+        // It's usually enabled by default anyway, so the role of this header is to re-enable the filter for this particular website if it was disabled by the user.
         // This header is supported in IE 8+, and in Chrome (not sure which versions). The anti-XSS filter was added in Chrome 4. Its unknown if that version honored this header.
         // FireFox has still an open bug entry and "offers" only the noscript plugin
-        // https://wiki.mozilla.org/Security/Features/XSS_Filter 
+        // https://wiki.mozilla.org/Security/Features/XSS_Filter
         // https://bugzilla.mozilla.org/show_bug.cgi?id=528661
         resp.addHeader("X-XSS-Protection", "1; mode=block");
-
-        try {
-            if (Debug.verboseOn())
-                Debug.logVerbose("Rendering view [" + nextPage + "] of type [" + viewMap.type + "]", module);
-            ViewHandler vh = viewFactory.getViewHandler(viewMap.type);
-            vh.render(view, nextPage, viewMap.info, contentType, charset, req, resp);
-        } catch (ViewHandlerException e) {
-            Throwable throwable = e.getNested() != null ? e.getNested() : e;
-
-            throw new RequestHandlerException(e.getNonNestedMessage(), throwable);
-        }
 
         // before getting the view generation time flush the response output to get more consistent results
         try {
             resp.flushBuffer();
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             /* If any request gets aborted before completing, i.e if a user requests a page and cancels that request before the page is rendered and returned
                or if request is an ajax request and user calls abort() method for on ajax request then its showing broken pipe exception on console,
                skip throwing of RequestHandlerException. JIRA Ticket - OFBIZ-254

@@ -18,16 +18,12 @@
  *******************************************************************************/
 package org.ofbiz.service.config.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.ofbiz.base.lang.ThreadSafe;
 import org.ofbiz.base.util.UtilXml;
 import org.ofbiz.service.config.ServiceConfigException;
 import org.w3c.dom.Element;
+
+import java.util.*;
 
 /**
  * An object that models the <code>&lt;engine&gt;</code> element.

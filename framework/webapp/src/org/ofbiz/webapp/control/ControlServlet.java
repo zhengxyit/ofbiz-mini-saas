@@ -18,8 +18,14 @@
  *******************************************************************************/
 package org.ofbiz.webapp.control;
 
-import java.io.IOException;
-import java.util.Enumeration;
+import org.ofbiz.base.util.*;
+import org.ofbiz.entity.Delegator;
+import org.ofbiz.entity.DelegatorFactory;
+import org.ofbiz.entity.GenericDelegator;
+import org.ofbiz.entity.transaction.GenericTransactionException;
+import org.ofbiz.entity.transaction.TransactionUtil;
+import org.ofbiz.service.LocalDispatcher;
+import org.ofbiz.webapp.stats.VisitHandler;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -29,24 +35,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.bsf.BSFManager;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.UtilCodec;
-import org.ofbiz.base.util.UtilGenerics;
-import org.ofbiz.base.util.UtilHttp;
-import org.ofbiz.base.util.UtilTimer;
-import org.ofbiz.base.util.UtilValidate;
-import org.ofbiz.entity.Delegator;
-import org.ofbiz.entity.DelegatorFactory;
-import org.ofbiz.entity.GenericDelegator;
-import org.ofbiz.entity.GenericValue;
-import org.ofbiz.entity.transaction.GenericTransactionException;
-import org.ofbiz.entity.transaction.TransactionUtil;
-import org.ofbiz.service.LocalDispatcher;
-import org.ofbiz.webapp.stats.ServerHitBin;
-import org.ofbiz.webapp.stats.VisitHandler;
-import freemarker.ext.servlet.ServletContextHashModel;
+import java.io.IOException;
+import java.util.Enumeration;
 
 /**
  * ControlServlet.java - Master servlet for the web application.
@@ -72,8 +62,6 @@ public class ControlServlet extends HttpServlet {
             Debug.logInfo("Loading webapp [" + webappName + "], located at " + servletContext.getRealPath("/"), module);
         }
 
-        // configure custom BSF engines
-        configureBsf();
         // initialize the request handler
         getRequestHandler();
     }
@@ -325,17 +313,6 @@ public class ControlServlet extends HttpServlet {
 
     protected RequestHandler getRequestHandler() {
         return RequestHandler.getRequestHandler(getServletContext());
-    }
-
-    protected void configureBsf() {
-        String[] bshExtensions = {"bsh"};
-        BSFManager.registerScriptingEngine("beanshell", "org.ofbiz.base.util.OfbizBshBsfEngine", bshExtensions);
-
-        String[] jsExtensions = {"js"};
-        BSFManager.registerScriptingEngine("javascript", "org.ofbiz.base.util.OfbizJsBsfEngine", jsExtensions);
-
-        String[] smExtensions = {"sm"};
-        BSFManager.registerScriptingEngine("simplemethod", "org.ofbiz.minilang.SimpleMethodBsfEngine", smExtensions);
     }
 
     protected void logRequestInfo(HttpServletRequest request) {

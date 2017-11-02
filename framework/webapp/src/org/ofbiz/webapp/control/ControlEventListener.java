@@ -18,25 +18,17 @@
  *******************************************************************************/
 package org.ofbiz.webapp.control;
 
-import java.sql.Timestamp;
-import java.util.Enumeration;
-import java.util.Map;
+import org.ofbiz.base.util.Debug;
+import org.ofbiz.base.util.UtilGenerics;
+import org.ofbiz.base.util.UtilValidate;
+import org.ofbiz.entity.GenericValue;
+import org.ofbiz.entity.serialize.XmlSerializer;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.UtilDateTime;
-import org.ofbiz.base.util.UtilGenerics;
-import org.ofbiz.base.util.UtilMisc;
-import org.ofbiz.base.util.UtilValidate;
-import org.ofbiz.entity.Delegator;
-import org.ofbiz.entity.GenericEntityException;
-import org.ofbiz.entity.GenericValue;
-import org.ofbiz.entity.serialize.XmlSerializer;
-import org.ofbiz.entity.transaction.TransactionUtil;
-import org.ofbiz.entity.util.EntityQuery;
+import java.util.Enumeration;
+import java.util.Map;
 
 /**
  * HttpSessionListener that gathers and tracks various information and statistics
@@ -51,79 +43,79 @@ public class ControlEventListener implements HttpSessionListener {
     public ControlEventListener() {}
 
     public void sessionCreated(HttpSessionEvent event) {
-        HttpSession session = event.getSession();
+        //HttpSession session = event.getSession();
 
         // get/create the visit
         // NOTE: don't create the visit here, just let the control servlet do it; GenericValue visit = VisitHandler.getVisit(session);
 
-        countCreateSession();
+        // countCreateSession();
 
         // property setting flag for logging stats
-        if (System.getProperty("org.ofbiz.log.session.stats") != null) {
-            session.setAttribute("org.ofbiz.log.session.stats", "Y");
-        }
+        //if (System.getProperty("org.ofbiz.log.session.stats") != null) {
+            //session.setAttribute("org.ofbiz.log.session.stats", "Y");
+        //}
 
-        Debug.logInfo("Creating session: " + ControlActivationEventListener.showSessionId(session), module);
+        //Debug.logInfo("Creating session: " + ControlActivationEventListener.showSessionId(session), module);
     }
 
     public void sessionDestroyed(HttpSessionEvent event) {
-        HttpSession session = event.getSession();
+//        HttpSession session = event.getSession();
 
         // Finalize the Visit
-        boolean beganTransaction = false;
-        try {
-            beganTransaction = TransactionUtil.begin();
+//        boolean beganTransaction = false;
+//        try {
+//            beganTransaction = TransactionUtil.begin();
 
             // instead of using this message, get directly from session attribute so it won't create a new one: GenericValue visit = VisitHandler.getVisit(session);
-            GenericValue visit = (GenericValue) session.getAttribute("visit");
-            if (visit != null) {
-                Delegator delegator = visit.getDelegator();
-                visit = EntityQuery.use(delegator).from("Visit").where("visitId", visit.get("visitId")).queryOne();
-                if (visit != null) {
-                    visit.set("thruDate", new Timestamp(session.getLastAccessedTime()));
-                    visit.store();
-                }
-            } else {
-                Debug.logWarning("Could not find visit value object in session [" + ControlActivationEventListener.showSessionId(session) + "] that is being destroyed", module);
-            }
+//            GenericValue visit = (GenericValue) session.getAttribute("visit");
+//            if (visit != null) {
+//                Delegator delegator = visit.getDelegator();
+//                visit = EntityQuery.use(delegator).from("Visit").where("visitId", visit.get("visitId")).queryOne();
+//                if (visit != null) {
+//                    visit.set("thruDate", new Timestamp(session.getLastAccessedTime()));
+//                    visit.store();
+//                }
+//            } else {
+//                Debug.logWarning("Could not find visit value object in session [" + ControlActivationEventListener.showSessionId(session) + "] that is being destroyed", module);
+//            }
 
             // Store the UserLoginSession
-            String userLoginSessionString = getUserLoginSession(session);
-            GenericValue userLogin = (GenericValue) session.getAttribute("userLogin");
-            if (userLogin != null && userLoginSessionString != null) {
-                GenericValue userLoginSession = null;
-                userLoginSession = userLogin.getRelatedOne("UserLoginSession", false);
+//            String userLoginSessionString = getUserLoginSession(session);
+//            GenericValue userLogin = (GenericValue) session.getAttribute("userLogin");
+//            if (userLogin != null && userLoginSessionString != null) {
+//                GenericValue userLoginSession = null;
+//                userLoginSession = userLogin.getRelatedOne("UserLoginSession", false);
+//
+//                if (userLoginSession == null) {
+//                    userLoginSession = userLogin.getDelegator().makeValue("UserLoginSession",
+//                            UtilMisc.toMap("userLoginId", userLogin.getString("userLoginId")));
+//                    userLogin.getDelegator().create(userLoginSession);
+//                }
+//                userLoginSession.set("savedDate", UtilDateTime.nowTimestamp());
+//                userLoginSession.set("sessionData", userLoginSessionString);
+//                userLoginSession.store();
+//            }
 
-                if (userLoginSession == null) {
-                    userLoginSession = userLogin.getDelegator().makeValue("UserLoginSession",
-                            UtilMisc.toMap("userLoginId", userLogin.getString("userLoginId")));
-                    userLogin.getDelegator().create(userLoginSession);
-                }
-                userLoginSession.set("savedDate", UtilDateTime.nowTimestamp());
-                userLoginSession.set("sessionData", userLoginSessionString);
-                userLoginSession.store();
-            }
-
-            countDestroySession();
-            Debug.logInfo("Destroying session: " + ControlActivationEventListener.showSessionId(session), module);
-            this.logStats(session, visit);
-        } catch (GenericEntityException e) {
-            try {
-                // only rollback the transaction if we started one...
-                TransactionUtil.rollback(beganTransaction, "Error saving information about closed HttpSession", e);
-            } catch (GenericEntityException e2) {
-                Debug.logError(e2, "Could not rollback transaction: " + e2.toString(), module);
-            }
-
-            Debug.logError(e, "Error in session destuction information persistence", module);
-        } finally {
-            // only commit the transaction if we started one... this will throw an exception if it fails
-            try {
-                TransactionUtil.commit(beganTransaction);
-            } catch (GenericEntityException e) {
-                Debug.logError(e, "Could not commit transaction for update visit for session destuction", module);
-            }
-        }
+//            countDestroySession();
+//            Debug.logInfo("Destroying session: " + ControlActivationEventListener.showSessionId(session), module);
+//            this.logStats(session, visit);
+//        } catch (GenericEntityException e) {
+//            try {
+//                // only rollback the transaction if we started one...
+//                TransactionUtil.rollback(beganTransaction, "Error saving information about closed HttpSession", e);
+//            } catch (GenericEntityException e2) {
+//                Debug.logError(e2, "Could not rollback transaction: " + e2.toString(), module);
+//            }
+//
+//            Debug.logError(e, "Error in session destuction information persistence", module);
+//        } finally {
+//            // only commit the transaction if we started one... this will throw an exception if it fails
+//            try {
+//                TransactionUtil.commit(beganTransaction);
+//            } catch (GenericEntityException e) {
+//                Debug.logError(e, "Could not commit transaction for update visit for session destuction", module);
+//            }
+//        }
     }
 
     public void logStats(HttpSession session, GenericValue visit) {

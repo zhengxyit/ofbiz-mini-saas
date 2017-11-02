@@ -18,18 +18,18 @@
  *******************************************************************************/
 package org.ofbiz.service.calendar;
 
-import java.util.Arrays;
 import com.ibm.icu.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.StringUtil;
 import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Recurrence Rule Object

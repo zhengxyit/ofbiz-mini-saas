@@ -44,7 +44,7 @@ public class MapComparator implements Comparator<Map<Object, Object>> {
     }
 
     /**
-     * @see java.lang.Object#equals(java.lang.Object)
+     * @see Object#equals(Object)
      */
     @Override
     public boolean equals(Object obj) {
@@ -52,7 +52,7 @@ public class MapComparator implements Comparator<Map<Object, Object>> {
     }
 
     /**
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     * @see Comparator#compare(Object, Object)
      */
     public int compare(Map<Object, Object> map1, Map<Object, Object> map2) {
 

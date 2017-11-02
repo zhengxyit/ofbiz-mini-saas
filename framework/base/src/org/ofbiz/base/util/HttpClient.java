@@ -290,7 +290,7 @@ public class HttpClient {
     }
 
     /** Returns the content of the response. */
-    public Object getResponseContent() throws java.io.IOException, HttpClientException {
+    public Object getResponseContent() throws IOException, HttpClientException {
         if (con == null) {
             throw new HttpClientException("Connection not yet established");
         }

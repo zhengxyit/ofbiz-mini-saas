@@ -18,22 +18,15 @@
  *******************************************************************************/
 package org.ofbiz.service.calendar;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
+import com.ibm.icu.util.Calendar;
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
 import org.ofbiz.entity.util.EntityQuery;
 
-import com.ibm.icu.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /** TemporalExpression UI artifacts worker. */
 public class ExpressionUiHelper {

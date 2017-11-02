@@ -18,14 +18,14 @@
  *******************************************************************************/
 package org.ofbiz.webapp.webdav;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.ofbiz.base.util.UtilValidate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /** PROPFIND HTTP method helper class. This class provides helper methods for
  * working with WebDAV PROPFIND requests and responses.*/

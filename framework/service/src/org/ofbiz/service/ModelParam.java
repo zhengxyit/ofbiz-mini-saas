@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,19 +18,19 @@
  *******************************************************************************/
 package org.ofbiz.service;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Locale;
+import com.alibaba.fastjson.JSONArray;
+import org.ofbiz.base.util.Debug;
+import org.ofbiz.base.util.ObjectType;
+import org.ofbiz.base.util.UtilProperties;
+import org.ofbiz.base.util.UtilValidate;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Part;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
-
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.ObjectType;
-import org.ofbiz.base.util.UtilProperties;
-import org.ofbiz.base.util.UtilValidate;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Generic Service Model Parameter
@@ -40,60 +40,104 @@ public class ModelParam implements Serializable {
 
     public static final String module = ModelParam.class.getName();
 
-    /** Parameter name */
+    /**
+     * Parameter name
+     */
     public String name;
 
-    /** The description of this parameter */
+    /**
+     * The description of this parameter
+     */
     public String description;
 
-    /** Paramater type */
+    /**
+     * Paramater type
+     */
     public String type;
 
-    /** Parameter mode (IN/OUT/INOUT) */
+    /**
+     * Parameter mode (IN/OUT/INOUT)
+     */
     public String mode;
 
-    /** The form label */
+    /**
+     * The form label
+     */
     public String formLabel;
 
-    /** The entity name */
+    /**
+     * The entity name
+     */
     public String entityName;
 
-    /** The entity field name */
+    /**
+     * The entity field name
+     */
     public String fieldName;
 
-    /** Request attribute to look for if not defined as a parameter */
+    /**
+     * Request attribute to look for if not defined as a parameter
+     */
     public String requestAttributeName;
 
-    /** Session attribute to look for if not defined as a parameter */
+    /**
+     * Session attribute to look for if not defined as a parameter
+     */
     public String sessionAttributeName;
 
-    /** Parameter prefix for creating an attribute Map */
+    /**
+     * Parameter prefix for creating an attribute Map
+     */
     public String stringMapPrefix;
 
-    /** Parameter suffix for creating an attribute List */
+    /**
+     * Parameter suffix for creating an attribute List
+     */
     public String stringListSuffix;
 
-    /** Validation methods */
+    public String parentName;
+
+    /**
+     * Validation methods
+     */
     public List<ModelParamValidator> validators;
 
-    /** Default value */
+    /**
+     * Default value
+     */
     private String defaultValue = null;
 
-    /** Is this Parameter required or optional? Default to false, or required */
+    /**
+     * Is this Parameter required or optional? Default to false, or required
+     */
     public boolean optional = false;
     public boolean overrideOptional = false;
 
-    /** Is this parameter to be displayed via the form tool? */
+    /**
+     * Is this parameter to be displayed via the form tool?
+     */
     public boolean formDisplay = true;
     public boolean overrideFormDisplay = false;
 
-    /** Default value */
+    /**
+     * Default value
+     */
     public String allowHtml = null;
 
-    /** Is this Parameter set internally? */
+    /**
+     * Is this Parameter set internally?
+     */
     public boolean internal = false;
 
-    public ModelParam() {}
+    /**
+     * 长度限制
+     */
+    public Integer maxLength = null;
+
+    public JSONArray data;
+
+    public ModelParam() {
+    }
 
     public ModelParam(ModelParam param) {
         this.name = param.name;
@@ -115,6 +159,9 @@ public class ModelParam implements Serializable {
         this.overrideFormDisplay = param.overrideFormDisplay;
         this.allowHtml = param.allowHtml;
         this.internal = param.internal;
+        this.parentName = param.parentName;
+        this.data = param.data;
+        this.maxLength = param.maxLength;
     }
 
     public void addValidator(String className, String methodName, String failMessage) {
@@ -140,6 +187,7 @@ public class ModelParam implements Serializable {
     public String getName() {
         return this.name;
     }
+
     // Method to retrieve form-label from model parameter object in freemarker
     public String getFormLabel() {
         return this.formLabel;
@@ -194,13 +242,16 @@ public class ModelParam implements Serializable {
         }
         return defaultValueObj;
     }
+
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
         if (this.defaultValue != null) {
             this.optional = true;
         }
-        if (Debug.verboseOn()) Debug.logVerbose("Default value for attribute [" + this.name + "] set to [" + this.defaultValue + "]", module);
+        if (Debug.verboseOn())
+            Debug.logVerbose("Default value for attribute [" + this.name + "] set to [" + this.defaultValue + "]", module);
     }
+
     public void copyDefaultValue(ModelParam param) {
         this.setDefaultValue(param.defaultValue);
     }
@@ -240,21 +291,21 @@ public class ModelParam implements Serializable {
     }
 
     protected String java2wsdlType() throws WSDLException {
-        if (ObjectType.instanceOf(java.lang.Character.class, this.type)) {
+        if (ObjectType.instanceOf(Character.class, this.type)) {
             return "std-String";
-        } else if (ObjectType.instanceOf(java.lang.String.class, this.type)) {
+        } else if (ObjectType.instanceOf(String.class, this.type)) {
             return "std-String";
-        } else if (ObjectType.instanceOf(java.lang.Byte.class, this.type)) {
+        } else if (ObjectType.instanceOf(Byte.class, this.type)) {
             return "std-String";
-        } else if (ObjectType.instanceOf(java.lang.Boolean.class, this.type)) {
+        } else if (ObjectType.instanceOf(Boolean.class, this.type)) {
             return "std-Boolean";
-        } else if (ObjectType.instanceOf(java.lang.Integer.class, this.type)) {
+        } else if (ObjectType.instanceOf(Integer.class, this.type)) {
             return "std-Integer";
-        } else if (ObjectType.instanceOf(java.lang.Double.class, this.type)) {
+        } else if (ObjectType.instanceOf(Double.class, this.type)) {
             return "std-Double";
-        } else if (ObjectType.instanceOf(java.lang.Float.class, this.type)) {
+        } else if (ObjectType.instanceOf(Float.class, this.type)) {
             return "std-Float";
-        } else if (ObjectType.instanceOf(java.lang.Short.class, this.type)) {
+        } else if (ObjectType.instanceOf(Short.class, this.type)) {
             return "std-Integer";
         } else if (ObjectType.instanceOf(java.math.BigDecimal.class, this.type)) {
             return "std-Long";
@@ -268,7 +319,7 @@ public class ModelParam implements Serializable {
             return "sql-Date";
         } else if (ObjectType.instanceOf(java.util.Date.class, this.type)) {
             return "sql-Timestamp";
-        } else if (ObjectType.instanceOf(java.lang.Long.class, this.type)) {
+        } else if (ObjectType.instanceOf(Long.class, this.type)) {
             return "std-Long";
         } else if (ObjectType.instanceOf(java.sql.Timestamp.class, this.type)) {
             return "sql-Timestamp";
@@ -278,7 +329,7 @@ public class ModelParam implements Serializable {
             return "eepk-";
         } else if (ObjectType.instanceOf(java.util.Map.class, this.type)) {
             return "map-Map";
-        } else if (ObjectType.instanceOf(java.util.List.class, this.type)) {
+        } else if (ObjectType.instanceOf(List.class, this.type)) {
             return "col-LinkedList";
         } else {
             return "cus-obj";

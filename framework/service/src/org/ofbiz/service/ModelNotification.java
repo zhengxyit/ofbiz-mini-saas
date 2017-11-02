@@ -19,11 +19,6 @@
 
 package org.ofbiz.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.ofbiz.base.config.GenericConfigException;
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.StringUtil;
@@ -32,6 +27,11 @@ import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.service.config.ServiceConfigUtil;
 import org.ofbiz.service.config.model.NotificationGroup;
 import org.ofbiz.service.config.model.Notify;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * ModelNotification

@@ -18,12 +18,12 @@
  *******************************************************************************/
 package org.ofbiz.service.job;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * Purge job - removes a JobSandbox entity value and its related values.

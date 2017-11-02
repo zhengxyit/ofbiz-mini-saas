@@ -53,7 +53,7 @@ public class UrlServletHelper extends ContextFilter {
 
         // 加个Tenant的判断
         if (useMultitenant) {
-            String ticket = TicketUtil.getTicketFormRequest(request);
+            String ticket = ((HttpServletRequest) request).getHeader(TicketUtil.TICKET_NAME);
             if (ticket == null) {
                 Debug.logWarning(null, "Unable to get Tenant", module);
             } else {

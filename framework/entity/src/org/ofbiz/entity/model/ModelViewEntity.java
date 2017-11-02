@@ -445,7 +445,7 @@ public class ModelViewEntity extends ModelEntity {
             while (aliasedFieldIterator.hasNext()) {
                 ModelField aliasedModelField = aliasedFieldIterator.next();
                 ModelField newModelField = ModelField.create(this, aliasedModelField.getDescription(), modelMemberEntity.getEntityAlias() + "." + aliasedModelField.getName(),
-                        aliasedModelField.getType(), modelMemberEntity.getEntityAlias() + "." + aliasedModelField.getColName(), null, null, false, false, false, false,
+                        aliasedModelField.getType(), modelMemberEntity.getEntityAlias() + "." + aliasedModelField.getColName(), null, null, false, false, false, false, false, false,
                         false, null, aliasedModelField.getValidators());
                 aliasedModelEntity.addField(newModelField);
             }
@@ -527,7 +527,7 @@ public class ModelViewEntity extends ModelEntity {
                     colValue = prefix + colValue + ")";
                 }
             }
-            ModelField field = ModelField.create(this, description, name, type, colName, colValue, fieldSet, isNotNull, isPk, encryptMethod, isAutoCreatedInternal, enableAuditLog, null, validators);
+            ModelField field = ModelField.create(this, description, name, type, colName, colValue, fieldSet, isNotNull, isPk, false, false, encryptMethod, isAutoCreatedInternal, enableAuditLog, null, validators);
             // if this is a groupBy field, add it to the groupBys list
             if (alias.groupBy || groupByFields.contains(alias.name)) {
                 this.groupBys.add(field);

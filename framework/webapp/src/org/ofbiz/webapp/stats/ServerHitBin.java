@@ -18,18 +18,10 @@
  *******************************************************************************/
 package org.ofbiz.webapp.stats;
 
-import java.util.Date;
-import java.util.Deque;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ConcurrentMap;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.ibm.icu.util.Calendar;
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.UtilHttp;
 import org.ofbiz.base.util.UtilProperties;
-import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.DelegatorFactory;
 import org.ofbiz.entity.GenericEntityException;
@@ -38,7 +30,12 @@ import org.ofbiz.entity.model.ModelEntity;
 import org.ofbiz.entity.util.EntityQuery;
 import org.ofbiz.entity.util.EntityUtilProperties;
 
-import com.ibm.icu.util.Calendar;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.Deque;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * <p>Counts server hits and tracks statistics for request, events and views

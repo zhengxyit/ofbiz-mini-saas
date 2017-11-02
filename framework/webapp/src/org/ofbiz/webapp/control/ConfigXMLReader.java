@@ -18,35 +18,22 @@
  *******************************************************************************/
 package org.ofbiz.webapp.control;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.ServletContext;
-
 import org.ofbiz.base.component.ComponentConfig.WebappInfo;
 import org.ofbiz.base.location.FlexibleLocation;
 import org.ofbiz.base.metrics.Metrics;
 import org.ofbiz.base.metrics.MetricsFactory;
-import org.ofbiz.base.util.Assert;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.FileUtil;
-import org.ofbiz.base.util.GeneralException;
-import org.ofbiz.base.util.UtilHttp;
-import org.ofbiz.base.util.UtilValidate;
-import org.ofbiz.base.util.UtilXml;
+import org.ofbiz.base.util.*;
 import org.ofbiz.base.util.cache.UtilCache;
 import org.ofbiz.base.util.collections.MapContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.servlet.ServletContext;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 /**
  * ConfigXMLReader.java - Reads and parses the XML site config files.

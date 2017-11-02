@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="../../../framework/service/dtd/services.xsd">
+    <description>Example Services</description>
+    <vendor>OFBiz</vendor>
+    <version>1.0</version>
+
+    <service name="queryDepartment" engine="groovy" location="component://hr/groovyScripts/GroupStorage.groovy" invoke="queryGroup" ret-model="api" release="Y" >
+        <description>(1.1)查询组织单位</description>
+        <attribute name="query" type="String" mode="IN" optional="true"><description>通用搜索条件，模糊匹配名称</description></attribute>
+        <attribute name="start" type="String" mode="IN" optional="true"><description>开始（第X）行，默认1</description></attribute>
+        <attribute name="rowSize" type="String" mode="IN" optional="true"><description>返回条数，默认20</description></attribute>
+        <attribute name="isAll" type="String" mode="IN" optional="true"><description>Y返回所有</description></attribute>
+        <attribute name="refresh" type="String" mode="IN" optional="true"><description>Y刷新服务器缓存,默认true</description></attribute>
+        <attribute name="list" type="List" mode="OUT">
+            <description>列表</description>
+            <attribute name="groupId" type="String" mode="OUT" optional="true"><description>组织单位ID不显示</description></attribute>
+            <attribute name="groupName" type="String" mode="OUT" optional="true"><description>组织单位名称</description></attribute>
+            <attribute name="pGroupId" type="String" mode="OUT" optional="true"><description>不显示</description></attribute>
+            <attribute name="groupGrade" type="Integer" mode="OUT" optional="true"><description>层级不显示</description></attribute>
+            <attribute name="groupPath" type="Integer" mode="OUT" optional="true"><description>结构,不显示</description></attribute>
+        </attribute>
+        <attribute name="count" type="Long" mode="OUT"><description>该条件下的总条数</description></attribute>
+    </service>
+    <service name="queryGroupInfo" engine="groovy" location="component://hr/groovyScripts/GroupStorage.groovy" invoke="groupInfo" ret-model="api" >
+        <description>查询组织单位信息</description>
+        <attribute name="groupId" type="String" mode="IN" optional="false"><description>ID</description></attribute>
+        <attribute name="data" type="Object" mode="OUT"><description>员工信息、装机信息、角色</description></attribute>
+    </service>
+    <service name="addDepartment" engine="groovy" location="component://hr/groovyScripts/AddDepartment.groovy" ret-model="api">
+        <description>创建部门</description>
+        <attribute name="groupName" type="String" mode="IN" optional="false"/>
+        <attribute name="superId" type="String" mode="IN" optional="true"/>
+        <attribute name="roles" type="String" mode="IN" optional="true"/>
+        <attribute name="employees" type="String" mode="IN" optional="true"/>
+    </service>
+    <service name="modifyDepartment" engine="groovy" location="component://hr/groovyScripts/ModifyDepartment.groovy" ret-model="api">
+        <description>修改部门信息</description>
+        <attribute name="groupId" type="String" mode="IN" optional="false"/>
+        <attribute name="groupName" type="String" mode="IN" optional="true"/>
+        <attribute name="superId" type="String" mode="IN" optional="true"><description>上级部门的ID，用在多层结构创建或更改</description></attribute>
+        <attribute name="roles" type="String" mode="IN" optional="true"/>
+        <attribute name="employees" type="String" mode="IN" optional="true"/>
+    </service>
+    <service name="delDepartment" engine="groovy" location="component://hr/groovyScripts/DelDepartment.groovy" ret-model="api">
+        <description>删除部门</description>
+        <attribute name="groupId" type="String" mode="IN" optional="false"/>
+    </service>
+    <service name="removeEmployee" engine="groovy" location="component://hr/groovyScripts/GroupStorage.groovy" invoke="removeEmployee" ret-model="api">
+        <description>移除员工</description>
+        <attribute name="groupId" type="String" mode="IN" optional="false"/>
+        <attribute name="employeeId" type="String" mode="IN" optional="false"/>
+    </service>
+    <service name="queryEmployee" engine="groovy" location="component://hr/groovyScripts/QueryEmployeeList.groovy" ret-model="api" release="Y">
+        <description>(1.1)员工信息查询</description>
+        <attribute name="query" type="String" mode="IN" optional="true"><description>通用搜索条件，模糊匹配编码和描述</description></attribute>
+        <attribute name="start" type="String" mode="IN" optional="true"><description>开始（第X）行，默认1</description></attribute>
+        <attribute name="rowSize" type="String" mode="IN" optional="true"><description>返回条数，默认20</description></attribute>
+        <attribute name="isAll" type="String" mode="IN" optional="true"><description>Y返回所有</description></attribute>
+        <attribute name="refresh" type="String" mode="IN" optional="true"><description>Y刷新服务器缓存,默认true</description></attribute>
+        <attribute name="list" type="List" mode="OUT">
+            <attribute name="employeeId" type="String" mode="OUT"></attribute>
+            <attribute name="employeeName" type="String"  mode="OUT"><description>员工姓名，登录不同公司应用时，显示的是此名称</description></attribute>
+            <attribute name="employeeStatus" type="String" mode="OUT"><description>状态</description></attribute>
+            <attribute name="code" type="String" mode="OUT"><description>员工编码，工号</description></attribute>
+            <attribute name="headPic" type="String" mode="OUT"><description>头像</description></attribute>
+            <attribute name="mobile" type="String" mode="OUT"><description>手机号</description></attribute>
+            <attribute name="email" type="String" mode="OUT"><description>邮箱</description></attribute>
+        </attribute>
+        <attribute name="count" type="Long" mode="OUT"><description>该条件下的总条数</description></attribute>
+    </service>
+    <service name="addEmployee" engine="groovy" location="component://hr/groovyScripts/AddEmployee.groovy" ret-model="api">
+        <description>增加员工信息</description>
+        <attribute name="employeeName" type="String" mode="IN" optional="false"><description>员工姓名，登录不同公司应用时，显示的是此名称</description></attribute>
+        <attribute name="code" type="String" mode="IN" optional="true"><description>员工编码，工号</description></attribute>
+        <attribute name="mobile" type="String" mode="IN" optional="true"><description>手机号</description></attribute>
+        <attribute name="groupId" type="String" mode="IN" optional="true"><description>组织单位</description></attribute>
+        <attribute name="email" type="String" mode="IN" optional="true"><description>邮箱</description></attribute>
+        <attribute name="isApp" type="String" mode="IN" optional="true"><description>移动App登录</description></attribute>
+        <attribute name="isPc" type="String" mode="IN" optional="true"><description>PC后台登录</description></attribute>
+        <attribute name="employeeId" type="String" mode="OUT" optional="true"/>
+    </service>
+    <service name="modifyEmployee" engine="groovy" location="component://hr/groovyScripts/ModifyEmployee.groovy" ret-model="api">
+        <description>修改员工信息</description>
+        <attribute name="employeeId" type="String" mode="IN" optional="false"/>
+        <attribute name="employeeName" type="String" mode="IN" optional="true"/>
+        <attribute name="mobile" type="String" mode="IN" optional="true"><description>手机号</description></attribute>
+        <attribute name="groupId" type="String" mode="IN" optional="true"><description>组织单位</description></attribute>
+        <attribute name="email" type="String" mode="IN" optional="true"><description>邮箱</description></attribute>
+        <attribute name="isApp" type="String" mode="IN" optional="true"><description>移动App登录</description></attribute>
+        <attribute name="isPc" type="String" mode="IN" optional="true"><description>PC后台登录</description></attribute>
+        <attribute name="name" type="String" mode="IN" optional="true"><description>测试</description></attribute>
+        <attribute name="age" type="String" mode="IN" optional="true"><description>测试</description></attribute>
+    </service>
+    <service name="delEmployee" engine="groovy" location="component://hr/groovyScripts/DelEmployee.groovy" ret-model="api">
+        <description>删除员工信息</description>
+        <attribute name="employeeId" type="String" mode="IN" optional="false"/>
+    </service>
+    <service name="resetPassword" engine="groovy" location="component://hr/groovyScripts/ResetPassword.groovy" ret-model="api">
+        <description>重置员工密码</description>
+        <attribute name="employeeId" type="String" mode="IN" optional="false"/>
+    </service>
+    <!-- 员工操作结束 -->
+
+    <!-- 角色 start -->
+    <service name="queryRole" engine="groovy" location="component://hr/groovyScripts/QueryRoleList.groovy" ret-model="api">
+        <description>角色信息查询(E)</description>
+        <attribute name="query" type="String" mode="IN" optional="true"><description>通用搜索条件，模糊匹配编码和描述</description></attribute>
+        <attribute name="start" type="String" mode="IN" optional="true"><description>开始（第X）行，默认1</description></attribute>
+        <attribute name="rowSize" type="String" mode="IN" optional="true"><description>返回条数，默认20</description></attribute>
+        <attribute name="isAll" type="String" mode="IN" optional="true"><description>Y返回所有</description></attribute>
+        <attribute name="refresh" type="String" mode="IN" optional="true"><description>Y刷新服务器缓存,默认true</description></attribute>
+        <attribute name="list" type="List" mode="OUT">
+            <attribute name="roleId" type="String" mode="OUT"></attribute>
+            <attribute name="roleName" type="String"  mode="OUT"><description>角色名称</description></attribute>
+            <attribute name="authList" type="List"  mode="OUT"><description>权限数组</description></attribute>
+        </attribute>
+        <attribute name="count" type="Long" mode="OUT"><description>该条件下的总条数</description></attribute>
+    </service>
+    <service name="queryAuth" engine="groovy" location="component://hr/groovyScripts/QueryAuthList.groovy" ret-model="api">
+        <attribute name="list" type="List" mode="OUT" />
+    </service>
+    <service name="addRole" engine="groovy" location="component://hr/groovyScripts/AddRole.groovy" ret-model="api">
+        <description>创建角色</description>
+        <attribute name="roleName" type="String" mode="IN" optional="false"/>
+        <attribute name="authList" type="String" mode="IN" optional="false"/>
+    </service>
+    <service name="modifyRole" engine="groovy" location="component://hr/groovyScripts/ModifyRole.groovy" ret-model="api">
+        <description>创建角色</description>
+        <attribute name="roleId" type="String" mode="IN" optional="false"/>
+        <attribute name="roleName" type="String" mode="IN" optional="false"/>
+        <attribute name="authList" type="String" mode="IN" optional="false"/>
+    </service>
+    <service name="delRole" engine="groovy" location="component://hr/groovyScripts/DelRole.groovy" ret-model="api">
+        <description>创建角色</description>
+        <attribute name="roleId" type="String" mode="IN" optional="false"/>
+    </service>
+    <!-- 角色 end -->
+</services>

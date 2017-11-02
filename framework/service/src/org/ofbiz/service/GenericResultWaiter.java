@@ -18,9 +18,9 @@
  *******************************************************************************/
 package org.ofbiz.service;
 
-import java.util.Map;
-
 import org.ofbiz.base.util.Debug;
+
+import java.util.Map;
 
 /**
  * Generic Result Waiter Class
@@ -43,7 +43,7 @@ public class GenericResultWaiter implements GenericRequester {
     private Throwable t = null;
 
     /**
-     * @see org.ofbiz.service.GenericRequester#receiveResult(java.util.Map)
+     * @see GenericRequester#receiveResult(Map)
      */
     public synchronized void receiveResult(Map<String, Object> result) {
         this.result = result;
@@ -55,7 +55,7 @@ public class GenericResultWaiter implements GenericRequester {
     }
 
     /**
-     * @see org.ofbiz.service.GenericRequester#receiveThrowable(java.lang.Throwable)
+     * @see GenericRequester#receiveThrowable(Throwable)
      */
     public synchronized void receiveThrowable(Throwable t) {
         this.t = t;
@@ -86,7 +86,7 @@ public class GenericResultWaiter implements GenericRequester {
      */
     public synchronized Throwable getThrowable() {
         if (!isCompleted())
-            throw new java.lang.IllegalStateException("Cannot return exception, synchronous call has not completed.");
+            throw new IllegalStateException("Cannot return exception, synchronous call has not completed.");
         return this.t;
     }
 
@@ -96,7 +96,7 @@ public class GenericResultWaiter implements GenericRequester {
      */
     public synchronized Map<String, Object> getResult() {
         if (!isCompleted())
-            throw new java.lang.IllegalStateException("Cannot return result, asynchronous call has not completed.");
+            throw new IllegalStateException("Cannot return result, asynchronous call has not completed.");
         return result;
     }
 
@@ -119,7 +119,7 @@ public class GenericResultWaiter implements GenericRequester {
             try {
                 this.wait(milliseconds);
                 if (Debug.verboseOn()) Debug.logVerbose("Waiting...", module);
-            } catch (java.lang.InterruptedException e) {
+            } catch (InterruptedException e) {
                 Debug.logError(e, module);
             }
         }

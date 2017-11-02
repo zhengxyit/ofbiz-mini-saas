@@ -314,7 +314,7 @@ public final class ComponentConfig {
         if (serverName == null || contextRoot == null) {
             return null;
         }
-        ComponentConfig.WebappInfo info = null;
+        WebappInfo info = null;
         for (ComponentConfig cc : getAllComponents()) {
             for (WebappInfo wInfo : cc.getWebappInfos()) {
                 if (serverName.equals(wInfo.server) && contextRoot.equals(wInfo.getContextRoot())) {

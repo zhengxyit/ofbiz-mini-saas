@@ -18,10 +18,6 @@
  *******************************************************************************/
 package org.ofbiz.service.semaphore;
 
-import java.sql.Timestamp;
-
-import javax.transaction.Transaction;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.UtilDateTime;
 import org.ofbiz.entity.Delegator;
@@ -32,6 +28,9 @@ import org.ofbiz.entity.transaction.TransactionUtil;
 import org.ofbiz.entity.util.EntityQuery;
 import org.ofbiz.service.ModelService;
 import org.ofbiz.service.job.JobManager;
+
+import javax.transaction.Transaction;
+import java.sql.Timestamp;
 
 /**
  * ServiceSemaphore

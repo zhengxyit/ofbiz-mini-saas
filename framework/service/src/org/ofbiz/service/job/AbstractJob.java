@@ -18,12 +18,12 @@
  *******************************************************************************/
 package org.ofbiz.service.job;
 
-import java.util.Date;
-
 import org.ofbiz.base.util.Assert;
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.entity.transaction.GenericTransactionException;
 import org.ofbiz.entity.transaction.TransactionUtil;
+
+import java.util.Date;
 
 /**
  * Abstract Job.

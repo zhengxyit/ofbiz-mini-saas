@@ -11,7 +11,6 @@
       <root url="jar://$PROJECT_DIR$/framework/base/lib/clhm-release-1.0-lru.jar!/" />
       <root url="jar://$PROJECT_DIR$/framework/base/lib/esapi-2.1.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/framework/base/lib/fop-2.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/framework/base/lib/freemarker-2.3.22.jar!/" />
       <root url="jar://$PROJECT_DIR$/framework/base/lib/guava-14.0.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/framework/base/lib/hamcrest-all-1.2.jar!/" />
       <root url="jar://$PROJECT_DIR$/framework/base/lib/httpclient-4.4.1.jar!/" />
@@ -103,7 +102,6 @@
       <root url="jar://$PROJECT_DIR$/framework/entity/lib/jdbc/derby-10.11.1.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/framework/entity/lib/jdbc/mysql-connector-java-5.1.38.jar!/" />
       <root url="jar://$PROJECT_DIR$/framework/entity/lib/commons-dbcp2-2.1.jar!/" />
-      <root url="jar://$PROJECT_DIR$/framework/geronimo/lib/geronimo-transaction-3.1.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/framework/service/lib/axiom-api-1.2.14.jar!/" />
       <root url="jar://$PROJECT_DIR$/framework/service/lib/axiom-impl-1.2.14.jar!/" />
       <root url="jar://$PROJECT_DIR$/framework/service/lib/axis2-adb-1.6.3.jar!/" />
@@ -119,8 +117,9 @@
       <root url="jar://$PROJECT_DIR$/framework/webapp/lib/rome-0.9.jar!/" />
       <root url="jar://$PROJECT_DIR$/ofbiz.jar!/" />
       <root url="jar://$PROJECT_DIR$/applications/sso/lib/CCP_REST_SDK_JAVA_v2.7r.jar!/" />
-      <root url="jar://$PROJECT_DIR$/applications/sso/lib/fastjson-1.2.8.jar!/" />
-      <root url="jar://$PROJECT_DIR$/applications/sso/lib/jpush-client-3.2.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/framework/base/lib/fastjson-1.2.8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/framework/entity/lib/geronimo-transaction-3.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/framework/entity/lib/jdbc/postgresql-42.1.4.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

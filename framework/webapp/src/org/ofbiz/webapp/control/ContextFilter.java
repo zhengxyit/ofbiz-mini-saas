@@ -18,8 +18,17 @@
  *******************************************************************************/
 package org.ofbiz.webapp.control;
 
-import static org.ofbiz.base.util.UtilGenerics.checkMap;
+import org.ofbiz.base.util.*;
+import org.ofbiz.entity.Delegator;
+import org.ofbiz.entity.DelegatorFactory;
+import org.ofbiz.service.LocalDispatcher;
+import org.ofbiz.service.ServiceContainer;
+import org.ofbiz.webapp.event.RequestBodyMapHandlerFactory;
+import org.ofbiz.webapp.website.WebSiteWorker;
 
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
@@ -27,32 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.StringUtil;
-import org.ofbiz.base.util.UtilGenerics;
-import org.ofbiz.base.util.UtilHttp;
-import org.ofbiz.base.util.UtilObject;
-import org.ofbiz.base.util.UtilValidate;
-import org.ofbiz.entity.Delegator;
-import org.ofbiz.entity.DelegatorFactory;
-import org.ofbiz.entity.GenericEntityException;
-import org.ofbiz.entity.GenericValue;
-import org.ofbiz.entity.util.EntityQuery;
-import org.ofbiz.entity.util.EntityUtil;
-import org.ofbiz.service.LocalDispatcher;
-import org.ofbiz.service.ServiceContainer;
-import org.ofbiz.webapp.event.RequestBodyMapHandlerFactory;
-import org.ofbiz.webapp.website.WebSiteWorker;
+import static org.ofbiz.base.util.UtilGenerics.checkMap;
 
 /**
  * ContextFilter - Restricts access to raw files and configures servlet objects.
@@ -219,6 +203,10 @@ public class ContextFilter implements Filter {
 
         setCharacterEncoding(request);
         setAttributesFromRequestBody(request);
+
+        httpResponse.addHeader("Access-Control-Allow-Origin", "*");
+        httpResponse.addHeader("Access-Control-Allow-Methods", "POST, GET");
+        httpResponse.addHeader("Access-Control-Allow-Headers", "Authorization,Content-Type,Cache-Control,X-TICKET,X-YBS-USER,X-Requested-With");
 
         // we're done checking; continue on
         chain.doFilter(request, httpResponse);

@@ -18,12 +18,12 @@
  *******************************************************************************/
 package org.ofbiz.webapp.control;
 
+import org.ofbiz.base.util.Debug;
+import org.ofbiz.base.util.UtilProperties;
+
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
-
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.UtilProperties;
 
 /**
  * HttpSessionListener that gathers and tracks various information and statistics

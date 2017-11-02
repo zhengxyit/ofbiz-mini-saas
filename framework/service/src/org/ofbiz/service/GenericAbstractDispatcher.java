@@ -18,19 +18,17 @@
  *******************************************************************************/
 package org.ofbiz.service;
 
-import java.util.Date;
-import java.util.Map;
-
-import javax.transaction.Transaction;
-
-import org.ofbiz.service.calendar.RecurrenceRule;
+import org.ofbiz.base.util.Debug;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.transaction.GenericTransactionException;
 import org.ofbiz.entity.transaction.TransactionUtil;
-import org.ofbiz.service.jms.JmsListenerFactory;
+import org.ofbiz.service.calendar.RecurrenceRule;
 import org.ofbiz.service.job.JobManager;
 import org.ofbiz.service.job.JobManagerException;
-import org.ofbiz.base.util.Debug;
+
+import javax.transaction.Transaction;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * Generic Services Local Dispatcher
@@ -47,7 +45,7 @@ public abstract class GenericAbstractDispatcher implements LocalDispatcher {
     }
 
     /**
-     * @see org.ofbiz.service.LocalDispatcher#schedule(java.lang.String, java.lang.String, java.util.Map, long, int, int, int, long, int)
+     * @see LocalDispatcher#schedule(String, String, Map, long, int, int, int, long, int)
      */
     public void schedule(String poolName, String serviceName, Map<String, ? extends Object> context, long startTime, int frequency, int interval, int count, long endTime, int maxRetry) throws GenericServiceException {
         schedule(null, poolName, serviceName, context, startTime, frequency, interval, count, endTime, maxRetry);
@@ -58,7 +56,7 @@ public abstract class GenericAbstractDispatcher implements LocalDispatcher {
     }
 
     /**
-     * @see org.ofbiz.service.LocalDispatcher#schedule(java.lang.String, java.lang.String, java.lang.String, java.util.Map, long, int, int, int, long, int)
+     * @see LocalDispatcher#schedule(String, String, String, Map, long, int, int, int, long, int)
      */
     public void schedule(String jobName, String poolName, String serviceName, Map<String, ? extends Object> context, long startTime, int frequency, int interval, int count, long endTime, int maxRetry) throws GenericServiceException {
         Transaction suspendedTransaction = null;
@@ -132,7 +130,7 @@ public abstract class GenericAbstractDispatcher implements LocalDispatcher {
     }
 
     /**
-     * @see org.ofbiz.service.LocalDispatcher#schedule(java.lang.String, java.util.Map, long, int, int, int, long)
+     * @see LocalDispatcher#schedule(String, Map, long, int, int, int, long)
      */
     public void schedule(String serviceName, Map<String, ? extends Object> context, long startTime, int frequency, int interval, int count, long endTime) throws GenericServiceException {
         ModelService model = ctx.getModelService(serviceName);
@@ -144,7 +142,7 @@ public abstract class GenericAbstractDispatcher implements LocalDispatcher {
     }
 
     /**
-     * @see org.ofbiz.service.LocalDispatcher#schedule(java.lang.String, java.util.Map, long, int, int, int)
+     * @see LocalDispatcher#schedule(String, Map, long, int, int, int)
      */
     public void schedule(String serviceName, Map<String, ? extends Object> context, long startTime, int frequency, int interval, int count) throws GenericServiceException {
         schedule(serviceName, context, startTime, frequency, interval, count, 0);
@@ -155,7 +153,7 @@ public abstract class GenericAbstractDispatcher implements LocalDispatcher {
     }
 
     /**
-     * @see org.ofbiz.service.LocalDispatcher#schedule(java.lang.String, java.util.Map, long, int, int, long)
+     * @see LocalDispatcher#schedule(String, Map, long, int, int, long)
      */
     public void schedule(String serviceName, Map<String, ? extends Object> context, long startTime, int frequency, int interval, long endTime) throws GenericServiceException {
         schedule(serviceName, context, startTime, frequency, interval, -1, endTime);
@@ -166,7 +164,7 @@ public abstract class GenericAbstractDispatcher implements LocalDispatcher {
     }
 
     /**
-     * @see org.ofbiz.service.LocalDispatcher#schedule(java.lang.String, java.util.Map, long)
+     * @see LocalDispatcher#schedule(String, Map, long)
      */
     public void schedule(String serviceName, Map<String, ? extends Object> context, long startTime) throws GenericServiceException {
         schedule(serviceName, context, startTime, RecurrenceRule.DAILY, 1, 1);
@@ -177,42 +175,35 @@ public abstract class GenericAbstractDispatcher implements LocalDispatcher {
     }
 
     /**
-     * @see org.ofbiz.service.LocalDispatcher#getJobManager()
+     * @see LocalDispatcher#getJobManager()
      */
     public JobManager getJobManager() {
         return dispatcher.getJobManager();
     }
 
     /**
-     * @see org.ofbiz.service.LocalDispatcher#getJMSListeneFactory()
-     */
-    public JmsListenerFactory getJMSListeneFactory() {
-        return dispatcher.getJMSListenerFactory();
-    }
-
-    /**
-     * @see org.ofbiz.service.LocalDispatcher#getDelegator()
+     * @see LocalDispatcher#getDelegator()
      */
     public Delegator getDelegator() {
         return dispatcher.getDelegator();
     }
 
     /**
-     * @see org.ofbiz.service.LocalDispatcher#getName()
+     * @see LocalDispatcher#getName()
      */
     public String getName() {
         return this.name;
     }
 
     /**
-     * @see org.ofbiz.service.LocalDispatcher#getDispatchContext()
+     * @see LocalDispatcher#getDispatchContext()
      */
     public DispatchContext getDispatchContext() {
         return ctx;
     }
 
     /**
-     * @see org.ofbiz.service.LocalDispatcher#deregister()
+     * @see LocalDispatcher#deregister()
      */
     public void deregister() {
         ServiceContainer.removeFromCache(getName());
@@ -220,7 +211,7 @@ public abstract class GenericAbstractDispatcher implements LocalDispatcher {
     }
 
     /**
-     * @see org.ofbiz.service.LocalDispatcher#registerCallback(String, GenericServiceCallback)
+     * @see LocalDispatcher#registerCallback(String, GenericServiceCallback)
      */
     public void registerCallback(String serviceName, GenericServiceCallback cb) {
         dispatcher.registerCallback(serviceName, cb);

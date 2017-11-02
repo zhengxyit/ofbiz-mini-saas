@@ -41,30 +41,4 @@ under the License.
         <fileset dir="../entity/build/lib" includes="*.jar"/>
     </path>
 
-    <target name="stubs" depends="classes">
-        <rmic base="${build.dir}/classes" classname="org.ofbiz.service.rmi.RemoteDispatcherImpl">
-            <classpath>
-                <path refid="local.class.path"/>
-            </classpath>
-        </rmic>
-    </target>
-
-    <target name="main-jar" depends="stubs">
-        <main-jar/>
-        <test-jar/>
-    </target>
-
-    <target name="rmi-jar" depends="stubs">
-        <mkdir dir="${build.dir}/rmi"/>
-        <jar jarfile="${build.dir}/rmi/${name}-rmi.jar">
-            <fileset dir="${build.dir}/classes" includes="**/GenericServiceException.class"/>
-            <fileset dir="${build.dir}/classes" includes="**/GenericResultWaiter.class"/>
-            <fileset dir="${build.dir}/classes" includes="**/GenericRequester.class"/>
-            <fileset dir="${build.dir}/classes" includes="**/LocalDispatcher.class"/>
-            <fileset dir="${build.dir}/classes" includes="**/ModelService.class"/>
-            <fileset dir="${build.dir}/classes" includes="org/ofbiz/service/rmi/**"/>
-        </jar>
-    </target>
-
-    <target name="jar" depends="main-jar, rmi-jar"/>
 </project>

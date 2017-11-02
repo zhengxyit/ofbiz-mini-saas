@@ -93,7 +93,7 @@ public class Record implements Serializable {
 
     if (object == null)
         return null;
-    if (object instanceof java.lang.String)
+    if (object instanceof String)
         return (String) object;
     else
         return object.toString();
@@ -104,7 +104,7 @@ public class Record implements Serializable {
 
     if (object == null)
         return "";
-    if (object instanceof java.lang.String)
+    if (object instanceof String)
         return (String) object;
     else
         return object.toString();
@@ -235,21 +235,21 @@ public class Record implements Serializable {
         // string then put the result in a java.sql.Timestamp
         // a common timestamp format for flat files is with no separators: yyyyMMddHHmmss
         SimpleDateFormat sdf = new SimpleDateFormat(field.format);
-        java.util.Date tempDate = sdf.parse(value);
+        Date tempDate = sdf.parse(value);
         java.sql.Timestamp timestamp = new java.sql.Timestamp(tempDate.getTime());
 
         set(name, timestamp);
     } else if (fieldType.equals("CustomDate")) {
         // a common date only format for flat files is with no separators: yyyyMMdd or MMddyyyy
         SimpleDateFormat sdf = new SimpleDateFormat(field.format);
-        java.util.Date tempDate = sdf.parse(value);
+        Date tempDate = sdf.parse(value);
         java.sql.Date date = new java.sql.Date(tempDate.getTime());
 
         set(name, date);
     } else if (fieldType.equals("CustomTime")) {
         // a common time only format for flat files is with no separators: HHmmss
         SimpleDateFormat sdf = new SimpleDateFormat(field.format);
-        java.util.Date tempDate = sdf.parse(value);
+        Date tempDate = sdf.parse(value);
         java.sql.Time time = new java.sql.Time(tempDate.getTime());
 
         set(name, time);
@@ -513,10 +513,10 @@ public class Record implements Serializable {
         }
         try {
         record.setString(modelField.name, strVal);
-        } catch (java.text.ParseException e) {
+        } catch (ParseException e) {
         throw new DataFileException("Could not parse field " + modelField.name + ", format string \"" + modelField.format + "\" with value " + strVal +
             " on line " + lineNum, e);
-        } catch (java.lang.NumberFormatException e) {
+        } catch (NumberFormatException e) {
         throw new DataFileException("Number not valid for field " + modelField.name + ", format string \"" + modelField.format + "\" with value " +
             strVal + " on line " + lineNum, e);
         }
@@ -583,10 +583,10 @@ public class Record implements Serializable {
             strVal = strVal.substring(textDelimiter.length(), strVal.length() - textDelimiter.length());
         }
         record.setString(modelField.name, strVal);
-        } catch (java.text.ParseException e) {
+        } catch (ParseException e) {
         throw new DataFileException("Could not parse field " + modelField.name + ", format string \"" + modelField.format + "\" with value " + strVal +
             " on line " + lineNum, e);
-        } catch (java.lang.NumberFormatException e) {
+        } catch (NumberFormatException e) {
         throw new DataFileException("Number not valid for field " + modelField.name + ", format string \"" + modelField.format + "\" with value " +
             strVal + " on line " + lineNum, e);
         }

@@ -747,7 +747,7 @@ public class FindServices {
     public static Map<String, Object> performFindItem(DispatchContext dctx, Map<String, Object> context) {
         context.put("viewSize", 1);
         context.put("viewIndex", 0);
-        Map<String, Object> result = org.ofbiz.common.FindServices.performFind(dctx,context);
+        Map<String, Object> result = FindServices.performFind(dctx,context);
 
         List<GenericValue> list = null;
         GenericValue item= null;

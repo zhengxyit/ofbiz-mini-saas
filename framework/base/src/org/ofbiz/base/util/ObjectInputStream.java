@@ -37,7 +37,7 @@ public class ObjectInputStream extends java.io.ObjectInputStream {
     }
 
     /**
-     * @see java.io.ObjectInputStream#resolveClass(java.io.ObjectStreamClass)
+     * @see java.io.ObjectInputStream#resolveClass(ObjectStreamClass)
      */
     @Override
     protected Class<?> resolveClass(ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
@@ -45,7 +45,7 @@ public class ObjectInputStream extends java.io.ObjectInputStream {
     }
 
     /**
-     * @see java.io.ObjectInputStream#resolveProxyClass(java.lang.String[])
+     * @see java.io.ObjectInputStream#resolveProxyClass(String[])
      */
     @Override
     protected Class<?> resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {

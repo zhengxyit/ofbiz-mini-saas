@@ -123,6 +123,11 @@ under the License.
                             Use with TIMESTAMP SQL type
                         </xs:documentation></xs:annotation>
                     </xs:enumeration>
+                    <xs:enumeration value="org.ofbiz.entity.field.JsonValue">
+                        <xs:annotation><xs:documentation>
+                            Use with json SQL type
+                        </xs:documentation></xs:annotation>
+                    </xs:enumeration>
         		</xs:restriction>
         	</xs:simpleType>
         </xs:attribute>

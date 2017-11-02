@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../framework/entity/dtd/entitymodel.xsd">
+
+    <title>Entity of an Apache OFBiz Component</title>
+    <description>None</description>
+    <version>1.0</version>
+
+    <entity entity-name="HrEmployee" package-name="org.ofbiz.hr" title="Employee"  no-auto-stamp="true" is-tenant="true">
+        <field name="employeeId" type="id-ne" />
+        <field name="employeeName" type="name" />
+        <field name="code" type="short-varchar"><description>员工编码</description></field>
+        <field name="mobile" type="short-varchar"><description>手机号</description></field>
+        <field name="email" type="short-varchar"><description>邮箱</description></field>
+        <field name="position" type="short-varchar"><description>职位</description></field>
+        <field name="employeeStatus" type="indicator" />
+        <field name="headPic" type="short-varchar"><description>头像</description></field>
+        <field name="isApp" type="indicator"><description>是否可以使用App</description></field>
+        <field name="isPc" type="indicator"><description>是否可以登录Web系统</description></field>
+        <field name="openId" type="short-varchar"><description>服务号OPENID</description></field>
+        <field name="custom" type="json"><description>自定义字段</description></field>
+        <field name="tenant" type="id-ne" />
+        <prim-key field="employeeId"/>
+    </entity>
+
+    <entity entity-name="HrGroup" package-name="org.ofbiz.hr" title="Group" is-tenant="true"  no-auto-stamp="true">
+        <field name="groupId" type="id-ne" />
+        <field name="pGroupId" type="id-ne"><description>父ID</description></field>
+        <field name="groupPath" type="long-varchar"><description>前后都要加,号</description></field>
+        <field name="groupGrade" type="integer"><description>级别</description></field>
+        <field name="groupType" type="short-varchar"><description>D部门(其它扩展)</description></field>
+        <field name="groupName" type="short-varchar" />
+        <field name="tenant" type="id-ne" />
+        <prim-key field="groupId"/>
+        <relation type="one-nofk" rel-entity-name="HrGroup">
+            <key-map field-name="pGroupId" rel-field-name="groupId"/>
+        </relation>
+        <relation type="many" rel-entity-name="HrGroup">
+            <key-map field-name="groupId" rel-field-name="pGroupId"/>
+        </relation>
+        <relation type="many" rel-entity-name="HrGroupAuth">
+            <key-map field-name="groupId" />
+        </relation>
+        <relation type="many" rel-entity-name="HrGroupEmployee">
+            <key-map field-name="groupId" />
+        </relation>
+    </entity>
+
+    <entity entity-name="HrRole" package-name="org.ofbiz.hr" title="HrRole" is-tenant="true"  no-auto-stamp="true">
+        <field name="roleId" type="id-ne" />
+        <field name="roleName" type="id-ne" />
+        <field name="tenant" type="id-ne" />
+        <prim-key field="roleId"/>
+    </entity>
+
+    <entity entity-name="HrRoleAuth" package-name="org.ofbiz.hr" title="HrRoleAuth" is-tenant="true" no-auto-stamp="true">
+        <field name="roleAuthId" type="id-ne" />
+        <field name="roleId" type="id-ne" />
+        <field name="serviceUrl" type="short-varchar" />
+        <field name="tenant" type="id-ne" />
+        <prim-key field="roleAuthId"/>
+        <relation type="one-nofk" rel-entity-name="HrRole">
+            <key-map field-name="roleId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="HrGroupRole" package-name="org.ofbiz.hr" title="HrGroupRole" is-tenant="true" no-auto-stamp="true">
+        <field name="groupRoleId" type="id-ne" />
+        <field name="groupId" type="id-ne" />
+        <field name="roleId" type="id-ne" />
+        <prim-key field="groupRoleId"/>
+        <relation type="one-nofk" rel-entity-name="HrRole">
+            <key-map field-name="roleId"/>
+        </relation>
+        <relation type="one-nofk" rel-entity-name="HrGroup">
+            <key-map field-name="groupId"/>
+        </relation>
+    </entity>
+
+    <entity entity-name="HrGroupEmployee" package-name="org.ofbiz.hr" title="HrGroupEmployee" is-tenant="true" no-auto-stamp="true">
+        <field name="groupEmployeeId" type="id-ne" />
+        <field name="employeeId" type="id-ne" />
+        <field name="groupId" type="id-ne" />
+        <prim-key field="groupEmployeeId"/>
+        <relation type="one-nofk" rel-entity-name="HrGroup">
+            <key-map field-name="groupId"/>
+        </relation>
+        <relation type="one-nofk" rel-entity-name="HrEmployee">
+            <key-map field-name="employeeId"/>
+        </relation>
+    </entity>
+</entitymodel>

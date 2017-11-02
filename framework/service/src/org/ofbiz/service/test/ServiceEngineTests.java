@@ -18,11 +18,11 @@
  *******************************************************************************/
 package org.ofbiz.service.test;
 
-import java.util.Map;
-
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.service.ModelService;
 import org.ofbiz.service.testtools.OFBizTestCase;
+
+import java.util.Map;
 
 public class ServiceEngineTests extends OFBizTestCase {
 

@@ -18,11 +18,10 @@
  *******************************************************************************/
 package org.ofbiz.service;
 
-import java.util.Map;
-
 import org.ofbiz.entity.Delegator;
-import org.ofbiz.service.jms.JmsListenerFactory;
 import org.ofbiz.service.job.JobManager;
+
+import java.util.Map;
 
 /**
  * A local service dispatcher. This is the main API for the service engine.
@@ -323,12 +322,6 @@ public interface LocalDispatcher {
      * @return JobManager that is associated with this dispatcher
      */
     JobManager getJobManager();
-
-    /**
-     * Gets the JmsListenerFactory which holds the message listeners.
-     * @return JmsListenerFactory
-     */
-    JmsListenerFactory getJMSListeneFactory();
 
     /**
      * Gets the GenericEntityDelegator associated with this dispatcher

@@ -186,7 +186,7 @@ public class ContainerLoader implements StartupLoader {
             containerObj.init(args, containerCfg.name, configFile);
         } catch (ContainerException e) {
             throw new StartupException("Cannot init() " + containerCfg.name, e);
-        } catch (java.lang.AbstractMethodError e) {
+        } catch (AbstractMethodError e) {
             throw new StartupException("Cannot init() " + containerCfg.name, e);
         }
 
@@ -237,7 +237,7 @@ public class ContainerLoader implements StartupLoader {
                 container.start();
             } catch (ContainerException e) {
                 throw new StartupException("Cannot start() " + container.getClass().getName(), e);
-            } catch (java.lang.AbstractMethodError e) {
+            } catch (AbstractMethodError e) {
                 throw new StartupException("Cannot start() " + container.getClass().getName(), e);
             }
             Debug.logInfo("Started container " + container.getName(), module);

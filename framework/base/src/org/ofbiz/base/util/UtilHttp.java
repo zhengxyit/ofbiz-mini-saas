@@ -271,7 +271,7 @@ public class UtilHttp {
         for (Map.Entry<String, Object> entry : attrMap.entrySet()) {
             String key = entry.getKey();
             Object val = entry.getValue();
-            if (val instanceof java.sql.Timestamp) {
+            if (val instanceof Timestamp) {
                 val = val.toString();
             }
             if (val instanceof String || val instanceof Number || val instanceof Map<?, ?> || val instanceof List<?> || val instanceof Boolean) {
@@ -563,7 +563,7 @@ public class UtilHttp {
      * @param request
      */
     public static void parametersToAttributes(HttpServletRequest request) {
-        java.util.Enumeration<String> e = UtilGenerics.cast(request.getParameterNames());
+        Enumeration<String> e = UtilGenerics.cast(request.getParameterNames());
         while (e.hasMoreElements()) {
             String name = e.nextElement();
             request.setAttribute(name, request.getParameter(name));

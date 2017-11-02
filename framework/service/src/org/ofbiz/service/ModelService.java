@@ -18,38 +18,16 @@
  *******************************************************************************/
 package org.ofbiz.service;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.AbstractMap;
-import java.util.AbstractSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.TreeSet;
+import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
+import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
+import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
+import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
+import org.ofbiz.base.metrics.Metrics;
+import org.ofbiz.base.util.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingInput;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
-import javax.wsdl.Definition;
-import javax.wsdl.Input;
-import javax.wsdl.Message;
-import javax.wsdl.Operation;
-import javax.wsdl.Output;
-import javax.wsdl.Part;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
-import javax.wsdl.Types;
-import javax.wsdl.WSDLException;
+import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
@@ -58,25 +36,10 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.ofbiz.base.metrics.Metrics;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.GeneralException;
-import org.ofbiz.base.util.ObjectType;
-import org.ofbiz.base.util.UtilCodec;
-import org.ofbiz.base.util.UtilMisc;
-import org.ofbiz.base.util.UtilProperties;
-import org.ofbiz.base.util.UtilValidate;
-import org.ofbiz.service.group.GroupModel;
-import org.ofbiz.service.group.GroupServiceModel;
-import org.ofbiz.service.group.ServiceGroupReader;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
-import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
-import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
-import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * Generic Service Model Class
@@ -262,11 +225,6 @@ public class ModelService extends AbstractMap<String, Object> implements Seriali
     public List<ModelNotification> notifications = new LinkedList<ModelNotification>();
 
     /**
-     * Internal Service Group
-     */
-    public GroupModel internalGroup = null;
-
-    /**
      * Context Information, a Map of parameters used by the service, contains ModelParam objects
      */
     protected Map<String, ModelParam> contextInfo = new LinkedHashMap<String, ModelParam>();
@@ -280,6 +238,8 @@ public class ModelService extends AbstractMap<String, Object> implements Seriali
      * Flag to say if we have pulled in our addition parameters from our implemented service(s)
      */
     protected boolean inheritedParameters = false;
+
+    protected Map<String, ModelParam> formatInfo = new LinkedHashMap<String, ModelParam>();
 
     /**
      * Service metrics.
@@ -324,7 +284,6 @@ public class ModelService extends AbstractMap<String, Object> implements Seriali
         this.implServices = model.implServices;
         this.overrideParameters = model.overrideParameters;
         this.inheritedParameters = model.inheritedParameters();
-        this.internalGroup = model.internalGroup;
         this.hideResultInLog = model.hideResultInLog;
         this.metrics = model.metrics;
         List<ModelParam> modelParamList = model.getModelParamList();
@@ -346,7 +305,7 @@ public class ModelService extends AbstractMap<String, Object> implements Seriali
         return null;
     }
 
-    private final class ModelServiceMapEntry implements Map.Entry<String, Object> {
+    private final class ModelServiceMapEntry implements Entry<String, Object> {
         private final Field field;
 
         protected ModelServiceMapEntry(Field field) {
@@ -387,23 +346,23 @@ public class ModelService extends AbstractMap<String, Object> implements Seriali
     }
 
     @Override
-    public Set<Map.Entry<String, Object>> entrySet() {
-        return new AbstractSet<Map.Entry<String, Object>>() {
+    public Set<Entry<String, Object>> entrySet() {
+        return new AbstractSet<Entry<String, Object>>() {
             @Override
             public int size() {
                 return MODEL_SERVICE_FIELDS.length;
             }
 
             @Override
-            public Iterator<Map.Entry<String, Object>> iterator() {
-                return new Iterator<Map.Entry<String, Object>>() {
+            public Iterator<Entry<String, Object>> iterator() {
+                return new Iterator<Entry<String, Object>>() {
                     private int i = 0;
 
                     public boolean hasNext() {
                         return i < MODEL_SERVICE_FIELDS.length;
                     }
 
-                    public Map.Entry<String, Object> next() {
+                    public Entry<String, Object> next() {
                         return new ModelServiceMapEntry(MODEL_SERVICE_FIELDS[i++]);
                     }
 
@@ -480,6 +439,16 @@ public class ModelService extends AbstractMap<String, Object> implements Seriali
         if (param != null) {
             contextInfo.put(param.name, param);
             contextParamList.add(param);
+        }
+    }
+
+    public ModelParam getColumn(String name) {
+        return formatInfo.get(name);
+    }
+
+    public void addColumn(ModelParam param) {
+        if (param != null) {
+            formatInfo.put(param.name, param);
         }
     }
 
@@ -1016,7 +985,7 @@ public class ModelService extends AbstractMap<String, Object> implements Seriali
 
     private Map<String, Object> makePrefixMap(Map<String, ? extends Object> source, ModelParam param) {
         Map<String, Object> paramMap = new HashMap<String, Object>();
-        for (Map.Entry<String, ? extends Object> entry : source.entrySet()) {
+        for (Entry<String, ? extends Object> entry : source.entrySet()) {
             String key = entry.getKey();
             if (key.startsWith(param.stringMapPrefix)) {
                 key = key.replace(param.stringMapPrefix, "");
@@ -1028,7 +997,7 @@ public class ModelService extends AbstractMap<String, Object> implements Seriali
 
     private List<Object> makeSuffixList(Map<String, ? extends Object> source, ModelParam param) {
         List<Object> paramList = new LinkedList<Object>();
-        for (Map.Entry<String, ? extends Object> entry : source.entrySet()) {
+        for (Entry<String, ? extends Object> entry : source.entrySet()) {
             String key = entry.getKey();
             if (key.endsWith(param.stringListSuffix)) {
                 paramList.add(entry.getValue());
@@ -1196,21 +1165,6 @@ public class ModelService extends AbstractMap<String, Object> implements Seriali
      */
     public synchronized void interfaceUpdate(DispatchContext dctx) throws GenericServiceException {
         if (!inheritedParameters) {
-            // services w/ engine 'group' auto-implement the grouped services
-            if (this.engineName.equals("group") && implServices.size() == 0) {
-                GroupModel group = internalGroup;
-                if (group == null) {
-                    group = ServiceGroupReader.getGroupModel(this.location);
-                }
-                if (group != null) {
-                    for (GroupServiceModel sm : group.getServices()) {
-                        implServices.add(new ModelServiceIface(sm.getName(), sm.isOptional()));
-                        if (Debug.verboseOn())
-                            Debug.logVerbose("Adding service [" + sm.getName() + "] as interface of: [" + this.name + "]", module);
-                    }
-                }
-            }
-
             // handle interfaces
             if (UtilValidate.isNotEmpty(implServices) && dctx != null) {
                 for (ModelServiceIface iface : implServices) {

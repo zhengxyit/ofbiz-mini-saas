@@ -18,17 +18,17 @@
  */
 package org.ofbiz.service.engine;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Map;
-
+import org.ofbiz.base.util.Debug;
+import org.ofbiz.base.util.UtilGenerics;
 import org.ofbiz.service.DispatchContext;
 import org.ofbiz.service.GenericServiceException;
 import org.ofbiz.service.ModelService;
 import org.ofbiz.service.ServiceDispatcher;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.UtilGenerics;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Map;
 
 /**
  * Standard Java Static Method Service Engine
@@ -42,7 +42,7 @@ public final class StandardJavaEngine extends GenericAsyncEngine {
     }
 
     /**
-     * @see org.ofbiz.service.engine.GenericEngine#runSyncIgnore(java.lang.String, org.ofbiz.service.ModelService, java.util.Map)
+     * @see GenericEngine#runSyncIgnore(String, org.ofbiz.service.ModelService, Map)
      */
     @Override
     public void runSyncIgnore(String localName, ModelService modelService, Map<String, Object> context) throws GenericServiceException {
@@ -50,7 +50,7 @@ public final class StandardJavaEngine extends GenericAsyncEngine {
     }
 
     /**
-     * @see org.ofbiz.service.engine.GenericEngine#runSync(java.lang.String, org.ofbiz.service.ModelService, java.util.Map)
+     * @see GenericEngine#runSync(String, org.ofbiz.service.ModelService, Map)
      */
     @Override
     public Map<String, Object> runSync(String localName, ModelService modelService, Map<String, Object> context) throws GenericServiceException {

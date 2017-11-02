@@ -18,10 +18,10 @@
  *******************************************************************************/
 package org.ofbiz.service;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import org.ofbiz.base.util.UtilValidate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ServiceValidationException

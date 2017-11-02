@@ -18,26 +18,6 @@
  *******************************************************************************/
 package org.ofbiz.webapp.event;
 
-import static org.ofbiz.base.util.UtilGenerics.checkCollection;
-import static org.ofbiz.base.util.UtilGenerics.checkMap;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.UtilHttp;
 import org.ofbiz.base.util.UtilProperties;
@@ -50,6 +30,19 @@ import org.ofbiz.service.ModelService;
 import org.ofbiz.service.calendar.RecurrenceRule;
 import org.ofbiz.webapp.control.ConfigXMLReader.Event;
 import org.ofbiz.webapp.control.RequestHandler;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.*;
+
+import static org.ofbiz.base.util.UtilGenerics.checkCollection;
+import static org.ofbiz.base.util.UtilGenerics.checkMap;
 
 /**
  * CoreEvents - WebApp Events Related To Framework pieces

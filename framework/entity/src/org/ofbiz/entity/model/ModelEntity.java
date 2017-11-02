@@ -233,18 +233,18 @@ public class ModelEntity implements Comparable<ModelEntity>, Serializable {
             ModelField field = ModelField.create(this, fieldElement, isPk);
             internalAddField(field, pkFieldNames);
         }
-        // 多租户下 且 配置isTenant时才启用
-        if (EntityUtil.isMultiTenantEnabled() && this.isTenant && !fieldsMap.containsKey(TENANT_FIELD)) {
-            ModelField newField = ModelField.create(this, "", TENANT_FIELD, "id", null, null, null, false, false, false, true, false, null, null);
-            internalAddField(newField, pkFieldNames);
-        }
+        // 多租户下 且 配置isTenant时才启用 不用自动建字段，导入的时候会有Bug
+        //if (EntityUtil.isMultiTenantEnabled() && this.isTenant && !fieldsMap.containsKey(TENANT_FIELD)) {
+        //ModelField newField = ModelField.create(this, "", TENANT_FIELD, "id", null, null, null, false, false, false, true, false, null, null);
+        //internalAddField(newField, pkFieldNames);
+        //}
         // if applicable automatically add the STAMP_FIELD and STAMP_TX_FIELD fields
         if ((this.doLock || !this.noAutoStamp) && !fieldsMap.containsKey(STAMP_FIELD)) {
-            ModelField newField = ModelField.create(this, "", STAMP_FIELD, "date-time", null, null, null, false, false, false, true, false, null, null);
+            ModelField newField = ModelField.create(this, "", STAMP_FIELD, "date-time", null, null, null, false, false, false, false, false, true, false, null, null);
             internalAddField(newField, pkFieldNames);
         }
         if (!this.noAutoStamp && !fieldsMap.containsKey(STAMP_TX_FIELD)) {
-            ModelField newField = ModelField.create(this, "", STAMP_TX_FIELD, "date-time", null, null, null, false, false, false, true, false, null, null);
+            ModelField newField = ModelField.create(this, "", STAMP_TX_FIELD, "date-time", null, null, null, false, false, false, false, false, true, false, null, null);
             internalAddField(newField, pkFieldNames);
             // also add an index for this field
             String indexName = ModelUtil.shortenDbName(this.tableName + "_TXSTMP", 18);
@@ -254,11 +254,11 @@ public class ModelEntity implements Comparable<ModelEntity>, Serializable {
         }
         // if applicable automatically add the CREATE_STAMP_FIELD and CREATE_STAMP_TX_FIELD fields
         if ((this.doLock || !this.noAutoStamp) && !fieldsMap.containsKey(CREATE_STAMP_FIELD)) {
-            ModelField newField = ModelField.create(this, "", CREATE_STAMP_FIELD, "date-time", null, null, null, false, false, false, true, false, null, null);
+            ModelField newField = ModelField.create(this, "", CREATE_STAMP_FIELD, "date-time", null, null, null, false, false, false, false, false, true, false, null, null);
             internalAddField(newField, pkFieldNames);
         }
         if (!this.noAutoStamp && !fieldsMap.containsKey(CREATE_STAMP_TX_FIELD)) {
-            ModelField newField = ModelField.create(this, "", CREATE_STAMP_TX_FIELD, "date-time", null, null, null, false, false, false, true, false, null, null);
+            ModelField newField = ModelField.create(this, "", CREATE_STAMP_TX_FIELD, "date-time", null, null, null, false, false, false, false, false, true, false, null, null);
             internalAddField(newField, pkFieldNames);
             // also add an index for this field
             String indexName = ModelUtil.shortenDbName(this.tableName + "_TXCRTS", 18);
@@ -431,7 +431,7 @@ public class ModelEntity implements Comparable<ModelEntity>, Serializable {
                     this.isSupportModules = true;
                 }
                 newField = ModelField.create(this, description, existingField.getName(), type, colName, existingField.getColValue(), existingField.getFieldSet(),
-                        existingField.getIsNotNull(), existingField.getIsPk(), existingField.getEncryptMethod(), existingField.getIsAutoCreatedInternal(),
+                        existingField.getIsNotNull(), existingField.getIsPk(), existingField.getIsStatus(), existingField.getIsClassify(), existingField.getEncryptMethod(), existingField.getIsAutoCreatedInternal(),
                         enableAuditLog, supportModules, existingField.getValidators());
             }
             // add to the entity as a new field
@@ -793,9 +793,9 @@ public class ModelEntity implements Comparable<ModelEntity>, Serializable {
             nameList.add(CREATE_STAMP_FIELD);
             nameList.add(CREATE_STAMP_TX_FIELD);
         }
-        if (EntityUtil.isMultiTenantEnabled() && this.isTenant) {
-            nameList.add(TENANT_FIELD);
-        }
+        // if (EntityUtil.isMultiTenantEnabled() && this.isTenant) {
+        // nameList.add(TENANT_FIELD);
+        // }
         return nameList;
     }
 

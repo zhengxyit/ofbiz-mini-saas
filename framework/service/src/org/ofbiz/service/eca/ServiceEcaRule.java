@@ -18,12 +18,6 @@
  *******************************************************************************/
 package org.ofbiz.service.eca;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilValidate;
@@ -31,6 +25,8 @@ import org.ofbiz.base.util.UtilXml;
 import org.ofbiz.service.DispatchContext;
 import org.ofbiz.service.GenericServiceException;
 import org.w3c.dom.Element;
+
+import java.util.*;
 
 /**
  * ServiceEcaRule

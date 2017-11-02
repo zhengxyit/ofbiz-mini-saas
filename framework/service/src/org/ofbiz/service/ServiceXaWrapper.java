@@ -18,19 +18,18 @@
  *******************************************************************************/
 package org.ofbiz.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.transaction.Status;
-import javax.transaction.Transaction;
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.Xid;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.transaction.GenericTransactionException;
 import org.ofbiz.entity.transaction.GenericXaResource;
 import org.ofbiz.entity.transaction.TransactionUtil;
+
+import javax.transaction.Status;
+import javax.transaction.Transaction;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.Xid;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ServiceXaWrapper - XA Resource wrapper for running services on commit() or rollback()
@@ -166,7 +165,7 @@ public class ServiceXaWrapper extends GenericXaResource {
 
     // -- XAResource Methods
     /**
-     * @see javax.transaction.xa.XAResource#commit(javax.transaction.xa.Xid xid, boolean onePhase)
+     * @see javax.transaction.xa.XAResource#commit(Xid xid, boolean onePhase)
      */
     @Override
     public void commit(Xid xid, boolean onePhase) throws XAException {
@@ -201,7 +200,7 @@ public class ServiceXaWrapper extends GenericXaResource {
     }
 
     /**
-     * @see javax.transaction.xa.XAResource#rollback(javax.transaction.xa.Xid xid)
+     * @see javax.transaction.xa.XAResource#rollback(Xid xid)
      */
     @Override
     public void rollback(Xid xid) throws XAException {

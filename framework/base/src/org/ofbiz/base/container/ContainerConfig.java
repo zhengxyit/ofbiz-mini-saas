@@ -85,8 +85,8 @@ public class ContainerConfig {
         return result;
     }
 
-    public static String getPropertyValue(ContainerConfig.Container parentProp, String name, String defaultValue) {
-        ContainerConfig.Container.Property prop = parentProp.getProperty(name);
+    public static String getPropertyValue(Container parentProp, String name, String defaultValue) {
+        Container.Property prop = parentProp.getProperty(name);
         if (prop == null || UtilValidate.isEmpty(prop.value)) {
             return defaultValue;
         } else {
@@ -94,8 +94,8 @@ public class ContainerConfig {
         }
     }
 
-    public static int getPropertyValue(ContainerConfig.Container parentProp, String name, int defaultValue) {
-        ContainerConfig.Container.Property prop = parentProp.getProperty(name);
+    public static int getPropertyValue(Container parentProp, String name, int defaultValue) {
+        Container.Property prop = parentProp.getProperty(name);
         if (prop == null || UtilValidate.isEmpty(prop.value)) {
             return defaultValue;
         } else {
@@ -109,8 +109,8 @@ public class ContainerConfig {
         }
     }
 
-    public static boolean getPropertyValue(ContainerConfig.Container parentProp, String name, boolean defaultValue) {
-        ContainerConfig.Container.Property prop = parentProp.getProperty(name);
+    public static boolean getPropertyValue(Container parentProp, String name, boolean defaultValue) {
+        Container.Property prop = parentProp.getProperty(name);
         if (prop == null || UtilValidate.isEmpty(prop.value)) {
             return defaultValue;
         } else {
@@ -118,8 +118,8 @@ public class ContainerConfig {
         }
     }
 
-    public static String getPropertyValue(ContainerConfig.Container.Property parentProp, String name, String defaultValue) {
-        ContainerConfig.Container.Property prop = parentProp.getProperty(name);
+    public static String getPropertyValue(Container.Property parentProp, String name, String defaultValue) {
+        Container.Property prop = parentProp.getProperty(name);
         if (prop == null || UtilValidate.isEmpty(prop.value)) {
             return defaultValue;
         } else {
@@ -127,8 +127,8 @@ public class ContainerConfig {
         }
     }
 
-    public static int getPropertyValue(ContainerConfig.Container.Property parentProp, String name, int defaultValue) {
-        ContainerConfig.Container.Property prop = parentProp.getProperty(name);
+    public static int getPropertyValue(Container.Property parentProp, String name, int defaultValue) {
+        Container.Property prop = parentProp.getProperty(name);
         if (prop == null || UtilValidate.isEmpty(prop.value)) {
             return defaultValue;
         } else {
@@ -142,8 +142,8 @@ public class ContainerConfig {
         }
     }
 
-    public static boolean getPropertyValue(ContainerConfig.Container.Property parentProp, String name, boolean defaultValue) {
-        ContainerConfig.Container.Property prop = parentProp.getProperty(name);
+    public static boolean getPropertyValue(Container.Property parentProp, String name, boolean defaultValue) {
+        Container.Property prop = parentProp.getProperty(name);
         if (prop == null || UtilValidate.isEmpty(prop.value)) {
             return defaultValue;
         } else {

@@ -18,19 +18,13 @@
  *******************************************************************************/
 package org.ofbiz.webapp.event;
 
+import com.alibaba.fastjson.JSONObject;
 import org.ofbiz.base.lang.JSON;
-import org.ofbiz.base.util.Debug;
-import org.ofbiz.base.util.UtilGenerics;
-import org.ofbiz.base.util.UtilHttp;
-import org.ofbiz.base.util.UtilMisc;
+import org.ofbiz.base.util.*;
 import org.ofbiz.entity.Delegator;
 import org.ofbiz.entity.DelegatorFactory;
 import org.ofbiz.entity.GenericEntityException;
 import org.ofbiz.entity.GenericValue;
-import org.ofbiz.entity.condition.EntityCondition;
-import org.ofbiz.entity.util.EntityFindOptions;
-import org.ofbiz.entity.util.EntityUtil;
-import org.ofbiz.entity.util.EntityUtilProperties;
 import org.ofbiz.service.*;
 import org.ofbiz.webapp.EnterpriseModulesCache;
 import org.ofbiz.webapp.control.ConfigXMLReader.Event;
@@ -42,10 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Writer;
 import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * JsonEventHandler - JSON Event Handler implementation
@@ -77,32 +68,6 @@ public class JsonEventHandler implements EventHandler {
         // 将Request中的参数组成Map
         Map<String, Object> parameters = UtilGenerics.cast(UtilHttp.getParameterMap(request));
 
-        // TenantId设进去
-        String tenantId = TicketUtil.getTenantIdFromRequest(request);
-        dispatcher.getDelegator().setTenantId(tenantId);
-        // 设备企业模块支持
-        String enterpriseModules = EnterpriseModulesCache.getModulesByTenant(tenantId);
-        if (enterpriseModules == null) {
-            Delegator delegator = DelegatorFactory.getDelegator("default");
-            try {
-                // 只查询一条
-                EntityFindOptions findOptions = new EntityFindOptions();
-                findOptions.setMaxRows(1);
-                List<GenericValue> enterpriseList = delegator.findList("Enterprise", EntityCondition.makeCondition(UtilMisc.toMap("domainName", tenantId)), UtilMisc.toSet("configs"), null, findOptions, false);
-                if (enterpriseList == null || enterpriseList.size() != 1) {
-                    throw new GenericEntityException("Enterprise[" + tenantId + "] is not found");
-                }
-                enterpriseModules = enterpriseList.get(0).get("configs").toString();
-                EnterpriseModulesCache.putModules(tenantId, enterpriseModules);
-                dispatcher.getDelegator().setEnterpriseModules(enterpriseModules);
-            } catch (GenericEntityException e) {
-                e.printStackTrace();
-                throw new EventHandlerException("Enterprise[" + tenantId + "] is not found");
-            }
-        } else {
-            dispatcher.getDelegator().setEnterpriseModules(enterpriseModules);
-        }
-
         Debug.log(this.module + ",service:" + serviceName + ",path:" + request.getPathInfo() + ",parameters size:" + parameters.size());
         if (serviceName == null) {
             try {
@@ -115,7 +80,7 @@ public class JsonEventHandler implements EventHandler {
             } catch (Exception e) {
                 e.printStackTrace();
                 response.setStatus(500);
-                sendError(response, "ServiceName[" + serviceName + "] is not found", null);
+                sendError(response, "ServiceName[" + serviceName + "] is not found");
                 throw new EventHandlerException("ServiceName[" + serviceName + "] is not found");
             }
         }
@@ -123,38 +88,70 @@ public class JsonEventHandler implements EventHandler {
         // not a wsdl request; invoke the service
         try {
             Writer writer = response.getWriter();
-            StringBuilder sb = new StringBuilder();
             ModelService model = dispatcher.getDispatchContext().getModelService(serviceName);
 
             if (model == null) {
-                sendError(response, "Problem processing the service", serviceName);
+                sendError(response, "Problem processing the service");
                 Debug.logError("Could not find Service [" + serviceName + "].", module);
                 return null;
             }
 
             if (!model.export) {
-                sendError(response, "Problem processing the service", serviceName);
+                sendError(response, "Problem processing the service");
                 Debug.logError("Trying to call Service [" + serviceName + "] that is not exported.", module);
                 return null;
             }
 
             if (!this.checkAuth(model, ticket, dispatcher.getDelegator())) {
                 response.setStatus(403);
-                sendError(response, "Problem processing the service", serviceName);
+                sendError(response, "Problem processing the service");
                 Debug.logError("No auth [" + serviceName + "]", module);
                 return null;
             }
 
             // service模块使用,代替了框架的security
             parameters.put("ticket", ticket);
+            // tenant 从第四位取
+            String[] ts = ticket.split(":");
+            if (ts.length < 4) {
+                sendError(response, "Problem processing the service");
+                return null;
+            }
+
+            String tenant = ts[3];
+            dispatcher.getDelegator().setTenantId(tenant);
+
+            String accountType = TicketUtil.getAccountTypeFromTicket(ticket);
+            // 缓存中取出，并设置
+            List<String> flats = null;
+            List<String> trees = null;
+            if ("A".equals(accountType)) {
+                flats = StringUtil.split(EnterpriseModulesCache.getFlatFieldsByTenant(tenant), ",");
+                trees = StringUtil.split(EnterpriseModulesCache.getTreeFieldsByTenant(tenant), ",");
+            }
+
+            GenericValue loginToken = dispatcher.getDelegator().findOne("LoginToken", true, UtilMisc.toMap("ticket", ticket));
+            if (loginToken == null) {
+                response.setStatus(401);
+                sendError(response, "Problem processing the service");
+                Debug.logError("No auth [" + serviceName + "]", module);
+                return null;
+            }
+
+            if (!ticket.contains(":F:")) {
+                JSONObject personal = JSONObject.parseObject(loginToken.getString("cacheData")).getJSONObject("personal");
+                // 设置支持模块
+            }
+
+            response.setCharacterEncoding("UTF8");
+            response.setContentType("text/json");
+
             // 必须选回一个result
             Map<String, Object> serviceResults = dispatcher.runSync(serviceName, parameters);
             Map<String, Object> resp = model.makeValid(serviceResults, ModelService.OUT_PARAM, false, null);
 
             String result = JSON.from(resp).toString();
             // 设置长度
-            response.setCharacterEncoding("UTF8");
-            response.setContentType("text/json");
             response.setContentLength(result.getBytes("utf-8").length);
 
             writer.write(result);
@@ -162,8 +159,8 @@ public class JsonEventHandler implements EventHandler {
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(500);
-            sendError(response, e.getMessage(), serviceName);
-            throw new EventHandlerException("Problem processing the servic");
+            sendError(response, e.getMessage());
+            throw new EventHandlerException("Problem processing the service");
         }
         return null;
     }
@@ -172,10 +169,6 @@ public class JsonEventHandler implements EventHandler {
         // -1 如果joinType是空，不做判断(暂时只有OR)
         if (service.permissionGroups.size() == 0) {
             return true;
-        }
-        // 判断Ticket的合法性
-        if (EntityUtil.isMultiTenantEnabled() && !delegator.getTenantId().equals(TicketUtil.getTenantFromTicket(ticket))) {
-            return false;
         }
         // 0 先查Ticket查权限编码
         Map<String, Object> fields = new HashMap<String, Object>();
@@ -207,9 +200,7 @@ public class JsonEventHandler implements EventHandler {
 
         if (ticket != null) {
             Delegator delegator = DelegatorFactory.getDelegator("default");
-            if (EntityUtil.isMultiTenantEnabled()) {
-                delegator.setTenantId(TicketUtil.getTenantIdFromRequest(request));
-            }
+
             Map<String, Object> fields = new HashMap<String, Object>();
             fields.put("ticket", ticket);
             try {
@@ -218,15 +209,16 @@ public class JsonEventHandler implements EventHandler {
                 e.printStackTrace();
                 return null;
             }
-            if (userLoginToken == null || (EntityUtil.isMultiTenantEnabled() && !delegator.getTenantId().equals(TicketUtil.getTenantFromTicket(ticket)))) {
+
+            if (userLoginToken == null) {
                 response.setStatus(401);
-                sendError(response, "it's not login", null);
+                sendError(response, "用户已在其它设备登录，请重新登录");
                 return null;
             }
 
             if (Calendar.getInstance().getTimeInMillis() > ((Timestamp) userLoginToken.get("expirationTime")).getTime()) {
                 response.setStatus(401);
-                sendError(response, "it's not login", null);
+                sendError(response, "用户会话已超时，请重新登录");
                 return null;
             }
 
@@ -236,9 +228,12 @@ public class JsonEventHandler implements EventHandler {
         return null;
     }
 
-    private void sendError(HttpServletResponse res, String errorMessage, String serviceName) throws EventHandlerException {
+    private void sendError(HttpServletResponse res, String errorMessage) throws EventHandlerException {
         try {
-            res.getWriter().write("{\"success\":false,\"message\":\"" + serviceName + ":" + errorMessage + "\"}");
+            JSONObject msg = new JSONObject(); // 自己拼可能会出现"解析会出错
+            msg.put("success", false);
+            msg.put("message", errorMessage);
+            res.getWriter().write(msg.toString());
             res.getWriter().flush();
         } catch (Exception e) {
             throw new EventHandlerException(e.getMessage(), e);
