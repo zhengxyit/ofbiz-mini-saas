@@ -19,10 +19,6 @@
 
 package org.ofbiz.entity.condition;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.ofbiz.base.util.UtilMisc;
 import org.ofbiz.base.util.UtilValidate;
 import org.ofbiz.entity.Delegator;
@@ -34,9 +30,12 @@ import org.ofbiz.entity.model.ModelField;
 import org.ofbiz.entity.model.ModelViewEntity;
 import org.ofbiz.entity.model.ModelViewEntity.ModelAlias;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Field value expression.
- *
  */
 @SuppressWarnings("serial")
 public class EntityFieldValue extends EntityConditionValue {
@@ -45,6 +44,7 @@ public class EntityFieldValue extends EntityConditionValue {
 
     protected String fieldName = null;
     protected String entityAlias = null;
+    protected String colName = null; // 由于json字段处理不同
     protected List<String> entityAliasStack = null;
     protected ModelViewEntity modelViewEntity = null;
 
@@ -67,6 +67,20 @@ public class EntityFieldValue extends EntityConditionValue {
             this.entityAliasStack = new LinkedList<String>();
             this.entityAliasStack.addAll(entityAliasStack);
         }
+        if (this.fieldName.contains(".")) {
+            String[] js = this.fieldName.split("\\.");
+            if (js.length > 1) {
+                this.fieldName = js[0];
+                String sb = js[0];
+                for (int i = 1; i < js.length; i++) {
+                    sb += "->>'" + js[i] + "'";
+                }
+                this.colName = sb;
+            }
+        } else {
+            this.colName = fieldName;
+        }
+
         this.modelViewEntity = modelViewEntity;
         if (UtilValidate.isNotEmpty(this.entityAliasStack) && UtilValidate.isEmpty(this.entityAlias)) {
             // look it up on the view entity so it can be part of the big list, this only happens for aliased fields, so find the entity-alias and field-name for the alias
@@ -81,6 +95,7 @@ public class EntityFieldValue extends EntityConditionValue {
 
     public void reset() {
         this.fieldName = null;
+        this.colName = null;
         this.entityAlias = null;
         this.entityAliasStack = null;
         this.modelViewEntity = null;
@@ -134,7 +149,7 @@ public class EntityFieldValue extends EntityConditionValue {
                 // using entityAliasStack (ordered top to bottom) build a big long alias; not that dots will be replaced after it is combined with the column name in the SQL gen
                 if (UtilValidate.isNotEmpty(this.entityAliasStack)) {
                     boolean dotUsed = false;
-                    for (String curEntityAlias: entityAliasStack) {
+                    for (String curEntityAlias : entityAliasStack) {
                         sql.append(curEntityAlias);
                         if (dotUsed) {
                             sql.append("_");
@@ -153,10 +168,10 @@ public class EntityFieldValue extends EntityConditionValue {
                     sql.append(modelField.getColName());
                 }
             } else {
-                sql.append(getColName(tableAliases, modelViewEntity, fieldName, includeTableNamePrefix, datasourceInfo));
+                sql.append(getColName(tableAliases, modelViewEntity, colName, includeTableNamePrefix, datasourceInfo));
             }
         } else {
-            sql.append(getColName(tableAliases, modelEntity, fieldName, includeTableNamePrefix, datasourceInfo));
+            sql.append(getColName(tableAliases, modelEntity, colName, includeTableNamePrefix, datasourceInfo));
         }
     }
 

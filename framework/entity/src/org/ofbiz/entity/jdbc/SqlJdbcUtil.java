@@ -18,53 +18,27 @@
  *******************************************************************************/
 package org.ofbiz.entity.jdbc;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.nio.ByteBuffer;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.sql.rowset.serial.SerialBlob;
-import javax.sql.rowset.serial.SerialClob;
-
 import org.ofbiz.base.util.Debug;
 import org.ofbiz.base.util.ObjectType;
 import org.ofbiz.base.util.UtilGenerics;
 import org.ofbiz.base.util.UtilValidate;
-import org.ofbiz.entity.GenericDataSourceException;
-import org.ofbiz.entity.GenericEntity;
-import org.ofbiz.entity.GenericEntityException;
-import org.ofbiz.entity.GenericModelException;
-import org.ofbiz.entity.GenericNotImplementedException;
-import org.ofbiz.entity.GenericValue;
+import org.ofbiz.entity.*;
 import org.ofbiz.entity.condition.EntityCondition;
 import org.ofbiz.entity.condition.EntityConditionParam;
 import org.ofbiz.entity.condition.EntityOperator;
 import org.ofbiz.entity.condition.OrderByList;
 import org.ofbiz.entity.config.model.Datasource;
 import org.ofbiz.entity.field.JsonValue;
-import org.ofbiz.entity.model.ModelEntity;
-import org.ofbiz.entity.model.ModelField;
-import org.ofbiz.entity.model.ModelFieldType;
-import org.ofbiz.entity.model.ModelFieldTypeReader;
-import org.ofbiz.entity.model.ModelKeyMap;
-import org.ofbiz.entity.model.ModelViewEntity;
+import org.ofbiz.entity.model.*;
 import org.postgresql.util.PGobject;
+
+import javax.sql.rowset.serial.SerialBlob;
+import javax.sql.rowset.serial.SerialClob;
+import java.io.*;
+import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.sql.*;
+import java.util.*;
 
 /**
  * GenericDAO Utility methods for general tasks
@@ -272,6 +246,7 @@ public class SqlJdbcUtil {
             Object item = iter.next();
             Object name = null;
             ModelField modelField = null;
+
             if (item instanceof ModelField) {
                 modelField = (ModelField) item;
                 sb.append(modelField.getColValue());
@@ -441,6 +416,7 @@ public class SqlJdbcUtil {
             } else {
                 viewConditionClause = null;
             }
+
             if (UtilValidate.isNotEmpty(viewWhereClause) || UtilValidate.isNotEmpty(viewConditionClause)) {
                 sql.append(" WHERE ");
                 if (UtilValidate.isNotEmpty(viewWhereClause)) {
@@ -867,27 +843,27 @@ public class SqlJdbcUtil {
                     break;
 
                 case 5:
-                    sqlP.setValue((java.lang.Integer) fieldValue);
+                    sqlP.setValue((Integer) fieldValue);
                     break;
 
                 case 6:
-                    sqlP.setValue((java.lang.Long) fieldValue);
+                    sqlP.setValue((Long) fieldValue);
                     break;
 
                 case 7:
-                    sqlP.setValue((java.lang.Float) fieldValue);
+                    sqlP.setValue((Float) fieldValue);
                     break;
 
                 case 8:
-                    sqlP.setValue((java.lang.Double) fieldValue);
+                    sqlP.setValue((Double) fieldValue);
                     break;
 
                 case 9:
-                    sqlP.setValue((java.math.BigDecimal) fieldValue);
+                    sqlP.setValue((BigDecimal) fieldValue);
                     break;
 
                 case 10:
-                    sqlP.setValue((java.lang.Boolean) fieldValue);
+                    sqlP.setValue((Boolean) fieldValue);
                     break;
 
                 case 11:
@@ -900,12 +876,12 @@ public class SqlJdbcUtil {
                     } else if (fieldValue instanceof ByteBuffer) {
                         sqlP.setBytes(((ByteBuffer) fieldValue).array());
                     } else {
-                        sqlP.setValue((java.sql.Blob) fieldValue);
+                        sqlP.setValue((Blob) fieldValue);
                     }
                     break;
 
                 case 13:
-                    sqlP.setValue((java.sql.Clob) fieldValue);
+                    sqlP.setValue((Clob) fieldValue);
                     break;
 
                 case 14:
